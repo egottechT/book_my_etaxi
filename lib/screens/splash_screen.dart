@@ -15,7 +15,7 @@ class _SplashScreen extends State<SplashScreen> {
   }
 
   Future<void> _redirect() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
     Navigator.of(context).pushReplacementNamed('/loginScreen');
     // Navigator.of(context).pushReplacementNamed('/extraScreen');
   }

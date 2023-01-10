@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "709692300821",
+    "project_id": "book-my-etaxi",
+    "storage_bucket": "book-my-etaxi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709692300821:android:8b712224a6f5847b29381c",
+        "android_client_info": {
+          "package_name": "com.example.book_my_taxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709692300821-jae0it1focroqp9mh5kkk7akoltbl0ht.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.book_my_taxi",
+            "certificate_hash": "67090bde9c9c37a397ab02913db9d214a4bb59e2"
+          }
+        },
+        {
+          "client_id": "709692300821-4bmpccgvpo33ccdj1gdjgfeivl7hjbqu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmhfTVZULPMgosgbUaZLgdOvkpXRUisO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709692300821-4bmpccgvpo33ccdj1gdjgfeivl7hjbqu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
