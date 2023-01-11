@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/phone_number_view.dart';
+import 'package:book_my_taxi/service/authentication.dart';
 import 'package:flutter/material.dart';
 
 class PhoneNumberSetup extends StatefulWidget {
@@ -10,12 +11,14 @@ class PhoneNumberSetup extends StatefulWidget {
 
 class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
   late String phoneNumber;
+  bool showLoading = false;
 
   @override
   void initState() {
     super.initState();
     phoneNumber = "";
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -41,8 +44,14 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
             ElevatedButton(
               onPressed: () {
                 print(phoneNumber);
-                if(phoneNumber.length==12){
-                  print("Inside");
+                if(phoneNumber.length==13){
+                  setState(() {
+                    showLoading = true;
+                  });
+                  signInWithPhoneNumber(phoneNumber,context);
+                  setState(() {
+                    showLoading = false;
+                  });
                 }
               },
               child: Text("Next"),
@@ -76,7 +85,7 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
         SizedBox(
           height: 50,
         ),
-        PhoneNumberInput(
+        showLoading ? const CircularProgressIndicator() : PhoneNumberInput(
           onValueChange: (String value) {
             setState(() {
               phoneNumber = value;
