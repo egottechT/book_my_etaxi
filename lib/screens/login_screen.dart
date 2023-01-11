@@ -41,13 +41,13 @@ class _LoginScreen extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Take a comfortable & safe ",
                           style:
                               TextStyle(fontSize: 18, color: Colors.deepPurple),
                         ),
                         Row(
-                          children: [
+                          children: const [
                             Text(
                               " travel with ",
                               style: TextStyle(
@@ -64,17 +64,16 @@ class _LoginScreen extends State<LoginScreen> {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 25,
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        //TODO phone number setup will be here.
                         Navigator.of(context).pushNamed("/phoneNumberSetup");
                       },
-                      child: Text("Continue with Phone Number"),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black),
+                      child: const Text("Continue with Phone Number"),
                     ),
                     ElevatedButton.icon(
                       onPressed: () async {
@@ -83,24 +82,26 @@ class _LoginScreen extends State<LoginScreen> {
                           Navigator.of(context)
                               .pushNamed("/registrationScreen");
                         } else {
-                          context.showErrorSnackBar(message: "There is some error while LogIn. Please try again later");
+                          context.showErrorSnackBar(
+                              message:
+                                  "There is some error while LogIn. Please try again later");
                         }
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.mail_rounded,
                         color: Colors.red,
                       ),
-                      label: Text(
+                      label: const Text(
                         "Google",
                         style: TextStyle(color: Colors.black),
                       ),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
-                    Expanded(
+                    const Expanded(
                       flex: 1,
                       child: Text(
                         "By continuing, you agree that you have read and accept our T&C and Privacy Policy.",

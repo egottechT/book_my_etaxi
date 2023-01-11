@@ -70,7 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             children: [
               Flexible(
                 child: TextFormField(
-                  style: TextStyle(fontSize: 22),
+                  style: _textStyle,
                   decoration: const InputDecoration(
                     labelText: 'First Name',
                   ),
@@ -84,7 +84,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               Flexible(
                 child: TextFormField(
-                  style: TextStyle(fontSize: 22),
+                  style: _textStyle,
                   decoration: const InputDecoration(
                     labelText: 'Last Name',
                   ),
@@ -99,7 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             height: 10,
           ),
           TextFormField(
-            style: TextStyle(fontSize: 22),
+            style: _textStyle,
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
               labelText: 'Email',
@@ -126,7 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             height: 10,
           ),
           TextFormField(
-              style: TextStyle(fontSize: 22),
+              style: _textStyle,
               decoration: const InputDecoration(
                 labelText: 'Password',
               ),
@@ -139,4 +139,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
+
+  TextStyle get _textStyle => const TextStyle(
+    fontSize: 18,
+  );
 }

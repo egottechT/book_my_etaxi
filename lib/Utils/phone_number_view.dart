@@ -48,6 +48,6 @@ class PhoneNumberInput extends StatelessWidget {
 
   TextStyle get _textStyle => const TextStyle(
     color: Colors.black,
-    fontSize: 22,
+    fontSize: 18,
   );
 }

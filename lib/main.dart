@@ -17,7 +17,7 @@ void main() async {
           color: Colors.grey[800]
       ),
     ),
-    home: PhoneNumberSetup(),
+    home: SplashScreen(),
   ));
 }
 
