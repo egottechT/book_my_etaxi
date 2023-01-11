@@ -1,3 +1,4 @@
+import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/service/authentication.dart';
 import 'package:flutter/material.dart';
 
@@ -67,14 +68,23 @@ class _LoginScreen extends State<LoginScreen> {
                       height: 25,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        //TODO phone number setup will be here.
+                        Navigator.of(context).pushNamed("/phoneNumberSetup");
+                      },
                       child: Text("Continue with Phone Number"),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        doGmailLogin();
+                      onPressed: () async {
+                        dynamic result = await doGmailLogin();
+                        if (result != null) {
+                          Navigator.of(context)
+                              .pushNamed("/registrationScreen");
+                        } else {
+                          context.showErrorSnackBar(message: "There is some error while LogIn. Please try again later");
+                        }
                       },
                       icon: Icon(
                         Icons.mail_rounded,
@@ -84,7 +94,8 @@ class _LoginScreen extends State<LoginScreen> {
                         "Google",
                         style: TextStyle(color: Colors.black),
                       ),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
                     ),
                     SizedBox(
                       height: 15,

@@ -38,6 +38,7 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
   google_sign_in: ^5.4.2
+  intl_phone_number_input: ^0.7.1
 
 dev_dependencies:
   flutter_test:

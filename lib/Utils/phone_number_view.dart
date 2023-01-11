@@ -17,6 +17,7 @@ class PhoneNumberInput extends StatelessWidget {
         cursorColor: Colors.black,
         selectorConfig: const SelectorConfig(
           selectorType: PhoneInputSelectorType.DROPDOWN,
+          trailingSpace: false,
         ),
         errorMessage: "Enter a valid phone number",
         maxLength: 12,
@@ -40,7 +41,7 @@ class PhoneNumberInput extends StatelessWidget {
         onInputChanged: (PhoneNumber value) {
           onValueChange(value.phoneNumber.toString());
         },
-        countries: const ["IN","UK"],
+        countries: ["IN","US","GB"],
       ),
     );
   }
