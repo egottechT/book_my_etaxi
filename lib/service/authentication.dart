@@ -1,6 +1,7 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/otp_verify_screen.dart';
 import 'package:book_my_taxi/screens/registration_screen.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -19,7 +20,6 @@ Future<User?> doGmailLogin() async {
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken);
 
-    // Getting users credential
     UserCredential result = await _auth.signInWithCredential(authCredential);
     User? user = result.user;
 
@@ -43,12 +43,13 @@ Future<void> signOut() async {
 }
 
 String verificationCode = "";
-
+String phoneNumber = "";
 Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
+  phoneNumber = number;
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
-      await _auth.signInWithCredential(credential).then((dynamic result) {
+      await _auth.signInWithCredential(credential).then((dynamic result) async {
         Navigator.of(context).pushReplacementNamed("/registrationScreen");
       });
     },
@@ -69,6 +70,7 @@ Future<void> checkOTP(String smsCode,BuildContext context) async {
   try{
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
+    await addUserToDatabase(phoneNumber);
     await _auth.signInWithCredential(credential).then((dynamic result) {
       Navigator.of(context).pushReplacementNamed("/registrationScreen");
     });

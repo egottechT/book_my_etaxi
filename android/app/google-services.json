@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "709692300821",
+    "firebase_url": "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "book-my-etaxi",
     "storage_bucket": "book-my-etaxi.appspot.com"
   },

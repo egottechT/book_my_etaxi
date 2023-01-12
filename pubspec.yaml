@@ -39,6 +39,8 @@ dependencies:
   firebase_auth: ^4.2.5
   google_sign_in: ^5.4.2
   intl_phone_number_input: ^0.7.1
+  permission_handler: ^10.2.0
+  firebase_database: ^10.0.9
 
 dev_dependencies:
   flutter_test:
