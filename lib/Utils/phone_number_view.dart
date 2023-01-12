@@ -41,7 +41,7 @@ class PhoneNumberInput extends StatelessWidget {
         onInputChanged: (PhoneNumber value) {
           onValueChange(value.phoneNumber.toString());
         },
-        countries: ["IN","US","GB"],
+        countries: ["IN","US","GB","NL","MR","SL","CG","SO"],
       ),
     );
   }

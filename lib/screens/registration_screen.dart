@@ -49,7 +49,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ],
                   )),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if(_ownerFormKey.currentState!.validate()){
+                        Navigator.of(context).pushNamed("/homeScreen");
+                      }
+                    },
                     child: Text("Next"),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.black),

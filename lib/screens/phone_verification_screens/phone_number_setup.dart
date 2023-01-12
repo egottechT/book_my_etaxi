@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/Utils/phone_number_view.dart';
 import 'package:book_my_taxi/service/authentication.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 
 class PhoneNumberSetup extends StatefulWidget {
@@ -42,13 +43,21 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
               ],
             )),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 print(phoneNumber);
                 if(phoneNumber.length==13){
                   setState(() {
                     showLoading = true;
                   });
-                  signInWithPhoneNumber(phoneNumber,context);
+                  List<String>? values = await readData();
+                  if(values.contains(phoneNumber)){
+                    Navigator.of(context).pushNamed("/homeScreen");
+                  }
+                  else{
+                    signInWithPhoneNumber(phoneNumber,context);
+                  }
+
+                  await Future.delayed(const Duration(seconds: 3));
                   setState(() {
                     showLoading = false;
                   });
