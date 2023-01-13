@@ -102,7 +102,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 if (result != null) {
                                   List<String> values = await readData();
                                   if(values.contains(result.uid)){
-                                    Navigator.of(context).pushNamed("/homeScreen");
+                                    Navigator.of(context).pushNamed("/mapScreen");
                                   }
                                   else{
                                     addUserToDatabase(result.uid.toString());

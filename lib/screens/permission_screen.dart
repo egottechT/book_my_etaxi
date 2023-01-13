@@ -105,9 +105,8 @@ class _PermissionScreenState extends State<PermissionScreen> {
             )),
             ElevatedButton(
               onPressed: () {
-                //TODO onPressed work
                 if(location && phone){
-                  Navigator.of(context).pushNamed("/homeScreen");
+                  Navigator.of(context).pushNamed("/mapScreen");
                 }
                 else{
                   context.showErrorSnackBar(message: "Please allow both the permission first");

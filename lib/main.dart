@@ -1,6 +1,6 @@
 import 'package:book_my_taxi/screens/home_screen.dart';
+import 'package:book_my_taxi/screens/map_screen.dart';
 import 'package:book_my_taxi/screens/permission_screen.dart';
-import 'package:book_my_taxi/screens/phone_verification_screens/otp_verify_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
 import 'package:book_my_taxi/screens/registration_screen.dart';
 import 'package:book_my_taxi/screens/splash_screen.dart';
@@ -31,4 +31,5 @@ final Map<String, Widget Function(BuildContext)> appPageRoutes = {
   '/phoneNumberSetup':(_) => const PhoneNumberSetup(),
   '/registrationScreen':(_) => const RegistrationScreen(),
   '/homeScreen':(_) => const HomeScreen(),
+  '/mapScreen':(_) => const MapsScreen(),
 };
