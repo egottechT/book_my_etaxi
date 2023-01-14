@@ -32,4 +32,5 @@ final Map<String, Widget Function(BuildContext)> appPageRoutes = {
   '/registrationScreen':(_) => const RegistrationScreen(),
   '/homeScreen':(_) => const HomeScreen(),
   '/mapScreen':(_) => const MapsScreen(),
+  '/permissionScreen':(_) => const PermissionScreen(),
 };

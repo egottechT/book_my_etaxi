@@ -19,7 +19,7 @@ class _LoginScreen extends State<LoginScreen> {
       children: [
         SizedBox(width: 150,),
         CircularProgressIndicator(color: Colors.blue,),
-        SizedBox(width: 150,)
+        Flexible(child: SizedBox(width: 150,))
       ],
     ));
   }
@@ -102,7 +102,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 if (result != null) {
                                   List<String> values = await readData();
                                   if(values.contains(result.uid)){
-                                    Navigator.of(context).pushNamed("/mapScreen");
+                                    Navigator.of(context).pushNamed("/permissionScreen");
                                   }
                                   else{
                                     addUserToDatabase(result.uid.toString());

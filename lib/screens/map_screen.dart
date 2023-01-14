@@ -18,6 +18,8 @@ class _MapsScreenState extends State<MapsScreen> {
   Set<Marker> _makers = {};
   LatLng _center = const LatLng(20.5937, 78.9629);
   final double zoomLevel = 18;
+  String drive = "sedan";
+  Uint8List? markIcons;
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _MapsScreenState extends State<MapsScreen> {
   void setTheMarkers(LocationData location) async {
     Set<Marker> values = {};
     double diff = 0.001000;
-    final Uint8List markIcons = await getImages('assets/images/car.png', 300);
+    markIcons = await getImages('assets/images/${drive}.png', 300);
 
     for (int i = 0; i < 2; i++) {
       Marker tmpMarker = Marker(
@@ -49,7 +51,7 @@ class _MapsScreenState extends State<MapsScreen> {
         position: LatLng((location.latitude! + diff) as double,
             (location.longitude! + diff) as double),
         infoWindow: InfoWindow(title: "Car ${i + 1}", snippet: "Book the car"),
-        icon: BitmapDescriptor.fromBytes(markIcons),
+        icon: BitmapDescriptor.fromBytes(markIcons!),
       );
 
       values.add(tmpMarker);
@@ -79,9 +81,9 @@ class _MapsScreenState extends State<MapsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
           children: <Widget>[
             GoogleMap(
               myLocationButtonEnabled: true,
@@ -106,8 +108,7 @@ class _MapsScreenState extends State<MapsScreen> {
                       icon: Icon(Icons.search),
                       onPressed: () {},
                     ),
-                    Expanded(
-                      child: TextField(
+                TextField(
                         cursorColor: Colors.black,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.go,
@@ -116,12 +117,145 @@ class _MapsScreenState extends State<MapsScreen> {
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 15),
                             hintText: "PICKUP LOCATION"),
-                      ),
                     ),
                   ],
                 ),
               ),
             ),
+            DraggableScrollableSheet(
+                initialChildSize: 0.35,
+                builder:
+                    (BuildContext context, ScrollController scrollController) {
+                  return SingleChildScrollView(
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Card(
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: RadioListTile(
+                                      value: "micro",
+                                      title: Text("Micro",
+                                      style: TextStyle(fontSize: 10),),
+                                      groupValue: drive,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          drive = val as String;
+                                        });
+                                      }),
+                                ),
+                                Flexible(
+                                  child: RadioListTile(
+                                      value: "mini",
+                                      title: Text("Mini",
+                                      style: TextStyle(fontSize: 10),),
+                                      groupValue: drive,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          drive = val as String;
+                                        });
+                                      }),
+                                ),
+                                Flexible(
+                                  child: RadioListTile(
+                                      value: "sedan",
+                                      title: Text("Sedan",
+                                      style: TextStyle(fontSize: 10),),
+                                      groupValue: drive,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          drive = val as String;
+                                        });
+                                      }),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                            child: Card(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Container(
+                                      color: Colors.grey[300],
+                                      child: Row(
+                                        children: <Widget>[
+                                          IconButton(
+                                            splashColor: Colors.grey,
+                                            icon: Icon(Icons.search),
+                                            onPressed: () {},
+                                          ),
+                                          Expanded(
+                                            child: TextField(
+                                              cursorColor: Colors.black,
+                                              keyboardType: TextInputType.text,
+                                              textInputAction: TextInputAction.go,
+                                              decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 15),
+                                                  hintText: "Search Your Destination"),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      IconButton(
+                                        splashColor: Colors.grey,
+                                        icon: Icon(Icons.home,color: Colors.deepPurple,),
+                                        onPressed: () {},
+                                      ),
+                                      Expanded(
+                                        child: TextButton(
+                                          onPressed: (){
+
+                                          },
+                                          child: Text("ADD YOUR HOME ADDRESS",
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(color: Colors.black),),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      IconButton(
+                                        splashColor: Colors.grey,
+                                        icon: Icon(Icons.warehouse_rounded,color: Colors.deepPurple,),
+                                        onPressed: () {},
+                                      ),
+                                      Expanded(
+                                        child: TextButton(
+                                          onPressed: (){
+
+                                          },
+                                          child: Text("ADD YOUR WORK/OFFICE ADDRESS",
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(color: Colors.black),),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5,)
+                        ],
+                      ),
+                    ),
+                  );
+                })
           ],
         ),
       ),

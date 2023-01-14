@@ -51,7 +51,7 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
                   });
                   List<String>? values = await readData();
                   if(values.contains(phoneNumber)){
-                    Navigator.of(context).pushNamed("/mapScreen");
+                    Navigator.of(context).pushNamed("/permissionScreen");
                   }
                   else{
                     signInWithPhoneNumber(phoneNumber,context);

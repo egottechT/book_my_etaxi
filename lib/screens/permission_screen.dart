@@ -66,18 +66,21 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   children: [
                     Icon(Icons.do_not_disturb_on_total_silence,
                         size: 12, color: Colors.deepPurple),
-                    TextButton(
-                        onPressed: () async {
-                          var status = await Permission.location.request();
-                          if (status.isGranted) {
-                            location = true;
-                            context.showSnackBar(message: "Location Permission is Granted");
-                          }
-                        },
-                        child: Text(
-                          "Location (Please find the available rides)",
-                          style: _textStyle,
-                        ))
+                    Flexible(
+                      child: TextButton(
+                          onPressed: () async {
+                            var status = await Permission.location.request();
+                            if (status.isGranted) {
+                              location = true;
+                              context.showSnackBar(
+                                  message: "Location Permission is Granted");
+                            }
+                          },
+                          child: Text(
+                            "Location (Please find the available rides)",
+                            style: _textStyle,
+                          )),
+                    )
                   ],
                 ),
                 Row(
@@ -85,31 +88,32 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   children: [
                     Icon(Icons.do_not_disturb_on_total_silence,
                         size: 12, color: Colors.deepPurple),
-                    TextButton(
-                        onPressed: () async {
-                          var status = await Permission.contacts.request();
-                          if (status.isGranted){
-                            context.showSnackBar(message: "Contact Permission is Granted");
-                            phone = true;}
-                        },
-                        child: Text(
-                          "Phone (Security verification for account)",
-                          style: _textStyle,
-                        ))
+                    Flexible(
+                      child: TextButton(
+                          onPressed: () async {
+                            var status = await Permission.contacts.request();
+                            if (status.isGranted) {
+                              context.showSnackBar(
+                                  message: "Contact Permission is Granted");
+                              phone = true;
+                            }
+                          },
+                          child: Text(
+                            "Phone (Security verification for account)",
+                            style: _textStyle,
+                          )),
+                    )
                   ],
-                ),
-                SizedBox(
-                  height: 50,
                 ),
               ],
             )),
             ElevatedButton(
               onPressed: () {
-                if(location && phone){
+                if (location && phone) {
                   Navigator.of(context).pushNamed("/mapScreen");
-                }
-                else{
-                  context.showErrorSnackBar(message: "Please allow both the permission first");
+                } else {
+                  context.showErrorSnackBar(
+                      message: "Please allow both the permission first");
                 }
               },
               child: Text("Allow"),
