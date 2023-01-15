@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+
+String mapApiKey = "AIzaSyB9veCDeodL87QObk_JXfVvdNvG-JQKafU";
 
 extension ShowSnackBar on BuildContext {
   void showSnackBar({

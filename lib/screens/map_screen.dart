@@ -1,10 +1,17 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+import 'package:location/location.dart' as locate;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 class MapsScreen extends StatefulWidget {
   const MapsScreen({Key? key}) : super(key: key);
@@ -20,15 +27,25 @@ class _MapsScreenState extends State<MapsScreen> {
   final double zoomLevel = 18;
   String drive = "sedan";
   Uint8List? markIcons;
+  String googleApikey = "AIzaSyB9veCDeodL87QObk_JXfVvdNvG-JQKafU";
+  final _controller = TextEditingController();
+  var uuid = Uuid();
+  String? _sessionToken = null;
+  List<dynamic> list = [];
+  final _panelcontroller = PanelController();
+  String lstSearchLocation = "";
 
   @override
   void initState() {
     super.initState();
     Permission.location.request();
+    _controller.addListener(() {
+      onChangeText();
+    });
   }
 
   void getCurrentLocation() async {
-    Location currentLocation = Location();
+    locate.Location currentLocation = locate.Location();
     var location = await currentLocation.getLocation();
     CameraPosition _home = CameraPosition(
         target:
@@ -36,11 +53,22 @@ class _MapsScreenState extends State<MapsScreen> {
         zoom: zoomLevel);
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
-
     setTheMarkers(location);
   }
 
-  void setTheMarkers(LocationData location) async {
+  void showDestinationMarker(LatLng latLng) {
+    Marker tmpMarker = Marker(
+      markerId: MarkerId("destination"),
+      position: latLng,
+    );
+    setState(() {
+      _makers.add(tmpMarker);
+    });
+    CameraPosition _home = CameraPosition(target: latLng, zoom: zoomLevel);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
+  }
+
+  void setTheMarkers(locate.LocationData location) async {
     Set<Marker> values = {};
     double diff = 0.001000;
     markIcons = await getImages('assets/images/${drive}.png', 300);
@@ -55,8 +83,6 @@ class _MapsScreenState extends State<MapsScreen> {
       );
 
       values.add(tmpMarker);
-      debugPrint(
-          "${location.latitude! + diff} , ${location.longitude! + diff}");
       diff -= 0.000500;
     }
     setState(() {
@@ -79,186 +105,169 @@ class _MapsScreenState extends State<MapsScreen> {
     getCurrentLocation();
   }
 
+  Widget buildFAB(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        getCurrentLocation();
+      },
+      backgroundColor: Colors.white,
+      child: Icon(
+        Icons.gps_fixed,
+        color: Colors.blue,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final panelHeightClosed = MediaQuery.of(context).size.height * 0.35;
+    final panelHeightOpened = MediaQuery.of(context).size.height * 0.5;
+    double fabHeightBottom = 350;
+
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            GoogleMap(
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _center,
-                zoom: zoomLevel,
-              ),
-              markers: _makers, //MARKERS IN MAP
-            ),
-            Positioned(
-              top: 10,
-              right: 15,
-              left: 15,
-              child: Container(
-                color: Colors.white,
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      splashColor: Colors.grey,
-                      icon: Icon(Icons.search),
-                      onPressed: () {},
-                    ),
-                TextField(
-                        cursorColor: Colors.black,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.go,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 15),
-                            hintText: "PICKUP LOCATION"),
-                    ),
-                  ],
+        resizeToAvoidBottomInset: false,
+        body: SlidingUpPanel(
+          controller: _panelcontroller,
+          panelBuilder: (controller) {
+            return PanelWidget(controller: controller);
+          },
+          parallaxEnabled: true,
+          parallaxOffset: 0.5,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+          minHeight: panelHeightClosed,
+          maxHeight: panelHeightOpened,
+          onPanelSlide: (position) {
+            setState(() {
+              final panelMaxPos = panelHeightOpened - panelHeightClosed;
+              fabHeightBottom = position * panelMaxPos + 300;
+            });
+          },
+          body: Stack(
+            children: <Widget>[
+              GoogleMap(
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: _center,
+                  zoom: zoomLevel,
                 ),
+                markers: _makers, //MARKERS IN MAP
               ),
-            ),
-            DraggableScrollableSheet(
-                initialChildSize: 0.35,
-                builder:
-                    (BuildContext context, ScrollController scrollController) {
-                  return SingleChildScrollView(
-                    child: Container(
-                      color: Colors.grey[200],
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Card(
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: RadioListTile(
-                                      value: "micro",
-                                      title: Text("Micro",
-                                      style: TextStyle(fontSize: 10),),
-                                      groupValue: drive,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          drive = val as String;
-                                        });
-                                      }),
-                                ),
-                                Flexible(
-                                  child: RadioListTile(
-                                      value: "mini",
-                                      title: Text("Mini",
-                                      style: TextStyle(fontSize: 10),),
-                                      groupValue: drive,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          drive = val as String;
-                                        });
-                                      }),
-                                ),
-                                Flexible(
-                                  child: RadioListTile(
-                                      value: "sedan",
-                                      title: Text("Sedan",
-                                      style: TextStyle(fontSize: 10),),
-                                      groupValue: drive,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          drive = val as String;
-                                        });
-                                      }),
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: Card(
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Container(
-                                      color: Colors.grey[300],
-                                      child: Row(
-                                        children: <Widget>[
-                                          IconButton(
-                                            splashColor: Colors.grey,
-                                            icon: Icon(Icons.search),
-                                            onPressed: () {},
-                                          ),
-                                          Expanded(
-                                            child: TextField(
-                                              cursorColor: Colors.black,
-                                              keyboardType: TextInputType.text,
-                                              textInputAction: TextInputAction.go,
-                                              decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 15),
-                                                  hintText: "Search Your Destination"),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      IconButton(
-                                        splashColor: Colors.grey,
-                                        icon: Icon(Icons.home,color: Colors.deepPurple,),
-                                        onPressed: () {},
-                                      ),
-                                      Expanded(
-                                        child: TextButton(
-                                          onPressed: (){
-
-                                          },
-                                          child: Text("ADD YOUR HOME ADDRESS",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(color: Colors.black),),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      IconButton(
-                                        splashColor: Colors.grey,
-                                        icon: Icon(Icons.warehouse_rounded,color: Colors.deepPurple,),
-                                        onPressed: () {},
-                                      ),
-                                      Expanded(
-                                        child: TextButton(
-                                          onPressed: (){
-
-                                          },
-                                          child: Text("ADD YOUR WORK/OFFICE ADDRESS",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(color: Colors.black),),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 5,)
-                        ],
-                      ),
-                    ),
-                  );
-                })
-          ],
+              Positioned(
+                  top: 10, left: 10, right: 10, child: searchBarWidget()),
+              Positioned(
+                child: buildFAB(context),
+                right: 20,
+                bottom: fabHeightBottom,
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  void onChangeText() async {
+    if (_sessionToken == null) {
+      setState(() {
+        _sessionToken = uuid.v4();
+      });
+    }
+    debugPrint("Checking ${lstSearchLocation} ${_controller.text}");
+    if (lstSearchLocation != _controller.text) {
+      debugPrint("inside ");
+      getSuggestion(_controller.text);
+    } else {
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        list.clear();
+      });
+    }
+  }
+
+  void getSuggestion(String text) async {
+    String baseURL =
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+    String request =
+        '$baseURL?input=$text&key=$mapApiKey&sessiontoken=$_sessionToken';
+
+    var response = await http.get(Uri.parse(request));
+    if (response.statusCode == 200) {
+      setState(() {
+        list = jsonDecode(response.body.toString())['predictions'];
+      });
+    } else {
+      context.showErrorSnackBar(message: "Some error while fetching locations");
+    }
+  }
+
+  Widget searchBarWidget() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
+              children: [
+                Icon(Icons.search),
+                Expanded(
+                    child: TextField(
+                  onTap: () {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
+                    }
+                  },
+                  controller: _controller,
+                  cursorColor: Colors.black,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.go,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                      hintText: "PICKUP LOCATION"),
+                ))
+              ],
+            ),
+          ),
+        ),
+        list.length != 0
+            ? Flexible(
+                fit: FlexFit.loose,
+                child: Container(
+                  color: Colors.white,
+                  child: SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          onTap: () async {
+                            List<Location> locations =
+                                await locationFromAddress(
+                                    list[index]['description']);
+                            // debugPrint(locations.last.longitude.toString());
+                            // debugPrint(locations.last.latitude.toString());
+                            showDestinationMarker(LatLng(
+                                locations.last.latitude,
+                                locations.last.longitude));
+                            lstSearchLocation =
+                                _controller.text = list[index]['description'];
+                          },
+                          title: Text(list[index]['description']),
+                        );
+                      },
+                      itemCount: list.length,
+                    ),
+                  ),
+                ),
+              )
+            : Container()
+      ],
     );
   }
 }

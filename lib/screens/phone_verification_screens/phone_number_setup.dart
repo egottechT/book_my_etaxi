@@ -1,4 +1,4 @@
-import 'package:book_my_taxi/Utils/phone_number_view.dart';
+import 'package:book_my_taxi/widget/phone_number_view.dart';
 import 'package:book_my_taxi/service/authentication.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
