@@ -1,21 +1,20 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/search_location_screen.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as locate;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
 
 class MapsScreen extends StatefulWidget {
-  const MapsScreen({Key? key}) : super(key: key);
+  LatLng? positionMarker;
+
+  MapsScreen({Key? key, this.positionMarker}) : super(key: key);
 
   @override
   State<MapsScreen> createState() => _MapsScreenState();
@@ -28,9 +27,7 @@ class _MapsScreenState extends State<MapsScreen> {
   final double zoomLevel = 19;
   String drive = "sedan";
   Uint8List? markIcons;
-  final _controller = TextEditingController();
-  var uuid = Uuid();
-  String? _sessionToken = null;
+  String? _sessionToken = "";
   List<dynamic> list = [];
   final _panelcontroller = PanelController();
   String lstSearchLocation = "";
@@ -38,13 +35,7 @@ class _MapsScreenState extends State<MapsScreen> {
   @override
   void initState() {
     super.initState();
-    if (_sessionToken == null) {
-      _sessionToken = uuid.v4();
-    }
     Permission.location.request();
-    _controller.addListener(() {
-      onChangeText();
-    });
   }
 
   void getCurrentLocation() async {
@@ -59,7 +50,8 @@ class _MapsScreenState extends State<MapsScreen> {
     setTheMarkers(location);
   }
 
-    void showDestinationMarker(LatLng latLng) {
+  void showDestinationMarker(LatLng latLng) {
+    debugPrint("${latLng.latitude} ${latLng.longitude}");
     Marker tmpMarker = Marker(
       markerId: MarkerId("destination"),
       position: latLng,
@@ -105,6 +97,10 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    if (widget.positionMarker != null) {
+      debugPrint("Inside or not");
+      showDestinationMarker(widget.positionMarker as LatLng);
+    }
     getCurrentLocation();
   }
 
@@ -175,108 +171,40 @@ class _MapsScreenState extends State<MapsScreen> {
     );
   }
 
-  void onChangeText() async {
-    if (_sessionToken == null) {
-      setState(() {
-        _sessionToken = uuid.v4();
-      });
-    }
-    if (lstSearchLocation != _controller.text) {
-      getSuggestion(_controller.text);
-    } else {
-      await Future.delayed(Duration(seconds: 1));
-      setState(() {
-        list.clear();
-      });
-    }
-  }
-
-  void getSuggestion(String text) async {
-    String baseURL =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-    String request =
-        '$baseURL?input=$text&key=$mapApiKey&sessiontoken=$_sessionToken';
-
-    var response = await http.get(Uri.parse(request));
-    if (response.statusCode == 200) {
-      setState(() {
-        list = jsonDecode(response.body.toString())['predictions'];
-      });
-    } else {
-      context.showErrorSnackBar(message: "Some error while fetching locations");
-    }
-  }
-
   Widget searchBarWidget() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(),
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(5.0, 0, 5.0, 0),
-            child: Row(
-              children: [
-                Icon(Icons.search),
-                Expanded(
-                    child: TextField(
-                  controller: _controller,
-                  cursorColor: Colors.black,
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.go,
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                      hintText: "PICKUP LOCATION"),
-                )),
-                _controller.text.length != 0
-                    ? IconButton(
-                        onPressed: () {
-                          _controller.text = "";
-                        },
-                        icon: Icon(Icons.cancel))
-                    : Container(),
-              ],
-            ),
-          ),
-        ),
-        list.length != 0
-            ? Flexible(
-                fit: FlexFit.loose,
-                child: Container(
-                  color: Colors.white,
-                  child: SizedBox(
-                    height: 150,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          onTap: () async {
-                            List<Location> locations =
-                                await locationFromAddress(
-                                    list[index]['description']);
-                            // debugPrint(locations.last.longitude.toString());
-                            // debugPrint(locations.last.latitude.toString());
-                            showDestinationMarker(LatLng(
-                                locations.last.latitude,
-                                locations.last.longitude));
-                            lstSearchLocation =
-                                _controller.text = list[index]['description'];
-                          },
-                          title: Text(list[index]['description']),
-                        );
-                      },
-                      itemCount: list.length,
-                    ),
+    return InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SearchLocationScreen(
+                    mapController: mapController,
+                  showDestinationMarker: showDestinationMarker
+                  )));
+          // showSearchBar();
+        },
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Card(
+            child: Container(
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width - 40,
+                child: ListTile(
+                  title: Text(
+                    context.watch<StringProvider>().location,
+                    style: TextStyle(fontSize: 16),
                   ),
-                ),
-              )
-            : Container()
-      ],
-    );
+                  leading: Icon(Icons.search),
+                  dense: true,
+                  trailing: cancelButtonCondition(),
+                )),
+          ),
+        ));
+  }
+
+  cancelButtonCondition() {
+    if(context.read<StringProvider>().location != "Pickup Location")
+      return IconButton(onPressed: (){
+        context.read<StringProvider>().setString("Pickup Location");
+      }, icon: Icon(Icons.cancel));
+    return SizedBox(width: 2,);
   }
 }

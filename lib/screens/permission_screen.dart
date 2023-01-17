@@ -47,7 +47,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 Text(
                   "WELCOME TO BOOK MY ETAXI",
                   style: TextStyle(
-                      color: Colors.deepPurple,
+                      color: primaryColor,
                       fontSize: 22,
                       fontWeight: FontWeight.bold),
                 ),
@@ -65,7 +65,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.do_not_disturb_on_total_silence,
-                        size: 12, color: Colors.deepPurple),
+                        size: 12, color: primaryColor),
                     Flexible(
                       child: TextButton(
                           onPressed: () async {
@@ -87,7 +87,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.do_not_disturb_on_total_silence,
-                        size: 12, color: Colors.deepPurple),
+                        size: 12, color: primaryColor),
                     Flexible(
                       child: TextButton(
                           onPressed: () async {
