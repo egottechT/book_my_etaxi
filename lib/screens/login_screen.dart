@@ -3,6 +3,7 @@ import 'package:book_my_taxi/service/authentication.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:book_my_taxi/Utils/constant.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -55,23 +56,23 @@ class _LoginScreen extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               "Take a comfortable & safe ",
                               style:
-                              TextStyle(fontSize: 18, color: Colors.deepPurple),
+                              TextStyle(fontSize: 18, color: primaryColor),
                             ),
                             Row(
-                              children: const [
+                              children: [
                                 Text(
                                   " travel with ",
                                   style: TextStyle(
-                                      fontSize: 18, color: Colors.deepPurple),
+                                      fontSize: 18, color: primaryColor),
                                 ),
                                 Text(
                                   "BOOK MY ETAXI",
                                   style: TextStyle(
                                       fontSize: 20,
-                                      color: Colors.deepPurple,
+                                      color: primaryColor,
                                       fontWeight: FontWeight.bold),
                                 )
                               ],

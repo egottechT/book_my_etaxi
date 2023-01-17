@@ -1,8 +1,10 @@
+import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
 import 'package:book_my_taxi/screens/map_screen.dart';
 import 'package:book_my_taxi/screens/permission_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
 import 'package:book_my_taxi/screens/registration_screen.dart';
+import 'package:book_my_taxi/screens/share_app_screen.dart';
 import 'package:book_my_taxi/screens/splash_screen.dart';
 import 'package:book_my_taxi/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';

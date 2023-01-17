@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/screens/search_location_screen.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,10 +25,9 @@ class _MapsScreenState extends State<MapsScreen> {
   late GoogleMapController mapController;
   Set<Marker> _makers = {};
   LatLng _center = const LatLng(20.5937, 78.9629);
-  final double zoomLevel = 18;
+  final double zoomLevel = 19;
   String drive = "sedan";
   Uint8List? markIcons;
-  String googleApikey = "AIzaSyB9veCDeodL87QObk_JXfVvdNvG-JQKafU";
   final _controller = TextEditingController();
   var uuid = Uuid();
   String? _sessionToken = null;
@@ -38,6 +38,9 @@ class _MapsScreenState extends State<MapsScreen> {
   @override
   void initState() {
     super.initState();
+    if (_sessionToken == null) {
+      _sessionToken = uuid.v4();
+    }
     Permission.location.request();
     _controller.addListener(() {
       onChangeText();
@@ -56,7 +59,7 @@ class _MapsScreenState extends State<MapsScreen> {
     setTheMarkers(location);
   }
 
-  void showDestinationMarker(LatLng latLng) {
+    void showDestinationMarker(LatLng latLng) {
     Marker tmpMarker = Marker(
       markerId: MarkerId("destination"),
       position: latLng,
@@ -121,16 +124,19 @@ class _MapsScreenState extends State<MapsScreen> {
   @override
   Widget build(BuildContext context) {
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.35;
-    final panelHeightOpened = MediaQuery.of(context).size.height * 0.5;
+    final panelHeightOpened = MediaQuery.of(context).size.height * 0.8;
     double fabHeightBottom = 350;
 
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: SlidingUpPanel(
           controller: _panelcontroller,
           panelBuilder: (controller) {
-            return PanelWidget(controller: controller);
+            return PanelWidget(
+              controller: controller,
+              sessionToken: _sessionToken as String,
+            );
           },
           parallaxEnabled: true,
           parallaxOffset: 0.5,
@@ -175,9 +181,7 @@ class _MapsScreenState extends State<MapsScreen> {
         _sessionToken = uuid.v4();
       });
     }
-    debugPrint("Checking ${lstSearchLocation} ${_controller.text}");
     if (lstSearchLocation != _controller.text) {
-      debugPrint("inside ");
       getSuggestion(_controller.text);
     } else {
       await Future.delayed(Duration(seconds: 1));
@@ -208,20 +212,18 @@ class _MapsScreenState extends State<MapsScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          color: Colors.white,
+          decoration: BoxDecoration(
+            border: Border.all(),
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.fromLTRB(5.0, 0, 5.0, 0),
             child: Row(
               children: [
                 Icon(Icons.search),
                 Expanded(
                     child: TextField(
-                  onTap: () {
-                    FocusScopeNode currentFocus = FocusScope.of(context);
-                    if (!currentFocus.hasPrimaryFocus) {
-                      currentFocus.unfocus();
-                    }
-                  },
                   controller: _controller,
                   cursorColor: Colors.black,
                   keyboardType: TextInputType.text,
@@ -230,7 +232,14 @@ class _MapsScreenState extends State<MapsScreen> {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 15),
                       hintText: "PICKUP LOCATION"),
-                ))
+                )),
+                _controller.text.length != 0
+                    ? IconButton(
+                        onPressed: () {
+                          _controller.text = "";
+                        },
+                        icon: Icon(Icons.cancel))
+                    : Container(),
               ],
             ),
           ),
@@ -241,7 +250,7 @@ class _MapsScreenState extends State<MapsScreen> {
                 child: Container(
                   color: Colors.white,
                   child: SizedBox(
-                    height: 250,
+                    height: 150,
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
