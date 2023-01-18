@@ -1,3 +1,4 @@
+import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
@@ -17,7 +18,8 @@ void main() async {
   await Firebase.initializeApp();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => StringProvider())
+      ChangeNotifierProvider(create: (_) => StringProvider()),
+      ChangeNotifierProvider(create: (_) => BottomLocationProvider()),
     ],
     child: MaterialApp(
       title: 'Book My taxi',
@@ -28,7 +30,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: SplashScreen(),
+      home: MapsScreen(),
     ),
   ));
 }

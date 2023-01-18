@@ -1,16 +1,25 @@
 import 'dart:convert';
-
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/screens/search_location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class PanelWidget extends StatefulWidget {
-  final ScrollController controller;
-  final String sessionToken;
-  PanelWidget({Key? key, required this.controller,required this.sessionToken}) : super(key: key);
+  ScrollController? controller;
+  final Function function;
+  GoogleMapController? mapController;
+
+  PanelWidget(
+      {Key? key,
+      // required this.controller,
+      required this.function,
+      // required this.mapController
+      })
+      : super(key: key);
 
   @override
   State<PanelWidget> createState() => _PanelWidgetState();
@@ -18,18 +27,13 @@ class PanelWidget extends StatefulWidget {
 
 class _PanelWidgetState extends State<PanelWidget> {
   String drive = "mini";
-  final _controller = TextEditingController();
-  List<dynamic> list = [];
-  String lstSearchLocation = "";
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() {
-      onChangeText();
-    });
   }
-  Widget carInfoWidget(){
+
+  Widget carInfoWidget() {
     return Container(
       color: Colors.white,
       child: Column(
@@ -93,6 +97,48 @@ class _PanelWidgetState extends State<PanelWidget> {
     );
   }
 
+  Widget searchBarWidget() {
+    return InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SearchLocationScreen(
+                    mapController: widget.mapController as GoogleMapController,
+                    showDestinationMarker: widget.function,
+                    bottomSearch: true,
+                  )));
+          // showSearchBar();
+        },
+        child: Card(
+          child: Container(
+              padding: EdgeInsets.all(0),
+              width: MediaQuery.of(context).size.width - 40,
+              child: ListTile(
+                title: Text(
+                  context.watch<BottomLocationProvider>().location,
+                  style: TextStyle(fontSize: 16),
+                ),
+                leading: Icon(Icons.search),
+                dense: true,
+                trailing: cancelButtonCondition(),
+              )),
+        ));
+  }
+
+  cancelButtonCondition() {
+    if (context.read<BottomLocationProvider>().location !=
+        "Search Your Destination")
+      return IconButton(
+          onPressed: () {
+            context
+                .read<BottomLocationProvider>()
+                .setString("Search Your Destination");
+          },
+          icon: Icon(Icons.cancel));
+    return SizedBox(
+      width: 2,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
@@ -109,127 +155,61 @@ class _PanelWidgetState extends State<PanelWidget> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 carInfoWidget(),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Container(
-                            color: Colors.grey[300],
-                            child: Row(
-                              children: <Widget>[
-                                IconButton(
-                                  splashColor: Colors.grey,
-                                  icon: Icon(Icons.search),
-                                  onPressed: () {},
-                                ),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _controller,
-                                    cursorColor: Colors.black,
-                                    keyboardType: TextInputType.text,
-                                    textInputAction:
-                                    TextInputAction.go,
-                                    decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding:
-                                        EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        hintText:
-                                        "Search Your Destination"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Container(
+                          child: searchBarWidget(),
                         ),
-                        list.length != 0
-                            ? Flexible(
-                          fit: FlexFit.loose,
-                          child: Container(
-                            color: Colors.white,
-                            child: SizedBox(
-                              height: 250,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    onTap: () async {
-                                      List<Location> locations =
-                                      await locationFromAddress(
-                                          list[index]['description']);
-                                      // debugPrint(locations.last.longitude.toString());
-                                      // debugPrint(locations.last.latitude.toString());
-                                      // showDestinationMarker(LatLng(
-                                      //     locations.last.latitude,
-                                      //     locations.last.longitude));
-
-                                      //TODO add the above marker in map.
-                                      lstSearchLocation =
-                                          _controller.text = list[index]['description'];
-                                    },
-                                    title: Text(list[index]['description']),
-                                  );
-                                },
-                                itemCount: list.length,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            splashColor: Colors.grey,
+                            icon: Icon(
+                              Icons.home,
+                              color: primaryColor,
+                            ),
+                            onPressed: () {},
+                          ),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {},
+                              child: const Text(
+                                "ADD YOUR HOME ADDRESS",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
                           ),
-                        )
-                            : Container(),
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                              splashColor: Colors.grey,
-                              icon: Icon(
-                                Icons.home,
-                                color: primaryColor,
-                              ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            splashColor: Colors.grey,
+                            icon: Icon(
+                              Icons.warehouse_rounded,
+                              color: primaryColor,
+                            ),
+                            onPressed: () {},
+                          ),
+                          Expanded(
+                            child: TextButton(
                               onPressed: () {},
-                            ),
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {
-
-                                },
-                                child: const Text(
-                                  "ADD YOUR HOME ADDRESS",
-                                  textAlign: TextAlign.left,
-                                  style:
-                                  TextStyle(color: Colors.black),
-                                ),
+                              child: const Text(
+                                "ADD YOUR WORK/OFFICE ADDRESS",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.black),
                               ),
                             ),
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                              splashColor: Colors.grey,
-                              icon: Icon(
-                                Icons.warehouse_rounded,
-                                color: primaryColor,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  "ADD YOUR WORK/OFFICE ADDRESS",
-                                  textAlign: TextAlign.left,
-                                  style:
-                                  TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(
@@ -242,32 +222,4 @@ class _PanelWidgetState extends State<PanelWidget> {
       ),
     );
   }
-
-  void onChangeText() async {
-    if (lstSearchLocation != _controller.text) {
-      getSuggestion(_controller.text);
-    } else {
-      await Future.delayed(Duration(seconds: 1));
-      setState(() {
-        list.clear();
-      });
-    }
-  }
-
-  void getSuggestion(String text) async {
-    String baseURL =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-    String request =
-        '$baseURL?input=$text&key=$mapApiKey&sessiontoken=${widget.sessionToken}';
-
-    var response = await http.get(Uri.parse(request));
-    if (response.statusCode == 200) {
-      setState(() {
-        list = jsonDecode(response.body.toString())['predictions'];
-      });
-    } else {
-      context.showErrorSnackBar(message: "Some error while fetching locations");
-    }
-  }
-
 }

@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/map_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,12 @@ import 'package:location/location.dart' as locate;
 class SearchLocationScreen extends StatefulWidget {
   final GoogleMapController mapController;
   Function showDestinationMarker;
-
+  final bool bottomSearch;
   SearchLocationScreen(
-      {Key? key, required this.mapController,required this.showDestinationMarker})
+      {Key? key,
+      required this.mapController,
+      required this.showDestinationMarker,
+      required this.bottomSearch})
       : super(key: key);
 
   @override
@@ -47,7 +51,13 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       setState(() {
         location = place.description.toString();
       });
-      context.read<StringProvider>().setString(location);
+      if(widget.bottomSearch){
+        context.read<BottomLocationProvider>().setString(location);
+      }
+      else{
+        context.read<StringProvider>().setString(location);
+      }
+
       //form google_maps_webservice package
       final plist = GoogleMapsPlaces(
         apiKey: mapApiKey,
@@ -106,8 +116,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   onPressed: () async {
                     locate.Location currentLocation = locate.Location();
                     var location = await currentLocation.getLocation();
-                    var newlatlang = LatLng(
-                        location.latitude as double,
+                    var newlatlang = LatLng(location.latitude as double,
                         location.longitude as double);
                     widget.showDestinationMarker(newlatlang);
                     Navigator.pushAndRemoveUntil(

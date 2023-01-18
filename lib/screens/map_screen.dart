@@ -27,15 +27,17 @@ class _MapsScreenState extends State<MapsScreen> {
   final double zoomLevel = 19;
   String drive = "sedan";
   Uint8List? markIcons;
-  String? _sessionToken = "";
   List<dynamic> list = [];
   final _panelcontroller = PanelController();
-  String lstSearchLocation = "";
+  late PanelWidget panelWidget;
 
   @override
   void initState() {
     super.initState();
     Permission.location.request();
+    panelWidget = PanelWidget(
+      function: showDestinationMarker,
+    );
   }
 
   void getCurrentLocation() async {
@@ -97,6 +99,7 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    panelWidget.mapController = controller;
     if (widget.positionMarker != null) {
       debugPrint("Inside or not");
       showDestinationMarker(widget.positionMarker as LatLng);
@@ -129,10 +132,8 @@ class _MapsScreenState extends State<MapsScreen> {
         body: SlidingUpPanel(
           controller: _panelcontroller,
           panelBuilder: (controller) {
-            return PanelWidget(
-              controller: controller,
-              sessionToken: _sessionToken as String,
-            );
+            panelWidget.controller = controller;
+            return panelWidget;
           },
           parallaxEnabled: true,
           parallaxOffset: 0.5,
@@ -177,7 +178,8 @@ class _MapsScreenState extends State<MapsScreen> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SearchLocationScreen(
                     mapController: mapController,
-                  showDestinationMarker: showDestinationMarker
+                    showDestinationMarker: showDestinationMarker,
+                    bottomSearch: false,
                   )));
           // showSearchBar();
         },
@@ -201,10 +203,14 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   cancelButtonCondition() {
-    if(context.read<StringProvider>().location != "Pickup Location")
-      return IconButton(onPressed: (){
-        context.read<StringProvider>().setString("Pickup Location");
-      }, icon: Icon(Icons.cancel));
-    return SizedBox(width: 2,);
+    if (context.read<StringProvider>().location != "Pickup Location")
+      return IconButton(
+          onPressed: () {
+            context.read<StringProvider>().setString("Pickup Location");
+          },
+          icon: Icon(Icons.cancel));
+    return SizedBox(
+      width: 2,
+    );
   }
 }
