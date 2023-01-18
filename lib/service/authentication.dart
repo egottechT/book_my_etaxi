@@ -46,11 +46,18 @@ String verificationCode = "";
 String phoneNumber = "";
 Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   phoneNumber = number;
+  List<String>? values = await readData();
+
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
       await _auth.signInWithCredential(credential).then((dynamic result) async {
-        Navigator.of(context).pushReplacementNamed("/registrationScreen");
+        if(values.contains(phoneNumber)){
+          Navigator.of(context).pushNamed("/permissionScreen");
+        }
+        else{
+          Navigator.of(context).pushReplacementNamed("/registrationScreen");
+        }
       });
     },
     verificationFailed: (FirebaseAuthException e) {
@@ -68,11 +75,17 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
 
 Future<void> checkOTP(String smsCode,BuildContext context) async {
   try{
+    List<String>? values = await readData();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
     await addUserToDatabase(phoneNumber);
     await _auth.signInWithCredential(credential).then((dynamic result) {
-      Navigator.of(context).pushReplacementNamed("/registrationScreen");
+      if(values.contains(phoneNumber)){
+        Navigator.of(context).pushNamed("/permissionScreen");
+      }
+      else{
+        Navigator.of(context).pushReplacementNamed("/registrationScreen");
+      }
     });
   }catch(e){
     context.showErrorSnackBar(message: "Please enter correct OTP");

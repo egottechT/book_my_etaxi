@@ -17,13 +17,12 @@ class _SplashScreen extends State<SplashScreen> {
 
   Future<void> _redirect() async {
     await Future.delayed(const Duration(seconds: 3));
-
     if (await FirebaseAuth.instance.currentUser != null) {
-      // signed in
+      Navigator.of(context).pushReplacementNamed('/mapScreen');
     } else {
-
+      Navigator.of(context).pushReplacementNamed('/loginScreen');
     }
-    Navigator.of(context).pushReplacementNamed('/loginScreen');
+
   }
 
   @override

@@ -26,52 +26,47 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
       child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Flexible(
-                child: Column(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
-                  height: 100,
+                Flexible(
+                    child: Column(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                    ),
+                    phoneNumberForm(),
+                    SizedBox(
+                      height: 50,
+                    )
+                  ],
+                )),
+                ElevatedButton(
+                  onPressed: () async {
+                    print(phoneNumber);
+                    if (phoneNumber.length == 13) {
+                      setState(() {
+                        showLoading = true;
+                      });
+                      signInWithPhoneNumber(phoneNumber, context);
+
+                      await Future.delayed(const Duration(seconds: 3));
+                      setState(() {
+                        showLoading = false;
+                      });
+                    }
+                  },
+                  child: Text("Next"),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 ),
-                phoneNumberForm(),
                 SizedBox(
-                  height: 50,
+                  height: 25,
                 )
               ],
-            )),
-            ElevatedButton(
-              onPressed: () async {
-                print(phoneNumber);
-                if(phoneNumber.length==13){
-                  setState(() {
-                    showLoading = true;
-                  });
-                  List<String>? values = await readData();
-                  if(values.contains(phoneNumber)){
-                    Navigator.of(context).pushNamed("/permissionScreen");
-                  }
-                  else{
-                    signInWithPhoneNumber(phoneNumber,context);
-                  }
-
-                  await Future.delayed(const Duration(seconds: 3));
-                  setState(() {
-                    showLoading = false;
-                  });
-                }
-              },
-              child: Text("Next"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
             ),
-            SizedBox(
-              height: 25,
-            )
-          ],
-        ),
-      )),
+          )),
     );
   }
 
@@ -94,13 +89,15 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
         SizedBox(
           height: 50,
         ),
-        showLoading ? const CircularProgressIndicator() : PhoneNumberInput(
-          onValueChange: (String value) {
-            setState(() {
-              phoneNumber = value;
-            });
-          },
-        ),
+        showLoading
+            ? const CircularProgressIndicator()
+            : PhoneNumberInput(
+                onValueChange: (String value) {
+                  setState(() {
+                    phoneNumber = value;
+                  });
+                },
+              ),
       ],
     );
   }
