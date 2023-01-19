@@ -119,9 +119,9 @@ class _LoginScreen extends State<LoginScreen> {
                                   showLoading = false;
                                 });
                               },
-                              icon: const Icon(
-                                Icons.mail_rounded,
-                                color: Colors.red,
+                              icon: Image.asset(
+                                'assets/images/google.png',
+                                scale: 1.5,
                               ),
                               label: const Text(
                                 "Google",

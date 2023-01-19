@@ -32,10 +32,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
                 const SizedBox(
                   height: 100,
                 ),
-                const Icon(
-                  Icons.message_outlined,
-                  size: 80,
-                ),
+                Image.asset("assets/images/phone.png",scale: 1.5,),
                 const SizedBox(
                   height: 15,
                 ),

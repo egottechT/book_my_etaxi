@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 String mapApiKey = "AIzaSyB9veCDeodL87QObk_JXfVvdNvG-JQKafU";
-Color primaryColor = Colors.deepPurple;
+Color primaryColor = Color(0xFF824d89);
 Color lightGrey = Colors.grey[300] as Color;
 
 extension ShowSnackBar on BuildContext {

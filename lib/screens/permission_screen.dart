@@ -37,10 +37,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 SizedBox(
                   height: 150,
                 ),
-                Icon(
-                  Icons.car_crash_sharp,
-                  size: 200,
-                ),
+                Image.asset("assets/images/permission_page.png",),
                 SizedBox(
                   height: 20,
                 ),
