@@ -44,20 +44,15 @@ Future<void> signOut() async {
 
 String verificationCode = "";
 String phoneNumber = "";
+bool otpChecked = false;
 Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   phoneNumber = number;
-  List<String>? values = await readData();
 
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
       await _auth.signInWithCredential(credential).then((dynamic result) async {
-        if(values.contains(phoneNumber)){
-          Navigator.of(context).pushNamed("/permissionScreen");
-        }
-        else{
-          Navigator.of(context).pushReplacementNamed("/registrationScreen");
-        }
+        otpChecked = true;
       });
     },
     verificationFailed: (FirebaseAuthException e) {
@@ -75,9 +70,19 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
 
 Future<void> checkOTP(String smsCode,BuildContext context) async {
   try{
+
     List<String>? values = await readData();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
+
+    if(otpChecked){
+      if(values.contains(phoneNumber)){
+        Navigator.of(context).pushNamed("/permissionScreen");
+      }
+      else{
+        Navigator.of(context).pushReplacementNamed("/registrationScreen");
+      }
+    }
     await addUserToDatabase(phoneNumber);
     await _auth.signInWithCredential(credential).then((dynamic result) {
       if(values.contains(phoneNumber)){

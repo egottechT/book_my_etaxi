@@ -54,7 +54,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
             )),
             ElevatedButton(
               onPressed: () {
-                if (otp.length != 0) {
+                if (otp.length != 0 || otpChecked) {
                   checkOTP(otp, context);
                 }
               },
