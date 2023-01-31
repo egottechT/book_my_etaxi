@@ -17,6 +17,7 @@ class OTPVerifyScreen extends StatefulWidget {
 class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
   TextEditingController controller= TextEditingController();
   String otp="";
+  bool showLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +61,20 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
               ],
             )),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (otp.length != 0) {
-                  checkOTP(otp, context);
+                  setState(() {
+                    showLoading = true;
+                  });
+                  await checkOTP(otp, context);
+                  setState(() {
+                    showLoading = false;
+                  });
                 }
               },
-              child: Text("Submit"),
+              child: showLoading
+                  ? const CircularProgressIndicator()
+                  : Text("Submit"),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
             ),
             const SizedBox(
