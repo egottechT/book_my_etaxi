@@ -3,10 +3,12 @@ import 'dart:ui' as ui;
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/search_location_screen.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as locate;
+import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -40,7 +42,7 @@ class _MapsScreenState extends State<MapsScreen> {
     );
   }
 
-  void getCurrentLocation() async {
+  Future<LocationData> getCurrentLocation() async {
     locate.Location currentLocation = locate.Location();
     var location = await currentLocation.getLocation();
     CameraPosition _home = CameraPosition(
@@ -50,6 +52,7 @@ class _MapsScreenState extends State<MapsScreen> {
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
     setTheMarkers(location);
+    return location;
   }
 
   void showDestinationMarker(LatLng latLng) {
@@ -109,8 +112,8 @@ class _MapsScreenState extends State<MapsScreen> {
 
   Widget buildFAB(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () {
-        getCurrentLocation();
+      onPressed: () async {
+        await getCurrentLocation();
       },
       backgroundColor: Colors.white,
       child: Icon(
@@ -164,6 +167,27 @@ class _MapsScreenState extends State<MapsScreen> {
                 child: buildFAB(context),
                 right: 20,
                 bottom: fabHeightBottom,
+              ),
+              Positioned(
+                left: 20,
+                bottom: fabHeightBottom,
+                child: ElevatedButton(
+                  child: Text("Confirm Current Location"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey
+                  ),
+                  onPressed: () async {
+                    var location = await getCurrentLocation();
+                    debugPrint("locations :- ${location.latitude} ${location.longitude}");
+                    final databaseReference = FirebaseDatabase(databaseURL: "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app").ref();
+                    databaseReference.child("active_driver").push().set({
+                      "title": "Abhay sati",
+                      "body": "Please Pickup me",
+                      "lat": location.latitude.toString(),
+                      "long": location.longitude.toString(),
+                    });
+                  },
+                ),
               ),
             ],
           ),
