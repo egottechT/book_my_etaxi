@@ -214,7 +214,8 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ),
                 SizedBox(
                   height: 5,
-                )
+                ),
+                SharingLayout()
               ],
             ),
           )
@@ -222,4 +223,65 @@ class _PanelWidgetState extends State<PanelWidget> {
       ),
     );
   }
+
+  Widget SharingLayout(){
+    return Column(
+      children: [
+        cardView(
+            "Share Referral Code to Friend/Family. Earn Rs. 50 per Referral",
+            "Apply before 5 august 2022, enjoy the ride with your loved ones.",
+            "Apply Now",
+            Image.asset("assets/images/share_code.png")),
+        cardView(
+            "Invite your Family & Friends to ride with BOOK MY ETAXI",
+            "GPRR1U",
+            "Share",
+            Image.asset("assets/images/share_app.png")),
+        cardView(
+            "Email Verification",
+            "Please verify Email ID to protect your account. After verifing your email can link with your profile",
+            "View Profile",
+            Image.asset("assets/images/message.png"))
+      ],
+    );
+  }
+
+  Widget cardView(String title, String subtitle, String buttonText, Image icon) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(15,5,15,5),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20,),
+                  Text(title,
+                    style: TextStyle(color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),),
+                  SizedBox(height: 20,),
+                  Text(subtitle),
+                  SizedBox(height: 20,),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text(buttonText),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        )),
+                  )
+                ],
+              ),
+            ),
+            Expanded(flex: 1,child: icon)
+          ],
+        ),
+      ),
+    );
+  }
+
 }
