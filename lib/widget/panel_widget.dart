@@ -13,24 +13,60 @@ class PanelWidget extends StatefulWidget {
   final Function function;
   GoogleMapController? mapController;
 
-  PanelWidget(
-      {Key? key,
-      // required this.controller,
-      required this.function,
-      // required this.mapController
-      })
-      : super(key: key);
+  PanelWidget({
+    Key? key,
+    // required this.controller,
+    required this.function,
+    // required this.mapController
+  }) : super(key: key);
 
   @override
   State<PanelWidget> createState() => _PanelWidgetState();
 }
 
 class _PanelWidgetState extends State<PanelWidget> {
-  String drive = "mini";
+  int carIndex = 1;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Widget CarInfoWithIcon(int index, Image icon, String name) {
+    return Column(
+      children: [
+        SizedBox(height: 10,),
+        ClipOval(
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                carIndex = index;
+              });
+            },
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: carIndex == index ? primaryColor : Colors.grey[300],
+              ),
+              child: icon,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        Text(name,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+      ],
+    );
+  }
+
+  double ScaleCondition(int index) {
+    if (index == carIndex) return 1.2;
+    return 1.5;
+  }
+
+  Color ColorCondition(int index) {
+    if (index == carIndex) return Colors.white as Color;
+    return Colors.grey[800] as Color;
   }
 
   Widget carInfoWidget() {
@@ -46,52 +82,32 @@ class _PanelWidgetState extends State<PanelWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          Row(
-            children: [
-              Flexible(
-                child: RadioListTile(
-                    value: "micro",
-                    title: Text(
-                      "Micro",
-                      style: TextStyle(fontSize: 10),
-                    ),
-                    groupValue: drive,
-                    onChanged: (val) {
-                      // setState(() {
-                      //   drive = val as String;
-                      // });
-                    }),
-              ),
-              Flexible(
-                child: RadioListTile(
-                    value: "mini",
-                    title: Text(
-                      "Mini",
-                      style: TextStyle(fontSize: 10),
-                    ),
-                    groupValue: drive,
-                    onChanged: (val) {
-                      // setState(() {
-                      //   drive = val as String;
-                      // });
-                    }),
-              ),
-              Flexible(
-                child: RadioListTile(
-                    value: "sedan",
-                    title: Text(
-                      "Sedan",
-                      style: TextStyle(fontSize: 10),
-                    ),
-                    groupValue: drive,
-                    onChanged: (val) {
-                      // setState(() {
-                      //   drive = val as String;
-                      // });
-                    }),
-              )
-            ],
-          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            CarInfoWithIcon(
+                0,
+                Image.asset(
+                  "assets/images/mini.png",
+                  scale: ScaleCondition(0),
+                  color: ColorCondition(0),
+                ),
+                "Micro"),
+            CarInfoWithIcon(
+                1,
+                Image.asset(
+                  "assets/images/micro.png",
+                  scale: ScaleCondition(1),
+                  color: ColorCondition(1),
+                ),
+                "Mini"),
+            CarInfoWithIcon(
+                2,
+                Image.asset(
+                  "assets/images/sedan.png",
+                  scale: ScaleCondition(2),
+                  color: ColorCondition(2),
+                ),
+                "Sedan"),
+          ]),
         ],
       ),
     );
@@ -214,11 +230,90 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ),
                 SizedBox(
                   height: 5,
-                )
+                ),
+                SharingLayout()
               ],
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget SharingLayout() {
+    return Column(
+      children: [
+        cardView(
+            "Share Referral Code to Friend/Family. Earn Rs. 50 per Referral",
+            "Apply before 5 august 2022, enjoy the ride with your loved ones.",
+            "Apply Now",
+            Image.asset("assets/images/share_code.png")),
+        cardView("Invite your Family & Friends to ride with BOOK MY ETAXI",
+            "GPRR1U", "Share", Image.asset("assets/images/share_app.png")),
+        cardView(
+            "Email Verification",
+            "Please verify Email ID to protect your account. After verifing your email can link with your profile",
+            "View Profile",
+            Image.asset("assets/images/message.png"))
+      ],
+    );
+  }
+
+  Widget cardView(
+      String title, String subtitle, String buttonText, Image icon) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  buttonText == "Share"
+                      ? Card(
+                          color: Colors.grey[400],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              subtitle,
+                              style: TextStyle(fontSize: 22, letterSpacing: 5),
+                            ),
+                          ),
+                        )
+                      : Text(subtitle),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text(buttonText),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        )),
+                  )
+                ],
+              ),
+            ),
+            Expanded(flex: 1, child: icon)
+          ],
+        ),
       ),
     );
   }
