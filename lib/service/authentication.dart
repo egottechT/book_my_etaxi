@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/otp_verify_screen.dart';
 import 'package:book_my_taxi/screens/registration_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -44,21 +46,22 @@ Future<void> signOut() async {
 
 String verificationCode = "";
 String phoneNumber = "";
-bool otpChecked = false;
+
 Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   phoneNumber = number;
 
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
-      await _auth.signInWithCredential(credential).then((dynamic result) async {
-        otpChecked = true;
-      });
-    },
+      debugPrint("Code is :- ${credential.smsCode}");
+      Provider.of<OtpProvider>(context,listen: false).setString(credential.smsCode.toString());
+
+      },
     verificationFailed: (FirebaseAuthException e) {
       print("verification failed ${e.code}");
     },
     codeSent: (String verificationId, int? resendToken) async {
+      debugPrint("Code is sent ${verificationId}");
       Navigator.push(context,MaterialPageRoute(builder: (BuildContext context)=> OTPVerifyScreen(phoneNumber: number)));
       verificationCode = verificationId;
     },
@@ -69,20 +72,11 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
 }
 
 Future<void> checkOTP(String smsCode,BuildContext context) async {
-  try{
 
+  try{
     List<String>? values = await readData();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
-
-    if(otpChecked){
-      if(values.contains(phoneNumber)){
-        Navigator.of(context).pushNamed("/permissionScreen");
-      }
-      else{
-        Navigator.of(context).pushReplacementNamed("/registrationScreen");
-      }
-    }
     await addUserToDatabase(phoneNumber);
     await _auth.signInWithCredential(credential).then((dynamic result) {
       if(values.contains(phoneNumber)){
@@ -95,6 +89,4 @@ Future<void> checkOTP(String smsCode,BuildContext context) async {
   }catch(e){
     context.showErrorSnackBar(message: "Please enter correct OTP");
   }
-
-
 }

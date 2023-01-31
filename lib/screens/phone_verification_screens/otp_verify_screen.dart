@@ -1,10 +1,13 @@
+import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/service/authentication.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OTPVerifyScreen extends StatefulWidget {
   final String phoneNumber;
 
-  const OTPVerifyScreen({Key? key, required this.phoneNumber})
+
+  OTPVerifyScreen({Key? key, required this.phoneNumber})
       : super(key: key);
 
   @override
@@ -12,10 +15,13 @@ class OTPVerifyScreen extends StatefulWidget {
 }
 
 class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
-  String otp = "";
+  TextEditingController controller= TextEditingController();
+  String otp="";
 
   @override
   Widget build(BuildContext context) {
+    otp = controller.text = Provider.of<OtpProvider>(context).text;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -41,6 +47,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
                   textAlign: TextAlign.center,
                 ),
                 TextFormField(
+                  controller: controller,
                   style: TextStyle(fontSize: 18),
                   decoration: const InputDecoration(
                     labelText: 'Enter OTP',
@@ -54,7 +61,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
             )),
             ElevatedButton(
               onPressed: () {
-                if (otp.length != 0 || otpChecked) {
+                if (otp.length != 0) {
                   checkOTP(otp, context);
                 }
               },
