@@ -263,7 +263,15 @@ class _PanelWidgetState extends State<PanelWidget> {
                         fontWeight: FontWeight.bold,
                         fontSize: 20),),
                   SizedBox(height: 20,),
-                  Text(subtitle),
+                  buttonText=="Share" ?
+                      Card(
+                        color: Colors.grey[400],
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(subtitle,style: TextStyle(fontSize: 22,letterSpacing: 5),),
+                        ),
+                      )
+                      :Text(subtitle),
                   SizedBox(height: 20,),
                   ElevatedButton(
                     onPressed: () {},
