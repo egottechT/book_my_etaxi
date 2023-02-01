@@ -10,6 +10,7 @@ class PanelWidget extends StatefulWidget {
   ScrollController? controller;
   final Function function;
   final Function removeDestinationMaker;
+
   PanelWidget({
     Key? key,
     required this.function,
@@ -31,7 +32,9 @@ class _PanelWidgetState extends State<PanelWidget> {
   Widget CarInfoWithIcon(int index, Image icon, String name) {
     return Column(
       children: [
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         ClipOval(
           child: InkWell(
             onTap: () {
@@ -50,7 +53,10 @@ class _PanelWidgetState extends State<PanelWidget> {
         SizedBox(
           height: 5,
         ),
-        Text(name,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+        Text(
+          name,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -114,7 +120,7 @@ class _PanelWidgetState extends State<PanelWidget> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SearchLocationScreen(
-                setMapMarker: widget.function,
+                    setMapMarker: widget.function,
                   )));
           // showSearchBar();
         },
