@@ -24,11 +24,22 @@ class SearchLocationScreen extends StatefulWidget {
 
 class _SearchLocationScreenState extends State<SearchLocationScreen> {
   String location = "Destination";
+  double latitude=0,longitude=0;
 
   @override
   void initState() {
     super.initState();
     showSearchBar();
+  }
+
+  void showDestinationMarker(LatLng latLng) {
+    Marker tmpMarker = Marker(
+      markerId: const MarkerId("Destination"),
+      position: latLng,
+    );
+    setState(() {
+      _makers.add(tmpMarker);
+    });
   }
 
   void showSearchBar() async {
@@ -50,8 +61,6 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       });
 
       context.read<BottomLocationProvider>().setString(location);
-
-
       //form google_maps_webservice package
       final plist = GoogleMapsPlaces(
         apiKey: mapApiKey,
@@ -61,102 +70,130 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       String placeid = place.placeId ?? "0";
       final detail = await plist.getDetailsByPlaceId(placeid);
       final geometry = detail.result.geometry!;
-      final lat = geometry.location.lat;
-      final lang = geometry.location.lng;
-      var position = LatLng(lat, lang);
-      widget.setMapMarker(position, true);
-      Navigator.pop(context);
+      latitude = geometry.location.lat;
+      longitude = geometry.location.lng;
+
+      showDestinationMarker(LatLng(latitude, longitude));
+      CameraPosition _pickupLocation = CameraPosition(
+          target:
+          LatLng(latitude, longitude),
+          zoom: 19);
+
+      mapController.animateCamera(CameraUpdate.newCameraPosition(_pickupLocation));
     }
+  }
+
+  late GoogleMapController mapController;
+  Set<Marker> _makers = {};
+  LatLng _center = const LatLng(20.5937, 78.9629);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            body: Stack(
               children: [
-                Column(
-                  children: [
-                    SizedBox(height: 10,),
-                    Card(
-                      child: SizedBox(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width - 40,
-                          child: ListTile(
-                            title: Text(
-                              context
-                                  .read<StringProvider>()
-                                  .location,
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            leading: Text("Pick-Up"),
-                            dense: true,
-                          )),
-                    ),
-                    InkWell(
-                        onTap: () {
-                          showSearchBar();
-                        },
-                        child: Card(
-                          child: SizedBox(
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width - 40,
-                              child: ListTile(
-                                title: Text(
-                                  location,
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                leading: Icon(Icons.search),
-                                dense: true,
-                              )),
-                        )),
-                  ],
+                GoogleMap(
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _center,
+                    zoom: 17,
+                  ),
+                  markers: _makers, //MARKERS IN MAP
                 ),
-                Card(
+                Positioned(
+                  top: 2,
+                  left: 5,
+                  right: 5,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      ElevatedButton(
-                          onPressed: () {},
-                          child: Text("Confirm Current Location")),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton.icon(
-                              icon: Icon(Icons.location_searching_rounded,
-                                  color: Colors.black),
-                              onPressed: () async {
-                                locate.Location currentLocation = locate
-                                    .Location();
-                                var location = await currentLocation
-                                    .getLocation();
-                                var newlatlang = LatLng(location
-                                    .latitude as double,
-                                    location.longitude as double);
-                                widget.setMapMarker(newlatlang);
-                              },
+                      SizedBox(height: 10,),
+                      Card(
+                        child: ListTile(
+                          title: Text(
+                            context
+                                .read<StringProvider>()
+                                .location,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          leading: Text("Pick-Up"),
+                          dense: true,
+                        ),
+                      ),
+                      InkWell(
+                          onTap: () {
+                            showSearchBar();
+                          },
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                location,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              leading: Icon(Icons.search),
+                              dense: true,
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              var position = LatLng(latitude, longitude);
+                              widget.setMapMarker(position, true);
+                              Navigator.pop(context);
+                            },
+                            child: Text("Confirm Current Location")),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton.icon(
+                                icon: Icon(Icons.location_searching_rounded,
+                                    color: Colors.black),
+                                onPressed: () async {
+                                  locate.Location currentLocation = locate
+                                      .Location();
+                                  var location = await currentLocation
+                                      .getLocation();
+                                  var newlatlang = LatLng(location
+                                      .latitude as double,
+                                      location.longitude as double);
+                                  widget.setMapMarker(newlatlang);
+                                },
+                                label: Text(
+                                  "Current Location",
+                                  style: _textStyle,
+                                ),
+                                style: _buttonStyle),
+                            ElevatedButton.icon(
+                              icon: Icon(Icons.location_on, color: Colors.black),
+                              onPressed: () {},
                               label: Text(
-                                "Current Location",
+                                "Location on Map",
                                 style: _textStyle,
                               ),
-                              style: _buttonStyle),
-                          ElevatedButton.icon(
-                            icon: Icon(Icons.location_on, color: Colors.black),
-                            onPressed: () {},
-                            label: Text(
-                              "Location on Map",
-                              style: _textStyle,
+                              style: _buttonStyle,
                             ),
-                            style: _buttonStyle,
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
