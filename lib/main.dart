@@ -31,7 +31,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: SplashScreen(),
+      home: MapsScreen(),
     ),
   ));
 }

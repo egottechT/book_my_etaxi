@@ -26,7 +26,7 @@ class _MapsScreenState extends State<MapsScreen> {
   late GoogleMapController mapController;
   Set<Marker> _makers = {};
   LatLng _center = const LatLng(20.5937, 78.9629);
-  final double zoomLevel = 19;
+  double zoomLevel = 19;
   String drive = "sedan";
   Uint8List? markIcons;
   List<dynamic> list = [];
@@ -51,21 +51,62 @@ class _MapsScreenState extends State<MapsScreen> {
         zoom: zoomLevel);
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
-    setTheMarkers(location);
+    // setTheMarkers(location);
     return location;
   }
+
+  int c = 1;
+  double startLatitude = 0,
+      destinationLatitude = 0,
+      startLongitude = 0,
+      destinationLongitude = 0;
 
   void showDestinationMarker(LatLng latLng) {
     debugPrint("${latLng.latitude} ${latLng.longitude}");
     Marker tmpMarker = Marker(
-      markerId: MarkerId("destination"),
+      markerId: MarkerId("destination ${c + 1}"),
       position: latLng,
     );
+    c++;
     setState(() {
       _makers.add(tmpMarker);
     });
-    CameraPosition _home = CameraPosition(target: latLng, zoom: zoomLevel);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
+    if (c == 2) {
+      startLatitude = latLng.latitude;
+      startLongitude = latLng.longitude;
+      CameraPosition _home = CameraPosition(target: latLng, zoom: zoomLevel);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
+    } else {
+      destinationLatitude = latLng.latitude;
+      destinationLongitude = latLng.longitude;
+      double miny = (startLatitude <= destinationLatitude)
+          ? startLatitude
+          : destinationLatitude;
+      double minx = (startLongitude <= destinationLongitude)
+          ? startLongitude
+          : destinationLongitude;
+      double maxy = (startLatitude <= destinationLatitude)
+          ? destinationLatitude
+          : startLatitude;
+      double maxx = (startLongitude <= destinationLongitude)
+          ? destinationLongitude
+          : startLongitude;
+
+      double southWestLatitude = miny;
+      double southWestLongitude = minx;
+      double northEastLatitude = maxy;
+      double northEastLongitude = maxx;
+      mapController.animateCamera(
+        CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            northeast: LatLng(northEastLatitude, northEastLongitude),
+            southwest: LatLng(southWestLatitude, southWestLongitude),
+          ),
+          100.0,
+        ),
+      );
+    }
+
   }
 
   void setTheMarkers(locate.LocationData location) async {
@@ -127,7 +168,7 @@ class _MapsScreenState extends State<MapsScreen> {
   Widget build(BuildContext context) {
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.35;
     final panelHeightOpened = MediaQuery.of(context).size.height * 0.8;
-    double fabHeightBottom = 350;
+    double fabHeightBottom = 300;
 
     return SafeArea(
       child: Scaffold(
@@ -173,13 +214,15 @@ class _MapsScreenState extends State<MapsScreen> {
                 bottom: fabHeightBottom,
                 child: ElevatedButton(
                   child: Text("Confirm Current Location"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey
-                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
                     var location = await getCurrentLocation();
-                    debugPrint("locations :- ${location.latitude} ${location.longitude}");
-                    final databaseReference = FirebaseDatabase(databaseURL: "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app").ref();
+                    debugPrint(
+                        "locations :- ${location.latitude} ${location.longitude}");
+                    final databaseReference = FirebaseDatabase(
+                            databaseURL:
+                                "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
+                        .ref();
                     databaseReference.child("active_driver").push().set({
                       "title": "Abhay sati",
                       "body": "Please Pickup me",

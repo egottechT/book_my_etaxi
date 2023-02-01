@@ -14,6 +14,7 @@ class SearchLocationScreen extends StatefulWidget {
   final GoogleMapController mapController;
   Function showDestinationMarker;
   final bool bottomSearch;
+
   SearchLocationScreen(
       {Key? key,
       required this.mapController,
@@ -51,10 +52,9 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       setState(() {
         location = place.description.toString();
       });
-      if(widget.bottomSearch){
+      if (widget.bottomSearch) {
         context.read<BottomLocationProvider>().setString(location);
-      }
-      else{
+      } else {
         context.read<StringProvider>().setString(location);
       }
 
@@ -107,39 +107,46 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
               ),
             )),
         Card(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ElevatedButton.icon(
-                  icon: Icon(Icons.location_searching_rounded,
-                      color: Colors.black),
-                  onPressed: () async {
-                    locate.Location currentLocation = locate.Location();
-                    var location = await currentLocation.getLocation();
-                    var newlatlang = LatLng(location.latitude as double,
-                        location.longitude as double);
-                    widget.showDestinationMarker(newlatlang);
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => MapsScreen(
-                                  positionMarker: newlatlang,
-                                )),
-                        (Route route) => false);
-                  },
-                  label: Text(
-                    "Current Location",
-                    style: _textStyle,
+              ElevatedButton(
+                  onPressed: () {}, child: Text("Confirm Current Location")),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                      icon: Icon(Icons.location_searching_rounded,
+                          color: Colors.black),
+                      onPressed: () async {
+                        locate.Location currentLocation = locate.Location();
+                        var location = await currentLocation.getLocation();
+                        var newlatlang = LatLng(location.latitude as double,
+                            location.longitude as double);
+                        widget.showDestinationMarker(newlatlang);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => MapsScreen(
+                                      positionMarker: newlatlang,
+                                    )),
+                            (Route route) => false);
+                      },
+                      label: Text(
+                        "Current Location",
+                        style: _textStyle,
+                      ),
+                      style: _buttonStyle),
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.location_on, color: Colors.black),
+                    onPressed: () {},
+                    label: Text(
+                      "Location on Map",
+                      style: _textStyle,
+                    ),
+                    style: _buttonStyle,
                   ),
-                  style: _buttonStyle),
-              ElevatedButton.icon(
-                icon: Icon(Icons.location_on, color: Colors.black),
-                onPressed: () {},
-                label: Text(
-                  "Location on Map",
-                  style: _textStyle,
-                ),
-                style: _buttonStyle,
+                ],
               ),
             ],
           ),
