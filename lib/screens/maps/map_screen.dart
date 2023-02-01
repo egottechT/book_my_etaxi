@@ -59,9 +59,9 @@ class _MapsScreenState extends State<MapsScreen> {
       startLongitude = 0,
       destinationLongitude = 0;
 
-  void setMapMarker(LatLng latLng, bool destination) {
+  void setMapMarker(LatLng latLng, bool destination) async {
     String name = "Pick-up";
-    if(destination){
+    if (destination) {
       name = "destination";
     }
     Marker tmpMarker = Marker(
@@ -75,6 +75,12 @@ class _MapsScreenState extends State<MapsScreen> {
     if (destination) {
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
+      if(startLongitude==0 && startLongitude==0){
+          var currentLocate = await getCurrentLocation();
+          startLatitude = currentLocate.latitude as double;
+          startLongitude = currentLocate.longitude as double;
+          setMapMarker(LatLng(startLatitude, startLongitude),false);
+      }
       double miny = (startLatitude <= destinationLatitude)
           ? startLatitude
           : destinationLatitude;
@@ -265,6 +271,7 @@ class _MapsScreenState extends State<MapsScreen> {
       return IconButton(
           onPressed: () {
             context.read<StringProvider>().setString("Pickup Location");
+
           },
           icon: const Icon(Icons.cancel));
     }
