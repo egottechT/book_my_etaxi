@@ -11,15 +11,11 @@ import 'package:provider/provider.dart';
 import 'package:location/location.dart' as locate;
 
 class SearchLocationScreen extends StatefulWidget {
-  final GoogleMapController mapController;
-  Function showDestinationMarker;
-  final bool bottomSearch;
+  Function setMapMarker;
 
-  SearchLocationScreen(
-      {Key? key,
-      required this.mapController,
-      required this.showDestinationMarker,
-      required this.bottomSearch})
+  SearchLocationScreen({Key? key,
+    required this.setMapMarker,
+    })
       : super(key: key);
 
   @override
@@ -27,7 +23,7 @@ class SearchLocationScreen extends StatefulWidget {
 }
 
 class _SearchLocationScreenState extends State<SearchLocationScreen> {
-  String location = "Search Location";
+  String location = "Destination";
 
   @override
   void initState() {
@@ -43,7 +39,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         types: [],
         strictbounds: false,
         components: [Component(Component.country, 'IN')],
-        //google_map_webservice package
+
         onError: (err) {
           print(err);
         });
@@ -52,11 +48,9 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       setState(() {
         location = place.description.toString();
       });
-      if (widget.bottomSearch) {
-        context.read<BottomLocationProvider>().setString(location);
-      } else {
-        context.read<StringProvider>().setString(location);
-      }
+
+      context.read<BottomLocationProvider>().setString(location);
+
 
       //form google_maps_webservice package
       final plist = GoogleMapsPlaces(
@@ -69,12 +63,8 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       final geometry = detail.result.geometry!;
       final lat = geometry.location.lat;
       final lang = geometry.location.lng;
-      var newlatlang = LatLng(lat, lang);
-
-      //move map camera to selected place with animation
-      widget.mapController.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(target: newlatlang, zoom: 17)));
-      widget.showDestinationMarker(newlatlang);
+      var position = LatLng(lat, lang);
+      widget.setMapMarker(position, true);
       Navigator.pop(context);
     }
   }
@@ -84,78 +74,96 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     return SafeArea(
         child: Scaffold(
             body: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        InkWell(
-            onTap: () {
-              showSearchBar();
-            },
-            child: Padding(
-              padding: EdgeInsets.all(15),
-              child: Card(
-                child: Container(
-                    padding: EdgeInsets.all(0),
-                    width: MediaQuery.of(context).size.width - 40,
-                    child: ListTile(
-                      title: Text(
-                        location,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      leading: Icon(Icons.search),
-                      dense: true,
-                    )),
-              ),
-            )),
-        Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ElevatedButton(
-                  onPressed: () {}, child: Text("Confirm Current Location")),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton.icon(
-                      icon: Icon(Icons.location_searching_rounded,
-                          color: Colors.black),
-                      onPressed: () async {
-                        locate.Location currentLocation = locate.Location();
-                        var location = await currentLocation.getLocation();
-                        var newlatlang = LatLng(location.latitude as double,
-                            location.longitude as double);
-                        widget.showDestinationMarker(newlatlang);
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) => MapsScreen(
-                                      positionMarker: newlatlang,
-                                    )),
-                            (Route route) => false);
-                      },
-                      label: Text(
-                        "Current Location",
-                        style: _textStyle,
-                      ),
-                      style: _buttonStyle),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.location_on, color: Colors.black),
-                    onPressed: () {},
-                    label: Text(
-                      "Location on Map",
-                      style: _textStyle,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(height: 10,),
+                    Card(
+                      child: SizedBox(
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width - 40,
+                          child: ListTile(
+                            title: Text(
+                              context
+                                  .read<StringProvider>()
+                                  .location,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            leading: Text("Pick-Up"),
+                            dense: true,
+                          )),
                     ),
-                    style: _buttonStyle,
+                    InkWell(
+                        onTap: () {
+                          showSearchBar();
+                        },
+                        child: Card(
+                          child: SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width - 40,
+                              child: ListTile(
+                                title: Text(
+                                  location,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                leading: Icon(Icons.search),
+                                dense: true,
+                              )),
+                        )),
+                  ],
+                ),
+                Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {},
+                          child: Text("Confirm Current Location")),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton.icon(
+                              icon: Icon(Icons.location_searching_rounded,
+                                  color: Colors.black),
+                              onPressed: () async {
+                                locate.Location currentLocation = locate
+                                    .Location();
+                                var location = await currentLocation
+                                    .getLocation();
+                                var newlatlang = LatLng(location
+                                    .latitude as double,
+                                    location.longitude as double);
+                                widget.setMapMarker(newlatlang);
+                              },
+                              label: Text(
+                                "Current Location",
+                                style: _textStyle,
+                              ),
+                              style: _buttonStyle),
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.location_on, color: Colors.black),
+                            onPressed: () {},
+                            label: Text(
+                              "Location on Map",
+                              style: _textStyle,
+                            ),
+                            style: _buttonStyle,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
-        )
-      ],
-    )));
+                )
+              ],
+            )));
   }
 
   ButtonStyle _buttonStyle =
-      ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);
+  ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);
   TextStyle _textStyle = TextStyle(color: Colors.black);
 }

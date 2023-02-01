@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
+import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -14,9 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapsScreen extends StatefulWidget {
-  LatLng? positionMarker;
-
-  MapsScreen({Key? key, this.positionMarker}) : super(key: key);
+  MapsScreen({Key? key}) : super(key: key);
 
   @override
   State<MapsScreen> createState() => _MapsScreenState();
@@ -38,45 +37,42 @@ class _MapsScreenState extends State<MapsScreen> {
     super.initState();
     Permission.location.request();
     panelWidget = PanelWidget(
-      function: showDestinationMarker,
+      function: setMapMarker,
     );
   }
 
   Future<LocationData> getCurrentLocation() async {
     locate.Location currentLocation = locate.Location();
     var location = await currentLocation.getLocation();
-    CameraPosition _home = CameraPosition(
+    CameraPosition _cameraPos = CameraPosition(
         target:
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
 
-    mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
+    mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
     // setTheMarkers(location);
     return location;
   }
 
-  int c = 1;
   double startLatitude = 0,
       destinationLatitude = 0,
       startLongitude = 0,
       destinationLongitude = 0;
 
-  void showDestinationMarker(LatLng latLng) {
-    debugPrint("${latLng.latitude} ${latLng.longitude}");
+  void setMapMarker(LatLng latLng, bool destination) {
+    String name = "Pick-up";
+    if(destination){
+      name = "destination";
+    }
     Marker tmpMarker = Marker(
-      markerId: MarkerId("destination ${c + 1}"),
+      markerId: MarkerId(name),
       position: latLng,
     );
-    c++;
+
     setState(() {
       _makers.add(tmpMarker);
     });
-    if (c == 2) {
-      startLatitude = latLng.latitude;
-      startLongitude = latLng.longitude;
-      CameraPosition _home = CameraPosition(target: latLng, zoom: zoomLevel);
-      mapController.animateCamera(CameraUpdate.newCameraPosition(_home));
-    } else {
+    if (destination) {
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
       double miny = (startLatitude <= destinationLatitude)
@@ -105,11 +101,16 @@ class _MapsScreenState extends State<MapsScreen> {
           100.0,
         ),
       );
+    } else {
+      startLatitude = latLng.latitude;
+      startLongitude = latLng.longitude;
+      CameraPosition _cameraPos =
+          CameraPosition(target: latLng, zoom: zoomLevel);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
     }
-
   }
 
-  void setTheMarkers(locate.LocationData location) async {
+  void setCarsMarker(locate.LocationData location) async {
     Set<Marker> values = {};
     double diff = 0.001000;
     markIcons = await getImages('assets/images/${drive}.png', 300);
@@ -143,11 +144,6 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    panelWidget.mapController = controller;
-    if (widget.positionMarker != null) {
-      debugPrint("Inside or not");
-      showDestinationMarker(widget.positionMarker as LatLng);
-    }
     getCurrentLocation();
   }
 
@@ -217,8 +213,6 @@ class _MapsScreenState extends State<MapsScreen> {
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
                     var location = await getCurrentLocation();
-                    debugPrint(
-                        "locations :- ${location.latitude} ${location.longitude}");
                     final databaseReference = FirebaseDatabase(
                             databaseURL:
                                 "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -243,11 +237,8 @@ class _MapsScreenState extends State<MapsScreen> {
     return InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => SearchLocationScreen(
-                    mapController: mapController,
-                    showDestinationMarker: showDestinationMarker,
-                    bottomSearch: false,
-                  )));
+              builder: (context) =>
+                  PickUpLocationScreen(showMarkers: setMapMarker)));
           // showSearchBar();
         },
         child: Padding(
@@ -270,13 +261,14 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   cancelButtonCondition() {
-    if (context.read<StringProvider>().location != "Pickup Location")
+    if (context.read<StringProvider>().location != "Pickup Location") {
       return IconButton(
           onPressed: () {
             context.read<StringProvider>().setString("Pickup Location");
           },
-          icon: Icon(Icons.cancel));
-    return SizedBox(
+          icon: const Icon(Icons.cancel));
+    }
+    return const SizedBox(
       width: 2,
     );
   }

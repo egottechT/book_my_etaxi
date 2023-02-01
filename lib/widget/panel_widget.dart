@@ -9,13 +9,10 @@ import 'package:provider/provider.dart';
 class PanelWidget extends StatefulWidget {
   ScrollController? controller;
   final Function function;
-  GoogleMapController? mapController;
 
   PanelWidget({
     Key? key,
-    // required this.controller,
     required this.function,
-    // required this.mapController
   }) : super(key: key);
 
   @override
@@ -116,9 +113,7 @@ class _PanelWidgetState extends State<PanelWidget> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SearchLocationScreen(
-                    mapController: widget.mapController as GoogleMapController,
-                    showDestinationMarker: widget.function,
-                    bottomSearch: true,
+                setMapMarker: widget.function,
                   )));
           // showSearchBar();
         },
