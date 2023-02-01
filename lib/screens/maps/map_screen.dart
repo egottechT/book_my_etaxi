@@ -1,8 +1,7 @@
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
-import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +22,7 @@ class MapsScreen extends StatefulWidget {
 
 class _MapsScreenState extends State<MapsScreen> {
   late GoogleMapController mapController;
+  Marker? pickupMarker, destinationMarker;
   Set<Marker> _makers = {};
   LatLng _center = const LatLng(20.5937, 78.9629);
   double zoomLevel = 19;
@@ -31,14 +31,24 @@ class _MapsScreenState extends State<MapsScreen> {
   List<dynamic> list = [];
   final _panelcontroller = PanelController();
   late PanelWidget panelWidget;
+  double startLatitude = 0,
+      destinationLatitude = 0,
+      startLongitude = 0,
+      destinationLongitude = 0;
+
+  void removeDestinationMaker() {
+    debugPrint("Here removing");
+    setState(() {
+      _makers.remove(destinationMarker);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     Permission.location.request();
     panelWidget = PanelWidget(
-      function: setMapMarker,
-    );
+        function: setMapMarker, removeDestinationMaker: removeDestinationMaker);
   }
 
   Future<LocationData> getCurrentLocation() async {
@@ -54,10 +64,40 @@ class _MapsScreenState extends State<MapsScreen> {
     return location;
   }
 
-  double startLatitude = 0,
-      destinationLatitude = 0,
-      startLongitude = 0,
-      destinationLongitude = 0;
+  void correctCameraAngle() async {
+    if (startLongitude == 0 && startLongitude == 0) {
+      var currentLocate = await getCurrentLocation();
+      startLatitude = currentLocate.latitude as double;
+      startLongitude = currentLocate.longitude as double;
+      setMapMarker(LatLng(startLatitude, startLongitude), false);
+    }
+    double miny = (startLatitude <= destinationLatitude)
+        ? startLatitude
+        : destinationLatitude;
+    double minx = (startLongitude <= destinationLongitude)
+        ? startLongitude
+        : destinationLongitude;
+    double maxy = (startLatitude <= destinationLatitude)
+        ? destinationLatitude
+        : startLatitude;
+    double maxx = (startLongitude <= destinationLongitude)
+        ? destinationLongitude
+        : startLongitude;
+
+    double southWestLatitude = miny;
+    double southWestLongitude = minx;
+    double northEastLatitude = maxy;
+    double northEastLongitude = maxx;
+    mapController.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          northeast: LatLng(northEastLatitude, northEastLongitude),
+          southwest: LatLng(southWestLatitude, southWestLongitude),
+        ),
+        100.0,
+      ),
+    );
+  }
 
   void setMapMarker(LatLng latLng, bool destination) async {
     String name = "Pick-up";
@@ -72,42 +112,14 @@ class _MapsScreenState extends State<MapsScreen> {
     setState(() {
       _makers.add(tmpMarker);
     });
+
     if (destination) {
+      destinationMarker = tmpMarker;
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
-      if(startLongitude==0 && startLongitude==0){
-          var currentLocate = await getCurrentLocation();
-          startLatitude = currentLocate.latitude as double;
-          startLongitude = currentLocate.longitude as double;
-          setMapMarker(LatLng(startLatitude, startLongitude),false);
-      }
-      double miny = (startLatitude <= destinationLatitude)
-          ? startLatitude
-          : destinationLatitude;
-      double minx = (startLongitude <= destinationLongitude)
-          ? startLongitude
-          : destinationLongitude;
-      double maxy = (startLatitude <= destinationLatitude)
-          ? destinationLatitude
-          : startLatitude;
-      double maxx = (startLongitude <= destinationLongitude)
-          ? destinationLongitude
-          : startLongitude;
-
-      double southWestLatitude = miny;
-      double southWestLongitude = minx;
-      double northEastLatitude = maxy;
-      double northEastLongitude = maxx;
-      mapController.animateCamera(
-        CameraUpdate.newLatLngBounds(
-          LatLngBounds(
-            northeast: LatLng(northEastLatitude, northEastLongitude),
-            southwest: LatLng(southWestLatitude, southWestLongitude),
-          ),
-          100.0,
-        ),
-      );
+      correctCameraAngle();
     } else {
+      pickupMarker = tmpMarker;
       startLatitude = latLng.latitude;
       startLongitude = latLng.longitude;
       CameraPosition _cameraPos =
@@ -136,16 +148,6 @@ class _MapsScreenState extends State<MapsScreen> {
     setState(() {
       _makers = values;
     });
-  }
-
-  Future<Uint8List> getImages(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetHeight: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -271,7 +273,9 @@ class _MapsScreenState extends State<MapsScreen> {
       return IconButton(
           onPressed: () {
             context.read<StringProvider>().setString("Pickup Location");
-
+            setState(() {
+              _makers.remove(pickupMarker);
+            });
           },
           icon: const Icon(Icons.cancel));
     }

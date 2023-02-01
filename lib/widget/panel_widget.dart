@@ -9,10 +9,11 @@ import 'package:provider/provider.dart';
 class PanelWidget extends StatefulWidget {
   ScrollController? controller;
   final Function function;
-
+  final Function removeDestinationMaker;
   PanelWidget({
     Key? key,
     required this.function,
+    required this.removeDestinationMaker,
   }) : super(key: key);
 
   @override
@@ -135,14 +136,16 @@ class _PanelWidgetState extends State<PanelWidget> {
 
   cancelButtonCondition() {
     if (context.read<BottomLocationProvider>().location !=
-        "Search Your Destination")
+        "Search Your Destination") {
       return IconButton(
           onPressed: () {
             context
                 .read<BottomLocationProvider>()
                 .setString("Search Your Destination");
+            widget.removeDestinationMaker();
           },
           icon: Icon(Icons.cancel));
+    }
     return SizedBox(
       width: 2,
     );
