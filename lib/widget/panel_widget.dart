@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
-import 'package:book_my_taxi/screens/search_location_screen.dart';
+import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class PanelWidget extends StatefulWidget {

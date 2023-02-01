@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
-import 'package:book_my_taxi/screens/search_location_screen.dart';
+import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
