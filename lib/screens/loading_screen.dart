@@ -32,7 +32,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ListTile(
                   title: Text(
                     pickUp,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
                   leading: Icon(
                     Icons.circle,
@@ -50,7 +50,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ListTile(
                   title: Text(
                     destination,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
                   leading: Icon(
                     Icons.location_on,

@@ -121,7 +121,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                             context
                                 .read<PickupLocationProvider>()
                                 .location,
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                           ),
                           leading: Icon(Icons.circle,color: Colors.green,size: 16,),
                           dense: true,
@@ -134,7 +134,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                             child: ListTile(
                               title: Text(
                                 location,
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                               ),
                               leading: Row(
                                 mainAxisSize: MainAxisSize.min,

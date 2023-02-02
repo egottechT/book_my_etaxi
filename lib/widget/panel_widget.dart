@@ -134,7 +134,7 @@ class _PanelWidgetState extends State<PanelWidget> {
               child: ListTile(
                 title: Text(
                   context.watch<DestinationLocationProvider>().location,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                 ),
                 leading: Icon(Icons.search),
                 dense: true,

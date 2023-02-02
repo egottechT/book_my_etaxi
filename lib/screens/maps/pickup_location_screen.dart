@@ -108,7 +108,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                         child: ListTile(
                           title: Text(
                             location,
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                           ),
                           leading: Icon(Icons.search),
                           dense: true,

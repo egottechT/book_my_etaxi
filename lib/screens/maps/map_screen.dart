@@ -237,7 +237,7 @@ class _MapsScreenState extends State<MapsScreen> {
                 child: ListTile(
                   title: Text(
                     context.watch<PickupLocationProvider>().location,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
                   leading: Icon(Icons.search),
                   dense: true,
