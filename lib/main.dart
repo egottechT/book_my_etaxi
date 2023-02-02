@@ -2,6 +2,7 @@ import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
+import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';

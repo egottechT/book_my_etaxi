@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -185,17 +186,18 @@ class _PanelWidgetState extends State<PanelWidget> {
                   child: Text("Book the ride"),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
-                    var location = await getCurrentLocation();
-                    final databaseReference = FirebaseDatabase(
-                        databaseURL:
-                        "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
-                        .ref();
-                    databaseReference.child("active_driver").push().set({
-                      "title": "Abhay sati",
-                      "body": "Please Pickup me",
-                      "lat": location.latitude.toString(),
-                      "long": location.longitude.toString(),
-                    });
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>LoadingScreen()));
+                    // var location = await getCurrentLocation();
+                    // final databaseReference = FirebaseDatabase(
+                    //     databaseURL:
+                    //     "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
+                    //     .ref();
+                    // databaseReference.child("active_driver").push().set({
+                    //   "title": "Abhay sati",
+                    //   "body": "Please Pickup me",
+                    //   "lat": location.latitude.toString(),
+                    //   "long": location.longitude.toString(),
+                    // });
                   },
                 ),
                 Card(
