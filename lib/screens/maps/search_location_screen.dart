@@ -108,41 +108,46 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   markers: _makers, //MARKERS IN MAP
                 ),
                 Positioned(
-                  top: 2,
+                  top: 15,
                   left: 5,
                   right: 5,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(height: 10,),
-                      Card(
-                        child: ListTile(
+                  child: Card(
+                    elevation: 10,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
                           title: Text(
                             context
                                 .read<StringProvider>()
                                 .location,
                             style: TextStyle(fontSize: 16),
                           ),
-                          leading: Text("Pick-Up"),
+                          leading: Icon(Icons.circle,color: Colors.green,size: 16,),
                           dense: true,
                         ),
-                      ),
-                      InkWell(
-                          onTap: () {
-                            showSearchBar();
-                          },
-                          child: Card(
+                        SizedBox(height: 2,child: Container(color: Colors.grey,),),
+                        InkWell(
+                            onTap: () {
+                              showSearchBar();
+                            },
                             child: ListTile(
                               title: Text(
                                 location,
                                 style: TextStyle(fontSize: 16),
                               ),
-                              leading: Icon(Icons.search),
+                              leading: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.circle,color: Colors.red,size: 16,),
+                                  Icon(Icons.arrow_right,color: Colors.red,size: 24,)
+                                ],
+                              ),
                               dense: true,
-                            ),
-                          )),
-                    ],
-                  ),
+                            )),
+                      ],
+                    ),
+                  )
                 ),
                 Positioned(
                   bottom: 0,

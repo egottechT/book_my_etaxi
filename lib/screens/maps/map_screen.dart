@@ -213,27 +213,6 @@ class _MapsScreenState extends State<MapsScreen> {
                 right: 20,
                 bottom: fabHeightBottom,
               ),
-              Positioned(
-                left: 20,
-                bottom: fabHeightBottom,
-                child: ElevatedButton(
-                  child: Text("Confirm Current Location"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                  onPressed: () async {
-                    var location = await getCurrentLocation();
-                    final databaseReference = FirebaseDatabase(
-                            databaseURL:
-                                "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
-                        .ref();
-                    databaseReference.child("active_driver").push().set({
-                      "title": "Abhay sati",
-                      "body": "Please Pickup me",
-                      "lat": location.latitude.toString(),
-                      "long": location.longitude.toString(),
-                    });
-                  },
-                ),
-              ),
             ],
           ),
         ),
