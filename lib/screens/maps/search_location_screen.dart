@@ -60,7 +60,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         location = place.description.toString();
       });
 
-      context.read<BottomLocationProvider>().setString(location);
+      context.read<DestinationLocationProvider>().setString(location);
       //form google_maps_webservice package
       final plist = GoogleMapsPlaces(
         apiKey: mapApiKey,
@@ -119,7 +119,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                         ListTile(
                           title: Text(
                             context
-                                .read<StringProvider>()
+                                .read<PickupLocationProvider>()
                                 .location,
                             style: TextStyle(fontSize: 16),
                           ),

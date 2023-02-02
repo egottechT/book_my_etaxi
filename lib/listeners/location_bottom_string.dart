@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BottomLocationProvider extends ChangeNotifier { // create a common file for data
+class DestinationLocationProvider extends ChangeNotifier { // create a common file for data
   String _str = "Search Your Destination";
 
   String get location => _str;

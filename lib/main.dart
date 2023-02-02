@@ -19,8 +19,8 @@ void main() async {
   await Firebase.initializeApp();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => StringProvider()),
-      ChangeNotifierProvider(create: (_) => BottomLocationProvider()),
+      ChangeNotifierProvider(create: (_) => PickupLocationProvider()),
+      ChangeNotifierProvider(create: (_) => DestinationLocationProvider()),
       ChangeNotifierProvider(create: (_) => OtpProvider()),
     ],
     child: MaterialApp(

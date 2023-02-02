@@ -14,9 +14,9 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen> {
   Widget SecondSectioView() {
     String pickUp =
-        Provider.of<StringProvider>(context, listen: false).location;
+        Provider.of<PickupLocationProvider>(context, listen: false).location;
     String destination =
-        Provider.of<BottomLocationProvider>(context, listen: false).location;
+        Provider.of<DestinationLocationProvider>(context, listen: false).location;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

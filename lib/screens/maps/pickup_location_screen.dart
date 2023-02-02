@@ -127,7 +127,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                   if(latitude!=0 && longitude!=0){
                     widget.showMarkers(LatLng(latitude, longitude),false);
                   }
-                  Provider.of<StringProvider>(context,listen: false).setString(location);
+                  Provider.of<PickupLocationProvider>(context,listen: false).setString(location);
                   Navigator.of(context).pop();
                 },
               ),

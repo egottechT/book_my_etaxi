@@ -236,7 +236,7 @@ class _MapsScreenState extends State<MapsScreen> {
                 width: MediaQuery.of(context).size.width - 40,
                 child: ListTile(
                   title: Text(
-                    context.watch<StringProvider>().location,
+                    context.watch<PickupLocationProvider>().location,
                     style: TextStyle(fontSize: 16),
                   ),
                   leading: Icon(Icons.search),
@@ -248,10 +248,10 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   cancelButtonCondition() {
-    if (context.read<StringProvider>().location != "Pickup Location") {
+    if (context.read<PickupLocationProvider>().location != "Pickup Location") {
       return IconButton(
           onPressed: () {
-            context.read<StringProvider>().setString("Pickup Location");
+            context.read<PickupLocationProvider>().setString("Pickup Location");
             setState(() {
               _makers.remove(pickupMarker);
             });

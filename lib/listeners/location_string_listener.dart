@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class StringProvider extends ChangeNotifier { // create a common file for data
+class PickupLocationProvider extends ChangeNotifier { // create a common file for data
   String _str = "Pickup Location";
 
   String get location => _str;

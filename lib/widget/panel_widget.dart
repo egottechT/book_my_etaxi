@@ -133,7 +133,7 @@ class _PanelWidgetState extends State<PanelWidget> {
               width: MediaQuery.of(context).size.width - 40,
               child: ListTile(
                 title: Text(
-                  context.watch<BottomLocationProvider>().location,
+                  context.watch<DestinationLocationProvider>().location,
                   style: TextStyle(fontSize: 16),
                 ),
                 leading: Icon(Icons.search),
@@ -144,12 +144,12 @@ class _PanelWidgetState extends State<PanelWidget> {
   }
 
   cancelButtonCondition() {
-    if (context.read<BottomLocationProvider>().location !=
+    if (context.read<DestinationLocationProvider>().location !=
         "Search Your Destination") {
       return IconButton(
           onPressed: () {
             context
-                .read<BottomLocationProvider>()
+                .read<DestinationLocationProvider>()
                 .setString("Search Your Destination");
             widget.removeDestinationMaker();
           },
