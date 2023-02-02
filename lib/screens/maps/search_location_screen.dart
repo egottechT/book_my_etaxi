@@ -1,7 +1,10 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
+import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:google_api_headers/google_api_headers.dart';
@@ -13,10 +16,10 @@ import 'package:location/location.dart' as locate;
 class SearchLocationScreen extends StatefulWidget {
   Function setMapMarker;
 
-  SearchLocationScreen({Key? key,
+  SearchLocationScreen({
+    Key? key,
     required this.setMapMarker,
-    })
-      : super(key: key);
+  }) : super(key: key);
 
   @override
   State<SearchLocationScreen> createState() => _SearchLocationScreenState();
@@ -24,7 +27,7 @@ class SearchLocationScreen extends StatefulWidget {
 
 class _SearchLocationScreenState extends State<SearchLocationScreen> {
   String location = "Destination";
-  double latitude=0,longitude=0;
+  double latitude = 0, longitude = 0;
 
   @override
   void initState() {
@@ -32,10 +35,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     showSearchBar();
   }
 
-  void showDestinationMarker(LatLng latLng) {
+  void showDestinationMarker(LatLng latLng) async {
+    Uint8List markIcons = await getImages('assets/images/red_pin.png', 150);
     Marker tmpMarker = Marker(
       markerId: const MarkerId("Destination"),
       position: latLng,
+      icon: BitmapDescriptor.fromBytes(markIcons),
     );
     setState(() {
       _makers.add(tmpMarker);
@@ -50,7 +55,6 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         types: [],
         strictbounds: false,
         components: [Component(Component.country, 'IN')],
-
         onError: (err) {
           print(err);
         });
@@ -74,12 +78,11 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       longitude = geometry.location.lng;
 
       showDestinationMarker(LatLng(latitude, longitude));
-      CameraPosition _pickupLocation = CameraPosition(
-          target:
-          LatLng(latitude, longitude),
-          zoom: 19);
+      CameraPosition _pickupLocation =
+          CameraPosition(target: LatLng(latitude, longitude), zoom: 19);
 
-      mapController.animateCamera(CameraUpdate.newCameraPosition(_pickupLocation));
+      mapController
+          .animateCamera(CameraUpdate.newCameraPosition(_pickupLocation));
     }
   }
 
@@ -96,116 +99,140 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     return SafeArea(
         child: Scaffold(
             body: Stack(
-              children: [
-                GoogleMap(
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: _center,
-                    zoom: 17,
-                  ),
-                  markers: _makers, //MARKERS IN MAP
-                ),
-                Positioned(
-                  top: 15,
-                  left: 5,
-                  right: 5,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          title: Text(
-                            context
-                                .read<PickupLocationProvider>()
-                                .location,
-                            style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
-                          ),
-                          leading: Icon(Icons.circle,color: Colors.green,size: 16,),
-                          dense: true,
+      children: [
+        GoogleMap(
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _center,
+            zoom: 17,
+          ),
+          markers: _makers, //MARKERS IN MAP
+        ),
+        Positioned(
+            top: 15,
+            left: 5,
+            right: 5,
+            child: Card(
+              elevation: 10,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => PickUpLocationScreen(
+                              showMarkers: widget.setMapMarker)));
+                    },
+                    child: ListTile(
+                      title: Text(
+                        context.watch<PickupLocationProvider>().location,
+                        style: TextStyle(
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 2,child: Container(color: Colors.grey,),),
-                        InkWell(
-                            onTap: () {
-                              showSearchBar();
-                            },
-                            child: ListTile(
-                              title: Text(
-                                location,
-                                style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
-                              ),
-                              leading: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.circle,color: Colors.red,size: 16,),
-                                  Icon(Icons.arrow_right,color: Colors.red,size: 24,)
-                                ],
-                              ),
-                              dense: true,
-                            )),
-                      ],
+                      ),
+                      leading: Icon(
+                        Icons.circle,
+                        color: Colors.green,
+                        size: 16,
+                      ),
+                      dense: true,
                     ),
-                  )
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              var position = LatLng(latitude, longitude);
-                              widget.setMapMarker(position, true);
-                              Navigator.pop(context);
-                            },
-                            child: Text("Confirm Current Location")),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  ),
+                  SizedBox(
+                    height: 2,
+                    child: Container(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {
+                        showSearchBar();
+                      },
+                      child: ListTile(
+                        title: Text(
+                          location,
+                          style: TextStyle(
+                            fontSize: 16,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        leading: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            ElevatedButton.icon(
-                                icon: Icon(Icons.location_searching_rounded,
-                                    color: Colors.black),
-                                onPressed: () async {
-                                  locate.Location currentLocation = locate
-                                      .Location();
-                                  var location = await currentLocation
-                                      .getLocation();
-                                  var newlatlang = LatLng(location
-                                      .latitude as double,
-                                      location.longitude as double);
-                                  widget.setMapMarker(newlatlang);
-                                },
-                                label: Text(
-                                  "Current Location",
-                                  style: _textStyle,
-                                ),
-                                style: _buttonStyle),
-                            ElevatedButton.icon(
-                              icon: Icon(Icons.location_on, color: Colors.black),
-                              onPressed: () {},
-                              label: Text(
-                                "Location on Map",
-                                style: _textStyle,
-                              ),
-                              style: _buttonStyle,
+                            Icon(
+                              Icons.circle,
+                              color: Colors.red,
+                              size: 16,
                             ),
+                            Icon(
+                              Icons.arrow_right,
+                              color: Colors.red,
+                              size: 24,
+                            )
                           ],
                         ),
-                      ],
+                        dense: true,
+                      )),
+                ],
+              ),
+            )),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          left: 0,
+          child: Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      var position = LatLng(latitude, longitude);
+                      widget.setMapMarker(position, true);
+                      Navigator.pop(context);
+                    },
+                    child: Text("Confirm Current Location")),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton.icon(
+                        icon: Icon(Icons.location_searching_rounded,
+                            color: Colors.black),
+                        onPressed: () async {
+                          locate.Location currentLocation = locate.Location();
+                          var location = await currentLocation.getLocation();
+                          var newlatlang = LatLng(location.latitude as double,
+                              location.longitude as double);
+                          widget.setMapMarker(newlatlang);
+                        },
+                        label: Text(
+                          "Current Location",
+                          style: _textStyle,
+                        ),
+                        style: _buttonStyle),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.location_on, color: Colors.black),
+                      onPressed: () {},
+                      label: Text(
+                        "Location on Map",
+                        style: _textStyle,
+                      ),
+                      style: _buttonStyle,
                     ),
-                  ),
-                )
+                  ],
+                ),
               ],
-            )));
+            ),
+          ),
+        )
+      ],
+    )));
   }
 
   ButtonStyle _buttonStyle =
-  ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);
+      ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);
   TextStyle _textStyle = TextStyle(color: Colors.black);
 }

@@ -104,21 +104,26 @@ class _MapsScreenState extends State<MapsScreen> {
     if (destination) {
       name = "destination";
     }
-    Marker tmpMarker = Marker(
-      markerId: MarkerId(name),
-      position: latLng,
-    );
-
-    setState(() {
-      _makers.add(tmpMarker);
-    });
+    Marker? tmpMarker;
 
     if (destination) {
+      markIcons = await getImages('assets/images/red_pin.png', 150);
+      tmpMarker = Marker(
+        markerId: MarkerId(name),
+        position: latLng,
+        icon: BitmapDescriptor.fromBytes(markIcons!),
+      );
       destinationMarker = tmpMarker;
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
       correctCameraAngle();
     } else {
+      markIcons = await getImages('assets/images/green_pin.png', 150);
+      tmpMarker = Marker(
+        markerId: MarkerId(name),
+        position: latLng,
+        icon: BitmapDescriptor.fromBytes(markIcons!),
+      );
       pickupMarker = tmpMarker;
       startLatitude = latLng.latitude;
       startLongitude = latLng.longitude;
@@ -126,6 +131,10 @@ class _MapsScreenState extends State<MapsScreen> {
           CameraPosition(target: latLng, zoom: zoomLevel);
       mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
     }
+
+    setState(() {
+      _makers.add(tmpMarker!);
+    });
   }
 
   void setCarsMarker(locate.LocationData location) async {
@@ -237,7 +246,10 @@ class _MapsScreenState extends State<MapsScreen> {
                 child: ListTile(
                   title: Text(
                     context.watch<PickupLocationProvider>().location,
-                    style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
+                    style: TextStyle(
+                      fontSize: 16,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   leading: Icon(Icons.search),
                   dense: true,
