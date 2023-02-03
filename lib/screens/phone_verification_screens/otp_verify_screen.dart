@@ -62,7 +62,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
             )),
             ElevatedButton(
               onPressed: () async {
-                if (otp.length != 0) {
+                if (otp.isNotEmpty) {
                   setState(() {
                     showLoading = true;
                   });

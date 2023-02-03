@@ -52,7 +52,6 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
-      debugPrint("Code is :- ${credential.smsCode}");
       Provider.of<OtpProvider>(context,listen: false).setString(credential.smsCode.toString());
 
       },
