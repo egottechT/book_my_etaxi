@@ -1,11 +1,13 @@
 import 'dart:typed_data';
+import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
+import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as locate;
 import 'package:location/location.dart';
@@ -35,12 +37,57 @@ class _MapsScreenState extends State<MapsScreen> {
       destinationLatitude = 0,
       startLongitude = 0,
       destinationLongitude = 0;
+  late PolylinePoints polylinePoints;
+  List<LatLng> polylineCoordinates = [];
+  Map<PolylineId, Polyline> polylines = {};
+  String? _placeDistance = null;
 
   void removeDestinationMaker() {
-    debugPrint("Here removing");
     setState(() {
       _makers.remove(destinationMarker);
     });
+  }
+
+  void _createPolylines(
+    double startLatitude,
+    double startLongitude,
+    double destinationLatitude,
+    double destinationLongitude,
+  ) async {
+    debugPrint("Starting Polygon route");
+    // Initializing PolylinePoints
+    polylinePoints = PolylinePoints();
+
+    // Generating the list of coordinates to be used for
+    // drawing the polylines
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      mapApiKey, // Google Maps API Key
+      PointLatLng(startLatitude, startLongitude),
+      PointLatLng(destinationLatitude, destinationLongitude),
+      travelMode: TravelMode.transit,
+    );
+
+    // Adding the coordinates to the list
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+
+    PolylineId id = PolylineId('poly');
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.black,
+      points: polylineCoordinates,
+      width: 3,
+    );
+    setState(() {
+      polylines[id] = polyline;
+    });
+    setState(() {
+      _placeDistance = caluclateDistance(polylineCoordinates);
+    });
+
   }
 
   @override
@@ -117,6 +164,8 @@ class _MapsScreenState extends State<MapsScreen> {
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
       correctCameraAngle();
+      _createPolylines(startLatitude, startLongitude, destinationLatitude,
+          destinationLongitude);
     } else {
       markIcons = await getImages('assets/images/green_pin.png', 150);
       tmpMarker = Marker(
@@ -206,6 +255,7 @@ class _MapsScreenState extends State<MapsScreen> {
           body: Stack(
             children: <Widget>[
               GoogleMap(
+                polylines: Set<Polyline>.of(polylines.values),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 onMapCreated: _onMapCreated,
@@ -216,7 +266,21 @@ class _MapsScreenState extends State<MapsScreen> {
                 markers: _makers, //MARKERS IN MAP
               ),
               Positioned(
-                  top: 10, left: 10, right: 10, child: searchBarWidget()),
+                  top: 10, left: 10, right: 10, child: Column(
+                    children: [
+                      searchBarWidget(),
+                      Visibility(
+                        visible: _placeDistance == null ? false : true,
+                        child: Text(
+                          'DISTANCE: $_placeDistance km',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
               Positioned(
                 child: buildFAB(context),
                 right: 20,
