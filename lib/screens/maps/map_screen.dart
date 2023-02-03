@@ -44,6 +44,7 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void removeDestinationMaker() {
     setState(() {
+      polylineCoordinates.clear();
       _makers.remove(destinationMarker);
     });
   }
@@ -54,12 +55,8 @@ class _MapsScreenState extends State<MapsScreen> {
     double destinationLatitude,
     double destinationLongitude,
   ) async {
-    debugPrint("Starting Polygon route");
     // Initializing PolylinePoints
     polylinePoints = PolylinePoints();
-
-    // Generating the list of coordinates to be used for
-    // drawing the polylines
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       mapApiKey, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
@@ -68,6 +65,7 @@ class _MapsScreenState extends State<MapsScreen> {
     );
 
     // Adding the coordinates to the list
+    polylineCoordinates.clear();
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
@@ -87,7 +85,6 @@ class _MapsScreenState extends State<MapsScreen> {
     setState(() {
       _placeDistance = caluclateDistance(polylineCoordinates);
     });
-
   }
 
   @override
@@ -266,11 +263,15 @@ class _MapsScreenState extends State<MapsScreen> {
                 markers: _makers, //MARKERS IN MAP
               ),
               Positioned(
-                  top: 10, left: 10, right: 10, child: Column(
+                  top: 10,
+                  left: 10,
+                  right: 10,
+                  child: Column(
                     children: [
                       searchBarWidget(),
                       Visibility(
-                        visible: _placeDistance == null ? false : true,
+                        // visible: _placeDistance == null ? false : true,
+                        visible: false,
                         child: Text(
                           'DISTANCE: $_placeDistance km',
                           style: TextStyle(
@@ -329,6 +330,7 @@ class _MapsScreenState extends State<MapsScreen> {
           onPressed: () {
             context.read<PickupLocationProvider>().setString("Pickup Location");
             setState(() {
+              polylineCoordinates.clear();
               _makers.remove(pickupMarker);
             });
           },
