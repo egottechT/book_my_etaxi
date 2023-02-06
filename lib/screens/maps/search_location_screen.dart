@@ -206,7 +206,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                           var location = await currentLocation.getLocation();
                           var newlatlang = LatLng(location.latitude as double,
                               location.longitude as double);
-                          widget.setMapMarker(newlatlang);
+                          widget.setMapMarker(newlatlang,true);
                         },
                         label: Text(
                           "Current Location",

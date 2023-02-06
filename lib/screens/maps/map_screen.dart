@@ -104,25 +104,12 @@ class _MapsScreenState extends State<MapsScreen> {
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
 
-    //Current coordinate to address.
-    // List<Placemark> addresses = await
-    // placemarkFromCoordinates(location.latitude as double,location.longitude as double);
-    //
-    // var first = addresses.first;
-    // debugPrint("${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}");
-
     mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
     // setTheMarkers(location);
     return location;
   }
 
   void correctCameraAngle() async {
-    if (startLongitude == 0 && startLongitude == 0) {
-      var currentLocate = await getCurrentLocation();
-      startLatitude = currentLocate.latitude as double;
-      startLongitude = currentLocate.longitude as double;
-      setMapMarker(LatLng(startLatitude, startLongitude), false);
-    }
     double miny = (startLatitude <= destinationLatitude)
         ? startLatitude
         : destinationLatitude;
@@ -151,7 +138,7 @@ class _MapsScreenState extends State<MapsScreen> {
     );
   }
 
-  void setMapMarker(LatLng latLng, bool destination) async {
+  Future<void> setMapMarker(LatLng latLng, bool destination) async {
     String name = "Pick-up";
     if (destination) {
       name = "destination";
@@ -168,6 +155,18 @@ class _MapsScreenState extends State<MapsScreen> {
       destinationMarker = tmpMarker;
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
+      if (startLongitude == 0 && startLongitude == 0) {
+        var currentLocate = await getCurrentLocation();
+        startLatitude = currentLocate.latitude as double;
+        startLongitude = currentLocate.longitude as double;
+        //Current coordinate to address.
+        List<Placemark> addresses = await
+        placemarkFromCoordinates(currentLocate.latitude as double,currentLocate.longitude as double);
+
+        var first = addresses.first;
+        Provider.of<PickupLocationProvider>(context,listen: false).setString("${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}");
+        await setMapMarker(LatLng(startLatitude, startLongitude), false);
+      }
       correctCameraAngle();
       _createPolylines(startLatitude, startLongitude, destinationLatitude,
           destinationLongitude);
