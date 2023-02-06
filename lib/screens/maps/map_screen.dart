@@ -8,6 +8,7 @@ import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as locate;
 import 'package:location/location.dart';
@@ -102,6 +103,13 @@ class _MapsScreenState extends State<MapsScreen> {
         target:
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
+
+    //Current coordinate to address.
+    // List<Placemark> addresses = await
+    // placemarkFromCoordinates(location.latitude as double,location.longitude as double);
+    //
+    // var first = addresses.first;
+    // debugPrint("${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}");
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
     // setTheMarkers(location);

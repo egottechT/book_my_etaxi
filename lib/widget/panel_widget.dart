@@ -186,18 +186,18 @@ class _PanelWidgetState extends State<PanelWidget> {
                   child: Text("Book the ride"),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
+                    var location = await getCurrentLocation();
+                    final databaseReference = FirebaseDatabase(
+                        databaseURL:
+                        "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
+                        .ref();
+                    databaseReference.child("active_driver").push().set({
+                      "title": "Abhay sati",
+                      "body": "Please Pickup me",
+                      "lat": location.latitude.toString(),
+                      "long": location.longitude.toString(),
+                    });
                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>LoadingScreen()));
-                    // var location = await getCurrentLocation();
-                    // final databaseReference = FirebaseDatabase(
-                    //     databaseURL:
-                    //     "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
-                    //     .ref();
-                    // databaseReference.child("active_driver").push().set({
-                    //   "title": "Abhay sati",
-                    //   "body": "Please Pickup me",
-                    //   "lat": location.latitude.toString(),
-                    //   "long": location.longitude.toString(),
-                    // });
                   },
                 ),
                 Card(
