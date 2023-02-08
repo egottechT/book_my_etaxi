@@ -132,6 +132,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                     widget.showMarkers(LatLng(latitude, longitude),false);
                   }
                   Provider.of<PickupLocationProvider>(context,listen: false).setString(location);
+                  Provider.of<PickupLocationProvider>(context,listen: false).setPositionLatLng(LatLng(latitude, longitude));
                   Navigator.of(context).pop();
                 },
               ),

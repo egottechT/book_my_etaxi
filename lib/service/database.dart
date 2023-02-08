@@ -1,4 +1,8 @@
+import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 final databaseReference = FirebaseDatabase(databaseURL: "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app").ref();
 
@@ -21,5 +25,36 @@ Future<List<String>> readData() async {
     msg.add(uid);
   };
   return msg;
+}
+
+void uploadTripInfo(BuildContext context){
+  var pickUp = Provider.of<DestinationLocationProvider>(
+      context,
+      listen: false)
+      .position;
+  var destination = Provider.of<PickupLocationProvider>(
+      context,
+      listen: false)
+      .position;
+  databaseReference.child("active_driver").push().set({
+    "title": "Abhay sati",
+    "body": "Please Pickup me",
+    "destination": {
+      "lat": pickUp.latitude,
+      "long": pickUp.longitude,
+      "location": Provider.of<DestinationLocationProvider>(
+          context,
+          listen: false)
+          .location,
+    },
+    "pick-up": {
+      "location": Provider.of<PickupLocationProvider>(
+          context,
+          listen: false)
+          .location,
+      "lat": destination.latitude,
+      "long": destination.longitude,
+    },
+  });
 }
 

@@ -64,7 +64,6 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         location = place.description.toString();
       });
 
-      context.read<DestinationLocationProvider>().setString(location);
       //form google_maps_webservice package
       final plist = GoogleMapsPlaces(
         apiKey: mapApiKey,
@@ -77,6 +76,10 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       latitude = geometry.location.lat;
       longitude = geometry.location.lng;
 
+      if(context.mounted){
+        context.read<DestinationLocationProvider>().setString(location);
+        context.read<DestinationLocationProvider>().setPositionLatLng(LatLng(latitude, longitude));
+      }
       showDestinationMarker(LatLng(latitude, longitude));
       CameraPosition _pickupLocation =
           CameraPosition(target: LatLng(latitude, longitude), zoom: 19);
