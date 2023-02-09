@@ -160,11 +160,20 @@ class _MapsScreenState extends State<MapsScreen> {
         startLatitude = currentLocate.latitude as double;
         startLongitude = currentLocate.longitude as double;
         //Current coordinate to address.
-        List<Placemark> addresses = await
-        placemarkFromCoordinates(currentLocate.latitude as double,currentLocate.longitude as double);
+        List<Placemark> addresses = await placemarkFromCoordinates(
+            currentLocate.latitude as double,
+            currentLocate.longitude as double);
 
         var first = addresses.first;
-        Provider.of<PickupLocationProvider>(context,listen: false).setString("${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}");
+
+        if (context.mounted) {
+          Provider.of<PickupLocationProvider>(context, listen: false).setString(
+              "${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}");
+          Provider.of<PickupLocationProvider>(context, listen: false)
+              .setPositionLatLng(LatLng(currentLocate.latitude as double,
+                  currentLocate.longitude as double));
+        }
+
         await setMapMarker(LatLng(startLatitude, startLongitude), false);
       }
       correctCameraAngle();

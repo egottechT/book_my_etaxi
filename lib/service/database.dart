@@ -28,11 +28,11 @@ Future<List<String>> readData() async {
 }
 
 void uploadTripInfo(BuildContext context){
-  var pickUp = Provider.of<DestinationLocationProvider>(
+  var pickUp = Provider.of<PickupLocationProvider>(
       context,
       listen: false)
       .position;
-  var destination = Provider.of<PickupLocationProvider>(
+  var destination = Provider.of<DestinationLocationProvider>(
       context,
       listen: false)
       .position;
@@ -40,8 +40,8 @@ void uploadTripInfo(BuildContext context){
     "title": "Abhay sati",
     "body": "Please Pickup me",
     "destination": {
-      "lat": pickUp.latitude,
-      "long": pickUp.longitude,
+      "lat": destination.latitude,
+      "long": destination.longitude,
       "location": Provider.of<DestinationLocationProvider>(
           context,
           listen: false)
@@ -52,8 +52,8 @@ void uploadTripInfo(BuildContext context){
           context,
           listen: false)
           .location,
-      "lat": destination.latitude,
-      "long": destination.longitude,
+      "lat": pickUp.latitude,
+      "long": pickUp.longitude,
     },
   });
 }
