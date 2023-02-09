@@ -76,9 +76,11 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       latitude = geometry.location.lat;
       longitude = geometry.location.lng;
 
-      if(context.mounted){
+      if (context.mounted) {
         context.read<DestinationLocationProvider>().setString(location);
-        context.read<DestinationLocationProvider>().setPositionLatLng(LatLng(latitude, longitude));
+        context
+            .read<DestinationLocationProvider>()
+            .setPositionLatLng(LatLng(latitude, longitude));
       }
       showDestinationMarker(LatLng(latitude, longitude));
       CameraPosition _pickupLocation =
@@ -101,6 +103,9 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            title: Text("Destination"),
+          ),
             body: Stack(
       children: [
         GoogleMap(
@@ -197,7 +202,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                       widget.setMapMarker(position, true);
                       Navigator.pop(context);
                     },
-                    child: Text("Confirm Current Location")),
+                    child: const Text("Confirm Location")),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -209,7 +214,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                           var location = await currentLocation.getLocation();
                           var newlatlang = LatLng(location.latitude as double,
                               location.longitude as double);
-                          widget.setMapMarker(newlatlang,true);
+                          widget.setMapMarker(newlatlang, true);
                         },
                         label: Text(
                           "Current Location",

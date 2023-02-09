@@ -85,6 +85,9 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Pick-up"),
+        ),
         resizeToAvoidBottomInset: true,
         body: Stack(
           children: <Widget>[
@@ -125,7 +128,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
               bottom: 20,
               right: 20,
               child: ElevatedButton(
-                child: Text("Confirm Current Location"),
+                child: Text("Confirm Location"),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                 onPressed: () {
                   if(latitude!=0 && longitude!=0){
