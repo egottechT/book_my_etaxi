@@ -185,8 +185,8 @@ class _MapsScreenState extends State<MapsScreen> {
         markerId: MarkerId(name),
         position: latLng,
         draggable: true,
-        onDragEnd: (value){
-            debugPrint("New location:- ${value.latitude} , ${value.longitude}");
+        onDragEnd: (value) {
+          debugPrint("New location:- ${value.latitude} , ${value.longitude}");
         },
         icon: BitmapDescriptor.fromBytes(markIcons!),
       );
@@ -316,10 +316,14 @@ class _MapsScreenState extends State<MapsScreen> {
 
   Widget searchBarWidget() {
     return InkWell(
-        onTap: () {
+        onTap: () async {
+          var data = await getCurrentLocation();
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  PickUpLocationScreen(showMarkers: setMapMarker)));
+              builder: (context) => PickUpLocationScreen(
+                    showMarkers: setMapMarker,
+                    startLatLng: LatLng(
+                        data.latitude as double, data.longitude as double),
+                  )));
           // showSearchBar();
         },
         child: Padding(

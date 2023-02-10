@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
-import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -34,10 +31,10 @@ class _PanelWidgetState extends State<PanelWidget> {
     super.initState();
   }
 
-  Widget CarInfoWithIcon(int index, Image icon, String name) {
+  Widget carInfoWithIcon(int index, Image icon, String name) {
     return Column(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         ClipOval(
@@ -55,24 +52,24 @@ class _PanelWidgetState extends State<PanelWidget> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Text(
           name,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ],
     );
   }
 
-  double ScaleCondition(int index) {
+  double scaleCondition(int index) {
     if (index == carIndex) return 1.2;
     return 1.5;
   }
 
-  Color ColorCondition(int index) {
-    if (index == carIndex) return Colors.white as Color;
+  Color colorCondition(int index) {
+    if (index == carIndex) return Colors.white;
     return Colors.grey[800] as Color;
   }
 
@@ -90,28 +87,28 @@ class _PanelWidgetState extends State<PanelWidget> {
             ),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            CarInfoWithIcon(
+            carInfoWithIcon(
                 0,
                 Image.asset(
                   "assets/images/mini.png",
-                  scale: ScaleCondition(0),
-                  color: ColorCondition(0),
+                  scale: scaleCondition(0),
+                  color: colorCondition(0),
                 ),
                 "Micro"),
-            CarInfoWithIcon(
+            carInfoWithIcon(
                 1,
                 Image.asset(
                   "assets/images/micro.png",
-                  scale: ScaleCondition(1),
-                  color: ColorCondition(1),
+                  scale: scaleCondition(1),
+                  color: colorCondition(1),
                 ),
                 "Mini"),
-            CarInfoWithIcon(
+            carInfoWithIcon(
                 2,
                 Image.asset(
                   "assets/images/sedan.png",
-                  scale: ScaleCondition(2),
-                  color: ColorCondition(2),
+                  scale: scaleCondition(2),
+                  color: colorCondition(2),
                 ),
                 "Sedan"),
           ]),
@@ -122,26 +119,31 @@ class _PanelWidgetState extends State<PanelWidget> {
 
   Widget searchBarWidget() {
     return InkWell(
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => SearchLocationScreen(
-                    setMapMarker: widget.function,
-                  )));
+        onTap: () async {
+          var data = await getCurrentLocation();
+          if(context.mounted){
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SearchLocationScreen(
+                  setMapMarker: widget.function,
+                  startLatLng: LatLng(
+                      data.latitude as double, data.longitude as double),
+                )));
+          }
           // showSearchBar();
         },
         child: Card(
           child: Container(
-              padding: EdgeInsets.all(0),
+              padding: const EdgeInsets.all(0),
               width: MediaQuery.of(context).size.width - 40,
               child: ListTile(
                 title: Text(
                   context.watch<DestinationLocationProvider>().location,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                leading: Icon(Icons.search),
+                leading: const Icon(Icons.search),
                 dense: true,
                 trailing: cancelButtonCondition(),
               )),
@@ -158,9 +160,9 @@ class _PanelWidgetState extends State<PanelWidget> {
                 .setString("Search Your Destination");
             widget.removeDestinationMaker();
           },
-          icon: Icon(Icons.cancel));
+          icon: const Icon(Icons.cancel));
     }
-    return SizedBox(
+    return const SizedBox(
       width: 2,
     );
   }
@@ -188,7 +190,6 @@ class _PanelWidgetState extends State<PanelWidget> {
               children: [
                 carInfoWidget(),
                 ElevatedButton(
-                  child: Text("Book the ride"),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
 
@@ -197,6 +198,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                         builder: (context) => const LoadingScreen()));
 
                   },
+                  child: const Text("Book the ride"),
                 ),
                 Card(
                   child: Column(
@@ -255,10 +257,10 @@ class _PanelWidgetState extends State<PanelWidget> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
-                SharingLayout()
+                sharingLayout()
               ],
             ),
           )
@@ -267,7 +269,7 @@ class _PanelWidgetState extends State<PanelWidget> {
     );
   }
 
-  Widget SharingLayout() {
+  Widget sharingLayout() {
     return Column(
       children: [
         cardView(
@@ -298,7 +300,7 @@ class _PanelWidgetState extends State<PanelWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Text(
@@ -308,7 +310,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                         fontWeight: FontWeight.bold,
                         fontSize: 20),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   buttonText == "Share"
@@ -318,22 +320,22 @@ class _PanelWidgetState extends State<PanelWidget> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               subtitle,
-                              style: TextStyle(fontSize: 22, letterSpacing: 5),
+                              style: const TextStyle(fontSize: 22, letterSpacing: 5),
                             ),
                           ),
                         )
                       : Text(subtitle),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text(buttonText),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         )),
+                    child: Text(buttonText),
                   )
                 ],
               ),
