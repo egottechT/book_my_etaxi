@@ -48,6 +48,12 @@ class _MapsScreenState extends State<MapsScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
+  }
+
   void _createPolylines(
     double startLatitude,
     double startLongitude,
@@ -351,6 +357,9 @@ class _MapsScreenState extends State<MapsScreen> {
       return IconButton(
           onPressed: () {
             context.read<PickupLocationProvider>().setString("Pickup Location");
+            context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
+            startLatitude = 0;
+            startLongitude = 0;
             setState(() {
               polylineCoordinates.clear();
               _makers.remove(pickupMarker);

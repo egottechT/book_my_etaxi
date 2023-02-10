@@ -123,7 +123,7 @@ class _PanelWidgetState extends State<PanelWidget> {
           var data = await getCurrentLocation();
           if(context.mounted){
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => SearchLocationScreen(
+                builder: (context) => DestinationLocationScreen(
                   setMapMarker: widget.function,
                   startLatLng: LatLng(
                       data.latitude as double, data.longitude as double),
@@ -192,7 +192,6 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
-
                     uploadTripInfo(context);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const LoadingScreen()));
