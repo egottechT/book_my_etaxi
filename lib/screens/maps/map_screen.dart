@@ -184,6 +184,10 @@ class _MapsScreenState extends State<MapsScreen> {
       tmpMarker = Marker(
         markerId: MarkerId(name),
         position: latLng,
+        draggable: true,
+        onDragEnd: (value){
+            debugPrint("New location:- ${value.latitude} , ${value.longitude}");
+        },
         icon: BitmapDescriptor.fromBytes(markIcons!),
       );
       pickupMarker = tmpMarker;
