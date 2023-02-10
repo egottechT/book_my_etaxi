@@ -25,7 +25,6 @@ class PickUpLocationScreen extends StatefulWidget {
 
 class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
   late GoogleMapController mapController;
-  double zoomLevel = 19;
   Set<Marker> markersList = {};
   String location = "Pickup Location";
   double latitude = 0, longitude = 0;

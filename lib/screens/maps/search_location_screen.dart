@@ -89,7 +89,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       showDestinationMarker(LatLng(latitude, longitude));
 
       CameraPosition pickupLocation =
-          CameraPosition(target: LatLng(latitude, longitude), zoom: 19);
+          CameraPosition(target: LatLng(latitude, longitude), zoom: zoomLevel);
 
       mapController
           .animateCamera(CameraUpdate.newCameraPosition(pickupLocation));
@@ -108,7 +108,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     CameraPosition cameraPosition = CameraPosition(
         target:
         LatLng(location.latitude as double, location.longitude as double),
-        zoom: 17);
+        zoom: zoomLevel);
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
@@ -134,7 +134,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: widget.startLatLng,
-                    zoom: 17,
+                    zoom: zoomLevel,
                   ),
                   markers: markerList, //MARKERS IN MAP
                   onCameraMove: (position) async {
