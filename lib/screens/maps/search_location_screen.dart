@@ -46,9 +46,11 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
       position: latLng,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
-    setState(() {
-      markerList.add(tmpMarker);
-    });
+    if(mounted){
+      setState(() {
+        markerList.add(tmpMarker);
+      });
+    }
   }
 
   void showSearchBar() async {

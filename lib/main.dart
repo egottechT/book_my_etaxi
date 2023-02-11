@@ -32,7 +32,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: MapsScreen(),
+      home: const MapsScreen(),
     ),
   ));
 }
@@ -44,6 +44,6 @@ final Map<String, Widget Function(BuildContext)> appPageRoutes = {
   '/phoneNumberSetup':(_) => const PhoneNumberSetup(),
   '/registrationScreen':(_) => const RegistrationScreen(),
   '/homeScreen':(_) => const HomeScreen(),
-  '/mapScreen':(_) => MapsScreen(),
+  '/mapScreen':(_) => const MapsScreen(),
   '/permissionScreen':(_) => const PermissionScreen(),
 };
