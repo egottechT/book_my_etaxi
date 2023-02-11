@@ -32,7 +32,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: const MapsScreen(),
+      home: const SplashScreen(),
     ),
   ));
 }

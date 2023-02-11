@@ -102,8 +102,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
       CameraPosition pickupLocation =
           CameraPosition(target: LatLng(latitude, longitude), zoom: zoomLevel);
 
-      mapController
-          .animateCamera(CameraUpdate.newCameraPosition(pickupLocation));
+      mapController.moveCamera(CameraUpdate.newCameraPosition(pickupLocation));
     }
   }
 
