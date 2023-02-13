@@ -48,8 +48,12 @@ class _PanelWidgetState extends State<PanelWidget> {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: carIndex == index ? primaryColor : Colors.grey[300],
+                shape: BoxShape.circle,
               ),
-              child: icon,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: icon,
+              ),
             ),
           ),
         ),
@@ -140,15 +144,18 @@ class _PanelWidgetState extends State<PanelWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Expanded(flex: 1,child: Icon(Icons.search)),
-                  Expanded(flex: 5,child: Text(
-                    context.watch<DestinationLocationProvider>().location,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      overflow: TextOverflow.ellipsis,
+                  const Expanded(flex: 1, child: Icon(Icons.search)),
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      context.watch<DestinationLocationProvider>().location,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),),
-                  Expanded(flex: 1,child: cancelButtonCondition())
+                  ),
+                  Expanded(flex: 1, child: cancelButtonCondition())
                 ],
               )),
         ));
