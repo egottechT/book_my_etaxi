@@ -330,42 +330,42 @@ class _MapsScreenState extends State<MapsScreen> {
           }
           // showSearchBar();
         },
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Card(
-            child: Container(
-                padding: const EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width - 40,
-                child: ListTile(
-                  title: Text(
+        child: Card(
+          child: Container(
+              padding: const EdgeInsets.all(10),
+              width: MediaQuery.of(context).size.width - 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Expanded(flex: 1,child: Icon(Icons.search)),
+                  Expanded(flex: 5,child: Text(
                     context.watch<PickupLocationProvider>().location,
                     style: const TextStyle(
                       fontSize: 16,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  leading: const Icon(Icons.search),
-                  dense: true,
-                  trailing: cancelButtonCondition(),
-                )),
-          ),
+                  ),),
+                  Expanded(flex: 1,child: cancelButtonCondition())
+                ],
+              )),
         ));
   }
 
   cancelButtonCondition() {
     if (context.read<PickupLocationProvider>().location != "Pickup Location") {
-      return IconButton(
-          onPressed: () {
-            context.read<PickupLocationProvider>().setString("Pickup Location");
-            context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
-            startLatitude = 0;
-            startLongitude = 0;
-            setState(() {
-              polylineCoordinates.clear();
-              _makers.remove(pickupMarker);
-            });
-          },
-          icon: const Icon(Icons.cancel));
+      return InkWell(
+        onTap: (){
+          context.read<PickupLocationProvider>().setString("Pickup Location");
+          context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
+          startLatitude = 0;
+          startLongitude = 0;
+          setState(() {
+            polylineCoordinates.clear();
+            _makers.remove(pickupMarker);
+          });
+        },
+        child: const Icon(Icons.cancel),
+      );
     }
     return const SizedBox(
       width: 2,

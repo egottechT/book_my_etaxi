@@ -142,25 +142,24 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                   onTap: () {
                     showSearchBar();
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Card(
-                      child: Container(
-                          padding: const EdgeInsets.all(0),
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: ListTile(
-                            title: Text(
+                  child: Card(
+                    child: Container(
+                        padding: const EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width - 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Expanded(flex: 1,child: Icon(Icons.search)),
+                            Expanded(flex: 5,child: Text(
                               location,
                               style: const TextStyle(
                                 fontSize: 16,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            leading: const Icon(Icons.search),
-                            dense: true,
-                            trailing: cancelButtonCondition(),
-                          )),
-                    ),
+                            ),),
+                            Expanded(flex: 1,child: cancelButtonCondition())
+                          ],
+                        )),
                   )),
             ),
             Positioned(
@@ -190,13 +189,13 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
   cancelButtonCondition() {
     if (location != "Pickup Location") {
-      return IconButton(
-          onPressed: () {
+      return InkWell(
+          onTap: () {
             setState(() {
               location = "Pickup Location";
             });
           },
-          icon: const Icon(Icons.cancel));
+          child: const Icon(Icons.cancel));
     }
     return const SizedBox(
       width: 2,
