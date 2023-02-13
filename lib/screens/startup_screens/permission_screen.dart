@@ -34,11 +34,11 @@ class _PermissionScreenState extends State<PermissionScreen> {
             Flexible(
                 child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 150,
                 ),
                 Image.asset("assets/images/permission_page.png",),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Text(
@@ -48,14 +48,14 @@ class _PermissionScreenState extends State<PermissionScreen> {
                       fontSize: 22,
                       fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Text(
+                const Text(
                   "Enjoy the safe & comfortable booking experience by giving us the following below Permissions",
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Row(
@@ -69,8 +69,10 @@ class _PermissionScreenState extends State<PermissionScreen> {
                             var status = await Permission.location.request();
                             if (status.isGranted) {
                               location = true;
-                              context.showSnackBar(
+                              if(context.mounted) {
+                                context.showSnackBar(
                                   message: "Location Permission is Granted");
+                              }
                             }
                           },
                           child: Text(
@@ -89,7 +91,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                       child: TextButton(
                           onPressed: () async {
                             var status = await Permission.contacts.request();
-                            if (status.isGranted) {
+                            if (status.isGranted && context.mounted) {
                               context.showSnackBar(
                                   message: "Contact Permission is Granted");
                               phone = true;
@@ -113,8 +115,8 @@ class _PermissionScreenState extends State<PermissionScreen> {
                       message: "Please allow both the permission first");
                 }
               },
-              child: Text("Allow"),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+              child: const Text("Allow"),
             ),
           ],
         ),

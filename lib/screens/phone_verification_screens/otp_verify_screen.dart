@@ -7,7 +7,7 @@ class OTPVerifyScreen extends StatefulWidget {
   final String phoneNumber;
 
 
-  OTPVerifyScreen({Key? key, required this.phoneNumber})
+  const OTPVerifyScreen({Key? key, required this.phoneNumber})
       : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Verify Mobile"),
+        title: const Text("Verify Mobile"),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -49,7 +49,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
                 ),
                 TextFormField(
                   controller: controller,
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                   decoration: const InputDecoration(
                     labelText: 'Enter OTP',
                   ),
@@ -72,10 +72,10 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
                   });
                 }
               },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
               child: showLoading
                   ? const CircularProgressIndicator()
-                  : Text("Submit"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                  : const Text("Submit"),
             ),
             const SizedBox(
               height: 10,

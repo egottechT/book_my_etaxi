@@ -3,7 +3,6 @@ import 'package:book_my_taxi/service/authentication.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:book_my_taxi/Utils/constant.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,9 +14,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreen extends State<LoginScreen> {
   bool showLoading = false;
 
-  Widget CenterCircularWidget(){
+  Widget centerCircularWidget(){
     return Flexible(child: Row(
-      children: [
+      children: const [
         SizedBox(width: 150,),
         CircularProgressIndicator(color: Colors.blue,),
         Flexible(child: SizedBox(width: 150,))
@@ -30,21 +29,19 @@ class _LoginScreen extends State<LoginScreen> {
       child: Scaffold(
           body: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Expanded(
                   flex: 1,
                   child: Align(
                     alignment: Alignment.bottomLeft,
-                    child: Container(
-                        child: Image.asset("assets/images/taxi_app_logo.png")),
+                    child: Image.asset("assets/images/taxi_app_logo.png"),
                   )),
               Expanded(
                   flex: 5,
-                  child: Container(
-                      child: Image.asset(
-                          "assets/images/login_screen_image.png"))),
+                  child: Image.asset(
+                      "assets/images/login_screen_image.png")),
               Expanded(
                   flex: 4,
                   child: Padding(
@@ -82,7 +79,7 @@ class _LoginScreen extends State<LoginScreen> {
                         const SizedBox(
                           height: 25,
                         ),
-                        showLoading ? CenterCircularWidget() : Column(
+                        showLoading ? centerCircularWidget() : Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ElevatedButton(
@@ -102,18 +99,22 @@ class _LoginScreen extends State<LoginScreen> {
                                 User? result = await doGmailLogin();
                                 if (result != null) {
                                   List<String> values = await readData();
-                                  if(values.contains(result.uid)){
+                                  if(values.contains(result.uid) && context.mounted){
                                     Navigator.of(context).pushNamed("/permissionScreen");
                                   }
                                   else{
                                     addUserToDatabase(result.uid.toString());
-                                    Navigator.of(context)
+                                    if(context.mounted) {
+                                      Navigator.of(context)
                                         .pushNamed("/registrationScreen");
+                                    }
                                   }
                                 } else {
-                                  context.showErrorSnackBar(
+                                  if(context.mounted) {
+                                    context.showErrorSnackBar(
                                       message:
                                       "There is some error while LogIn. Please try again later");
+                                  }
                                 }
                                 setState(() {
                                   showLoading = false;
