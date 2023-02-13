@@ -1,15 +1,17 @@
+import 'dart:convert';
+
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart' as locate;
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class PickUpLocationScreen extends StatefulWidget {
   final Function showMarkers;
@@ -25,7 +27,6 @@ class PickUpLocationScreen extends StatefulWidget {
 
 class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
   late GoogleMapController mapController;
-  double zoomLevel = 19;
   Set<Marker> markersList = {};
   String location = "Pickup Location";
   double latitude = 0, longitude = 0;
@@ -47,7 +48,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
     latitude = location.latitude as double;
     longitude = location.longitude as double;
-    showLocationFromLatLng(latitude,longitude);
+    showLocationFromLatLng(latitude, longitude);
     showDestinationMarker(LatLng(latitude, longitude));
     return location;
   }
@@ -59,9 +60,11 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
       position: latLng,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
-    setState(() {
-      markersList.add(tmpMarker);
-    });
+    if (mounted) {
+      setState(() {
+        markersList.add(tmpMarker);
+      });
+    }
   }
 
   void showSearchBar() async {
@@ -97,8 +100,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
       CameraPosition pickupLocation =
           CameraPosition(target: LatLng(latitude, longitude), zoom: zoomLevel);
 
-      mapController
-          .animateCamera(CameraUpdate.newCameraPosition(pickupLocation));
+      mapController.moveCamera(CameraUpdate.newCameraPosition(pickupLocation));
     }
   }
 
@@ -127,7 +129,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                 longitude = position.target.longitude;
                 showDestinationMarker(LatLng(latitude, longitude));
 
-                showLocationFromLatLng(latitude,longitude);
+                showLocationFromLatLng(latitude, longitude);
               },
             ),
             Positioned(
@@ -138,25 +140,24 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                   onTap: () {
                     showSearchBar();
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Card(
-                      child: Container(
-                          padding: const EdgeInsets.all(0),
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: ListTile(
-                            title: Text(
+                  child: Card(
+                    child: Container(
+                        padding: const EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width - 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Expanded(flex: 1,child: Icon(Icons.search)),
+                            Expanded(flex: 5,child: Text(
                               location,
                               style: const TextStyle(
                                 fontSize: 16,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            leading: const Icon(Icons.search),
-                            dense: true,
-                            trailing: cancelButtonCondition(),
-                          )),
-                    ),
+                            ),),
+                            Expanded(flex: 1,child: cancelButtonCondition())
+                          ],
+                        )),
                   )),
             ),
             Positioned(
@@ -186,26 +187,51 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
   cancelButtonCondition() {
     if (location != "Pickup Location") {
-      return IconButton(
-          onPressed: () {
+      return InkWell(
+          onTap: () {
             setState(() {
               location = "Pickup Location";
             });
           },
-          icon: const Icon(Icons.cancel));
+          child: const Icon(Icons.cancel));
     }
     return const SizedBox(
       width: 2,
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
+  }
+
   void showLocationFromLatLng(double latitude, double longitude) async {
-    List<Placemark> addresses =
-        await placemarkFromCoordinates(latitude, longitude);
-    var first = addresses.first;
-    setState(() {
-      location =
-      "${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}";
-    });
+    try {
+      var text = await getAddressFromLatLng(latitude, longitude);
+      debugPrint("First :- $text");
+      if (mounted) {
+        setState(() {
+          location = text;
+        });
+      }
+    } catch (e) {
+      debugPrint("No address found");
+    }
+  }
+
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    String host = 'https://maps.google.com/maps/api/geocode/json';
+    final url = '$host?key=$mapApiKey&language=en&latlng=$lat,$lng';
+
+    var response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
+      String formattedAddress = data["results"][0]["formatted_address"];
+      debugPrint("response ==== $formattedAddress");
+      return formattedAddress;
+    } else {
+      return location;
+    }
   }
 }

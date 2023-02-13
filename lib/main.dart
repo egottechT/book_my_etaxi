@@ -2,9 +2,7 @@ import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
-import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
-import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
 import 'package:book_my_taxi/screens/startup_screens/login_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/permission_screen.dart';
@@ -32,7 +30,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: MapsScreen(),
+      home: const SplashScreen(),
     ),
   ));
 }
@@ -44,6 +42,6 @@ final Map<String, Widget Function(BuildContext)> appPageRoutes = {
   '/phoneNumberSetup':(_) => const PhoneNumberSetup(),
   '/registrationScreen':(_) => const RegistrationScreen(),
   '/homeScreen':(_) => const HomeScreen(),
-  '/mapScreen':(_) => MapsScreen(),
+  '/mapScreen':(_) => const MapsScreen(),
   '/permissionScreen':(_) => const PermissionScreen(),
 };

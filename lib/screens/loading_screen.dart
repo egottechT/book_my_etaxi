@@ -34,7 +34,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     pickUp,
                     style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.circle,
                     color: Colors.green,
                     size: 16,
