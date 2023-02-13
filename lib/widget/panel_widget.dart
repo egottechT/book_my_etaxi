@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/screens/confirm_location_screen.dart';
 import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
@@ -195,9 +196,8 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
-                    uploadTripInfo(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const LoadingScreen()));
+                        builder: (context) => const ConfirmLocationScreen()));
                   },
                   child: const Text("Book the ride"),
                 ),

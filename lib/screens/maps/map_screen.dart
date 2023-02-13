@@ -6,9 +6,13 @@ import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/directions.dart' as direction;
+import 'package:google_maps_webservice/places.dart' as place_web_service;
 import 'package:location/location.dart' as locate;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -40,6 +44,7 @@ class _MapsScreenState extends State<MapsScreen> {
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
   String? _placeDistance;
+  bool moveLocationMarker = true;
 
   void removeDestinationMaker() {
     setState(() {
@@ -106,7 +111,7 @@ class _MapsScreenState extends State<MapsScreen> {
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
 
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
     return location;
   }
 
@@ -185,19 +190,11 @@ class _MapsScreenState extends State<MapsScreen> {
       tmpMarker = Marker(
         markerId: MarkerId(name),
         position: latLng,
-        draggable: true,
-        onDragEnd: (value) {
-          debugPrint("New location:- ${value.latitude} , ${value.longitude}");
-        },
         icon: BitmapDescriptor.fromBytes(markIcons!),
       );
       pickupMarker = tmpMarker;
       startLatitude = latLng.latitude;
       startLongitude = latLng.longitude;
-      CameraPosition cameraPosition =
-          CameraPosition(target: latLng, zoom: zoomLevel);
-      mapController
-          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     }
 
     setState(() {
@@ -227,9 +224,14 @@ class _MapsScreenState extends State<MapsScreen> {
     });
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
-    getCurrentLocation();
+    var currentPoint = await getCurrentLocation();
+    markIcons = await getImages('assets/images/green_pin.png', 150);
+    setMapMarker(
+        LatLng(
+            currentPoint.latitude as double, currentPoint.longitude as double),
+        false);
   }
 
   Widget buildFAB(BuildContext context) {
@@ -283,6 +285,14 @@ class _MapsScreenState extends State<MapsScreen> {
                   zoom: zoomLevel,
                 ),
                 markers: _makers, //MARKERS IN MAP
+                onCameraMove: (position) async {
+                  startLatitude = position.target.latitude;
+                  startLongitude = position.target.longitude;
+                  Provider.of<PickupLocationProvider>(context,listen: false).setPositionLatLng(LatLng(startLatitude, startLongitude));
+                  setMapMarker(LatLng(startLatitude, startLongitude),false);
+
+                  showLocationFromLatLng(startLatitude, startLongitude);
+                },
               ),
               Positioned(
                   top: 10,
@@ -316,19 +326,30 @@ class _MapsScreenState extends State<MapsScreen> {
     );
   }
 
+  void showLocationFromLatLng(double latitude, double longitude) async {
+    try {
+      var text = await getAddressFromLatLng(latitude, longitude,"");
+      if (context.mounted) {
+        Provider.of<PickupLocationProvider>(context,listen: false).setString(text);
+      }
+    } catch (e) {
+      debugPrint("No address found");
+    }
+  }
+
   Widget searchBarWidget() {
     return InkWell(
         onTap: () async {
-          var data = await getCurrentLocation();
-          if (context.mounted) {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => PickUpLocationScreen(
-                      showMarkers: setMapMarker,
-                      startLatLng: LatLng(
-                          data.latitude as double, data.longitude as double),
-                    )));
-          }
-          // showSearchBar();
+          // var data = await getCurrentLocation();
+          // if (context.mounted) {
+          //   Navigator.of(context).push(MaterialPageRoute(
+          //       builder: (context) => PickUpLocationScreen(
+          //             showMarkers: setMapMarker,
+          //             startLatLng: LatLng(
+          //                 data.latitude as double, data.longitude as double),
+          //           )));
+          // }
+          showSearchBar();
         },
         child: Card(
           child: Container(
@@ -337,26 +358,67 @@ class _MapsScreenState extends State<MapsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Expanded(flex: 1,child: Icon(Icons.search)),
-                  Expanded(flex: 5,child: Text(
-                    context.watch<PickupLocationProvider>().location,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      overflow: TextOverflow.ellipsis,
+                  const Expanded(flex: 1, child: Icon(Icons.search)),
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      context.watch<PickupLocationProvider>().location,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),),
-                  Expanded(flex: 1,child: cancelButtonCondition())
+                  ),
+                  Expanded(flex: 1, child: cancelButtonCondition())
                 ],
               )),
         ));
   }
 
+  void showSearchBar() async {
+    var place = await PlacesAutocomplete.show(
+        context: context,
+        apiKey: mapApiKey,
+        mode: Mode.overlay,
+        types: [],
+        strictbounds: false,
+        components: [direction.Component(direction.Component.country, 'IN')],
+        onError: (err) {
+          debugPrint("$err");
+        });
+
+    if (place != null) {
+      Provider.of<PickupLocationProvider>(context,listen: false).setString(place.description.toString());
+
+      //form google_maps_webservice package
+      final plist = place_web_service.GoogleMapsPlaces(
+        apiKey: mapApiKey,
+        apiHeaders: await const GoogleApiHeaders().getHeaders(),
+        //from google_api_headers package
+      );
+      String placeId = place.placeId ?? "0";
+      final detail = await plist.getDetailsByPlaceId(placeId);
+      final geometry = detail.result.geometry!;
+      startLatitude = geometry.location.lat;
+      startLongitude = geometry.location.lng;
+      Provider.of<PickupLocationProvider>(context,listen: false).setPositionLatLng(LatLng(startLatitude, startLongitude),);
+
+      setMapMarker(LatLng(startLatitude, startLongitude),false);
+      CameraPosition pickupLocation =
+      CameraPosition(target: LatLng(startLatitude, startLongitude), zoom: zoomLevel);
+
+      mapController.moveCamera(CameraUpdate.newCameraPosition(pickupLocation));
+    }
+  }
+
   cancelButtonCondition() {
     if (context.read<PickupLocationProvider>().location != "Pickup Location") {
       return InkWell(
-        onTap: (){
+        onTap: () {
           context.read<PickupLocationProvider>().setString("Pickup Location");
-          context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
+          context
+              .read<PickupLocationProvider>()
+              .setPositionLatLng(const LatLng(0, 0));
           startLatitude = 0;
           startLongitude = 0;
           setState(() {
