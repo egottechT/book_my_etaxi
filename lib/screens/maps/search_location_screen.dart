@@ -14,21 +14,21 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart' as locate;
 
-class SearchLocationScreen extends StatefulWidget {
+class DestinationLocationScreen extends StatefulWidget {
   final Function setMapMarker;
   final LatLng startLatLng;
 
-  const SearchLocationScreen({
+  const DestinationLocationScreen({
     Key? key,
     required this.setMapMarker,
     required this.startLatLng,
   }) : super(key: key);
 
   @override
-  State<SearchLocationScreen> createState() => _SearchLocationScreenState();
+  State<DestinationLocationScreen> createState() => _DestinationLocationScreen();
 }
 
-class _SearchLocationScreenState extends State<SearchLocationScreen> {
+class _DestinationLocationScreen extends State<DestinationLocationScreen> {
   String location = "Destination";
   double latitude = 0, longitude = 0;
   late GoogleMapController mapController;
@@ -46,9 +46,11 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       position: latLng,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
-    setState(() {
-      markerList.add(tmpMarker);
-    });
+    if(mounted){
+      setState(() {
+        markerList.add(tmpMarker);
+      });
+    }
   }
 
   void showSearchBar() async {
@@ -80,19 +82,11 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       latitude = geometry.location.lat;
       longitude = geometry.location.lng;
 
-      if (context.mounted) {
-        context.read<DestinationLocationProvider>().setString(location);
-        context
-            .read<DestinationLocationProvider>()
-            .setPositionLatLng(LatLng(latitude, longitude));
-      }
       showDestinationMarker(LatLng(latitude, longitude));
-
       CameraPosition pickupLocation =
-          CameraPosition(target: LatLng(latitude, longitude), zoom: 19);
+          CameraPosition(target: LatLng(latitude, longitude), zoom: zoomLevel);
 
-      mapController
-          .animateCamera(CameraUpdate.newCameraPosition(pickupLocation));
+      mapController.moveCamera(CameraUpdate.newCameraPosition(pickupLocation));
     }
   }
 
@@ -104,19 +98,25 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
 
   Future<LocationData> getCurrentLocation() async {
     locate.Location currentLocation = locate.Location();
-    var location = await currentLocation.getLocation();
+    var currentPoint = await currentLocation.getLocation();
     CameraPosition cameraPosition = CameraPosition(
         target:
-        LatLng(location.latitude as double, location.longitude as double),
-        zoom: 17);
+        LatLng(currentPoint.latitude as double, currentPoint.longitude as double),
+        zoom: zoomLevel);
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-    latitude = location.latitude as double;
-    longitude = location.longitude as double;
+    latitude = currentPoint.latitude as double;
+    longitude = currentPoint.longitude as double;
     showLocationFromLatLng(latitude,longitude);
     showDestinationMarker(LatLng(latitude, longitude));
-    return location;
+    return currentPoint;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
   }
 
   @override
@@ -134,14 +134,13 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: widget.startLatLng,
-                    zoom: 17,
+                    zoom: zoomLevel,
                   ),
                   markers: markerList, //MARKERS IN MAP
                   onCameraMove: (position) async {
                     latitude = position.target.latitude;
                     longitude = position.target.longitude;
                     showDestinationMarker(LatLng(latitude, longitude));
-
                     showLocationFromLatLng(latitude,longitude);
                   },
                 ),
@@ -235,8 +234,14 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                         ElevatedButton(
                             onPressed: () {
                               var position = LatLng(latitude, longitude);
-                              widget.setMapMarker(position, true);
+                              if (context.mounted) {
+                                context.read<DestinationLocationProvider>().setString(location);
+                                context
+                                    .read<DestinationLocationProvider>()
+                                    .setPositionLatLng(LatLng(latitude, longitude));
+                              }
                               Navigator.pop(context);
+                              widget.setMapMarker(position, true);
                             },
                             child: const Text("Confirm Location")),
                         Row(
@@ -248,11 +253,11 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                 onPressed: () async {
                                   locate.Location currentLocation =
                                       locate.Location();
-                                  var location =
+                                  var currentPoint =
                                       await currentLocation.getLocation();
                                   var newlatlang = LatLng(
-                                      location.latitude as double,
-                                      location.longitude as double);
+                                      currentPoint.latitude as double,
+                                      currentPoint.longitude as double);
                                   widget.setMapMarker(newlatlang, true);
                                 },
                                 label: Text(
@@ -284,10 +289,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     List<Placemark> addresses =
     await placemarkFromCoordinates(latitude, longitude);
     var first = addresses.first;
-    setState(() {
-      location =
-      "${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}";
-    });
+    if(mounted){
+      setState(() {
+        location =
+        "${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}";
+      });
+    }
   }
   final ButtonStyle _buttonStyle =
       ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);

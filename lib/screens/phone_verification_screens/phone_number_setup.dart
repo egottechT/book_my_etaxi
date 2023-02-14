@@ -1,6 +1,5 @@
 import 'package:book_my_taxi/widget/phone_number_view.dart';
 import 'package:book_my_taxi/service/authentication.dart';
-import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 
 class PhoneNumberSetup extends StatefulWidget {
@@ -33,18 +32,17 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
                 Flexible(
                     child: Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 100,
                     ),
                     phoneNumberForm(),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     )
                   ],
                 )),
                 ElevatedButton(
                   onPressed: () async {
-                    print(phoneNumber);
                     if (phoneNumber.length == 13) {
                       setState(() {
                         showLoading = true;
@@ -56,11 +54,11 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
                       });
                     }
                   },
-                  child: Text("Next"),
                   style:
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                  child: const Text("Next"),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 )
               ],
@@ -77,7 +75,7 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
           textAlign: TextAlign.left,
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        SizedBox(
+        const SizedBox(
           height: 15,
         ),
         const Text(
@@ -85,7 +83,7 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
           textAlign: TextAlign.left,
           style: TextStyle(fontSize: 18, color: Colors.grey),
         ),
-        SizedBox(
+        const SizedBox(
           height: 50,
         ),
         showLoading

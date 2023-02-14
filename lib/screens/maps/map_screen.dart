@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapsScreen extends StatefulWidget {
-  MapsScreen({Key? key}) : super(key: key);
+  const MapsScreen({Key? key}) : super(key: key);
 
   @override
   State<MapsScreen> createState() => _MapsScreenState();
@@ -27,12 +27,11 @@ class _MapsScreenState extends State<MapsScreen> {
   late GoogleMapController mapController;
   Marker? pickupMarker, destinationMarker;
   Set<Marker> _makers = {};
-  LatLng _center = const LatLng(20.5937, 78.9629);
-  double zoomLevel = 19;
+  final LatLng _center = const LatLng(20.5937, 78.9629);
   String drive = "sedan";
   Uint8List? markIcons;
   List<dynamic> list = [];
-  final _panelcontroller = PanelController();
+  final panelController = PanelController();
   late PanelWidget panelWidget;
   double startLatitude = 0,
       destinationLatitude = 0,
@@ -41,13 +40,19 @@ class _MapsScreenState extends State<MapsScreen> {
   late PolylinePoints polylinePoints;
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
-  String? _placeDistance = null;
+  String? _placeDistance;
 
   void removeDestinationMaker() {
     setState(() {
       polylineCoordinates.clear();
       _makers.remove(destinationMarker);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
   }
 
   void _createPolylines(
@@ -68,12 +73,12 @@ class _MapsScreenState extends State<MapsScreen> {
     // Adding the coordinates to the list
     polylineCoordinates.clear();
     if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
+      for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
+      }
     }
 
-    PolylineId id = PolylineId('poly');
+    PolylineId id = const PolylineId('poly');
     Polyline polyline = Polyline(
       polylineId: id,
       color: Colors.black,
@@ -82,8 +87,6 @@ class _MapsScreenState extends State<MapsScreen> {
     );
     setState(() {
       polylines[id] = polyline;
-    });
-    setState(() {
       _placeDistance = caluclateDistance(polylineCoordinates);
     });
   }
@@ -99,13 +102,12 @@ class _MapsScreenState extends State<MapsScreen> {
   Future<LocationData> getCurrentLocation() async {
     locate.Location currentLocation = locate.Location();
     var location = await currentLocation.getLocation();
-    CameraPosition _cameraPos = CameraPosition(
+    CameraPosition cameraPosition = CameraPosition(
         target:
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
 
-    mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
-    // setTheMarkers(location);
+    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
     return location;
   }
 
@@ -184,18 +186,15 @@ class _MapsScreenState extends State<MapsScreen> {
       tmpMarker = Marker(
         markerId: MarkerId(name),
         position: latLng,
-        draggable: true,
-        onDragEnd: (value) {
-          debugPrint("New location:- ${value.latitude} , ${value.longitude}");
-        },
         icon: BitmapDescriptor.fromBytes(markIcons!),
       );
       pickupMarker = tmpMarker;
       startLatitude = latLng.latitude;
       startLongitude = latLng.longitude;
-      CameraPosition _cameraPos =
+      CameraPosition cameraPosition =
           CameraPosition(target: latLng, zoom: zoomLevel);
-      mapController.animateCamera(CameraUpdate.newCameraPosition(_cameraPos));
+      mapController
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     }
 
     setState(() {
@@ -206,13 +205,13 @@ class _MapsScreenState extends State<MapsScreen> {
   void setCarsMarker(locate.LocationData location) async {
     Set<Marker> values = {};
     double diff = 0.001000;
-    markIcons = await getImages('assets/images/${drive}.png', 300);
+    markIcons = await getImages('assets/images/$drive.png', 300);
 
     for (int i = 0; i < 2; i++) {
       Marker tmpMarker = Marker(
         markerId: MarkerId("Car ${i + 1}"),
-        position: LatLng((location.latitude! + diff) as double,
-            (location.longitude! + diff) as double),
+        position:
+            LatLng((location.latitude! + diff), (location.longitude! + diff)),
         infoWindow: InfoWindow(title: "Car ${i + 1}", snippet: "Book the car"),
         icon: BitmapDescriptor.fromBytes(markIcons!),
       );
@@ -225,7 +224,7 @@ class _MapsScreenState extends State<MapsScreen> {
     });
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     getCurrentLocation();
   }
@@ -236,7 +235,7 @@ class _MapsScreenState extends State<MapsScreen> {
         await getCurrentLocation();
       },
       backgroundColor: Colors.white,
-      child: Icon(
+      child: const Icon(
         Icons.gps_fixed,
         color: Colors.blue,
       ),
@@ -253,14 +252,14 @@ class _MapsScreenState extends State<MapsScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         body: SlidingUpPanel(
-          controller: _panelcontroller,
+          controller: panelController,
           panelBuilder: (controller) {
             panelWidget.controller = controller;
             return panelWidget;
           },
           parallaxEnabled: true,
           parallaxOffset: 0.5,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
           minHeight: panelHeightClosed,
           maxHeight: panelHeightOpened,
           onPanelSlide: (position) {
@@ -294,7 +293,7 @@ class _MapsScreenState extends State<MapsScreen> {
                         visible: false,
                         child: Text(
                           'DISTANCE: $_placeDistance km',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -303,9 +302,9 @@ class _MapsScreenState extends State<MapsScreen> {
                     ],
                   )),
               Positioned(
-                child: buildFAB(context),
                 right: 20,
                 bottom: fabHeightBottom,
+                child: buildFAB(context),
               ),
             ],
           ),
@@ -318,47 +317,52 @@ class _MapsScreenState extends State<MapsScreen> {
     return InkWell(
         onTap: () async {
           var data = await getCurrentLocation();
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PickUpLocationScreen(
-                    showMarkers: setMapMarker,
-                    startLatLng: LatLng(
-                        data.latitude as double, data.longitude as double),
-                  )));
+          if (context.mounted) {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => PickUpLocationScreen(
+                      showMarkers: setMapMarker,
+                      startLatLng: LatLng(
+                          data.latitude as double, data.longitude as double),
+                    )));
+          }
           // showSearchBar();
         },
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Card(
-            child: Container(
-                padding: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width - 40,
-                child: ListTile(
-                  title: Text(
+        child: Card(
+          child: Container(
+              padding: const EdgeInsets.all(10),
+              width: MediaQuery.of(context).size.width - 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Expanded(flex: 1,child: Icon(Icons.search)),
+                  Expanded(flex: 5,child: Text(
                     context.watch<PickupLocationProvider>().location,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  leading: Icon(Icons.search),
-                  dense: true,
-                  trailing: cancelButtonCondition(),
-                )),
-          ),
+                  ),),
+                  Expanded(flex: 1,child: cancelButtonCondition())
+                ],
+              )),
         ));
   }
 
   cancelButtonCondition() {
-    if (context.read<PickupLocationProvider>().location != "Your current Location") {
-      return IconButton(
-          onPressed: () {
-            context.read<PickupLocationProvider>().setString("Your current Location");
-            setState(() {
-              polylineCoordinates.clear();
-              _makers.remove(pickupMarker);
-            });
-          },
-          icon: const Icon(Icons.cancel));
+    if (context.read<PickupLocationProvider>().location != "Pickup Location") {
+      return InkWell(
+        onTap: (){
+          context.read<PickupLocationProvider>().setString("Pickup Location");
+          context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
+          startLatitude = 0;
+          startLongitude = 0;
+          setState(() {
+            polylineCoordinates.clear();
+            _makers.remove(pickupMarker);
+          });
+        },
+        child: const Icon(Icons.cancel),
+      );
     }
     return const SizedBox(
       width: 2,

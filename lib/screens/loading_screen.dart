@@ -12,11 +12,13 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  Widget SecondSectioView() {
+
+  Widget secondSectionView() {
     String pickUp =
         Provider.of<PickupLocationProvider>(context, listen: false).location;
     String destination =
-        Provider.of<DestinationLocationProvider>(context, listen: false).location;
+        Provider.of<DestinationLocationProvider>(context, listen: false)
+            .location;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -34,7 +36,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     pickUp,
                     style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.circle,
                     color: Colors.green,
                     size: 16,
@@ -63,10 +65,30 @@ class _LoadingScreenState extends State<LoadingScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Are you sure you want to cancel request?"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                ..pop()
+                                ..pop();
+                            },
+                            child: const Text("Yes")),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("No"))
+                      ],
+                    );
+                  });
             },
-            child: Text("CANCEL REQUEST"),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),
+            child: const Text("CANCEL REQUEST"),
           )
         ],
       ),
@@ -78,7 +100,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        title: Text("Booking Confirmation"),
+        title: const Text("Booking Confirmation"),
         elevation: 0,
         backgroundColor: Colors.orange,
       ),
@@ -98,18 +120,21 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         child: Lottie.asset(
                             // 'assets/animation/taxi_animation.json',
                             'assets/animation/car_animation.json',
-                        fit: BoxFit.fill),
+                            fit: BoxFit.fill),
                       ),
                       const Text(
                         "REQUEST ONGOING",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
                       ),
                     ],
                   ),
                 ),
               )),
-          Expanded(flex: 2, child: SecondSectioView()),
+          Expanded(flex: 2, child: secondSectionView()),
         ],
       ),
     ));

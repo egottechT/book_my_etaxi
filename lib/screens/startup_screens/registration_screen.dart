@@ -29,21 +29,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              title: Text("Register"),
+              title: const Text("Register"),
             ),
             body: Padding(
-              padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Flexible(
                       child: Column(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 150,
                       ),
                       registrationForm(),
-                      SizedBox(
+                      const SizedBox(
                         height: 100,
                       ),
                     ],
@@ -54,9 +54,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Navigator.of(context).pushNamed("/permissionScreen");
                       }
                     },
-                    child: Text("Next"),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    child: const Text("Next"),
                   )
                 ],
               ),
@@ -83,7 +83,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   textInputAction: TextInputAction.next,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 25,
               ),
               Flexible(
@@ -99,7 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           TextFormField(
@@ -116,7 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               return null;
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           PhoneNumberInput(
@@ -126,7 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               });
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           TextFormField(
