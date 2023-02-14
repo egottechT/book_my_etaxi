@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
@@ -9,12 +11,27 @@ import 'package:book_my_taxi/screens/startup_screens/permission_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/registration_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show PlatformDispatcher, kDebugMode;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: false);
+    return true;
+  };
+  Isolate.current.addErrorListener(RawReceivePort((pair) async {
+    final List<dynamic> errorAndStacktrace = pair;
+    await FirebaseCrashlytics.instance.recordError(
+      errorAndStacktrace.first,
+      errorAndStacktrace.last,
+      fatal: false,
+    );
+  }).sendPort);
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => PickupLocationProvider()),
@@ -30,7 +47,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: const SplashScreen(),
+      home: const MapsScreen(),
     ),
   ));
 }

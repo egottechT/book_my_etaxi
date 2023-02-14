@@ -59,7 +59,6 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
       print("verification failed ${e.code}");
     },
     codeSent: (String verificationId, int? resendToken) async {
-      debugPrint("Code is sent ${verificationId}");
       Navigator.push(context,MaterialPageRoute(builder: (BuildContext context)=> OTPVerifyScreen(phoneNumber: number)));
       verificationCode = verificationId;
     },

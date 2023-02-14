@@ -226,7 +226,8 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
-    getCurrentLocation();
+    LocationData locationData = await getCurrentLocation();
+    setMapMarker(LatLng(locationData.latitude as double, locationData.longitude as double), false);
   }
 
   Widget buildFAB(BuildContext context) {
@@ -349,10 +350,10 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   cancelButtonCondition() {
-    if (context.read<PickupLocationProvider>().location != "Pickup Location") {
+    if (context.read<PickupLocationProvider>().location != "Your current Location") {
       return InkWell(
         onTap: (){
-          context.read<PickupLocationProvider>().setString("Pickup Location");
+          context.read<PickupLocationProvider>().setString("Your current Location");
           context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
           startLatitude = 0;
           startLongitude = 0;
