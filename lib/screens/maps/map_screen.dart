@@ -349,10 +349,10 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   cancelButtonCondition() {
-    if (context.read<PickupLocationProvider>().location != "Pickup Location") {
+    if (context.read<PickupLocationProvider>().location != "Your current Location") {
       return IconButton(
           onPressed: () {
-            context.read<PickupLocationProvider>().setString("Pickup Location");
+            context.read<PickupLocationProvider>().setString("Your current Location");
             setState(() {
               polylineCoordinates.clear();
               _makers.remove(pickupMarker);

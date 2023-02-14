@@ -27,7 +27,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
   late GoogleMapController mapController;
   double zoomLevel = 19;
   Set<Marker> markersList = {};
-  String location = "Pickup Location";
+  String location = "Your current Location";
   double latitude = 0, longitude = 0;
 
   void _onMapCreated(GoogleMapController controller) async {
@@ -185,11 +185,11 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
   }
 
   cancelButtonCondition() {
-    if (location != "Pickup Location") {
+    if (location != "Your current Location") {
       return IconButton(
           onPressed: () {
             setState(() {
-              location = "Pickup Location";
+              location = "Your current Location";
             });
           },
           icon: const Icon(Icons.cancel));
