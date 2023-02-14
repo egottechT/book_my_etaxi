@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/screens/confirm_location_screen.dart';
 import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
@@ -47,8 +48,12 @@ class _PanelWidgetState extends State<PanelWidget> {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: carIndex == index ? primaryColor : Colors.grey[300],
+                shape: BoxShape.circle,
               ),
-              child: icon,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: icon,
+              ),
             ),
           ),
         ),
@@ -139,15 +144,18 @@ class _PanelWidgetState extends State<PanelWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Expanded(flex: 1,child: Icon(Icons.search)),
-                  Expanded(flex: 5,child: Text(
-                    context.watch<DestinationLocationProvider>().location,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      overflow: TextOverflow.ellipsis,
+                  const Expanded(flex: 1, child: Icon(Icons.search)),
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      context.watch<DestinationLocationProvider>().location,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),),
-                  Expanded(flex: 1,child: cancelButtonCondition())
+                  ),
+                  Expanded(flex: 1, child: cancelButtonCondition())
                 ],
               )),
         ));
@@ -195,9 +203,8 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {
-                    uploadTripInfo(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const LoadingScreen()));
+                        builder: (context) => const ConfirmLocationScreen()));
                   },
                   child: const Text("Book the ride"),
                 ),

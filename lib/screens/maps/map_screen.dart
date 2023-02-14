@@ -106,7 +106,7 @@ class _MapsScreenState extends State<MapsScreen> {
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
 
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
     return location;
   }
 
@@ -185,10 +185,6 @@ class _MapsScreenState extends State<MapsScreen> {
       tmpMarker = Marker(
         markerId: MarkerId(name),
         position: latLng,
-        draggable: true,
-        onDragEnd: (value) {
-          debugPrint("New location:- ${value.latitude} , ${value.longitude}");
-        },
         icon: BitmapDescriptor.fromBytes(markIcons!),
       );
       pickupMarker = tmpMarker;
@@ -227,7 +223,7 @@ class _MapsScreenState extends State<MapsScreen> {
     });
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     getCurrentLocation();
   }
