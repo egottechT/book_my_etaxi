@@ -208,7 +208,8 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
   void showLocationFromLatLng(double latitude, double longitude) async {
     try {
-      var text = await getAddressFromLatLng(latitude, longitude,location);
+      var text = await getAddressFromLatLng(latitude, longitude);
+      debugPrint("First :- $text");
       if (mounted) {
         setState(() {
           location = text;
@@ -216,6 +217,21 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
       }
     } catch (e) {
       debugPrint("No address found");
+    }
+  }
+
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    String host = 'https://maps.google.com/maps/api/geocode/json';
+    final url = '$host?key=$mapApiKey&language=en&latlng=$lat,$lng';
+
+    var response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
+      String formattedAddress = data["results"][0]["formatted_address"];
+      debugPrint("response ==== $formattedAddress");
+      return formattedAddress;
+    } else {
+      return location;
     }
   }
 }
