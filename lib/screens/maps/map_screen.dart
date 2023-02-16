@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
@@ -15,6 +16,7 @@ import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:http/http.dart' as http;
 
 class MapsScreen extends StatefulWidget {
   const MapsScreen({Key? key}) : super(key: key);
@@ -184,10 +186,26 @@ class _MapsScreenState extends State<MapsScreen> {
     } else {
       markIcons = await getImages('assets/images/green_pin.png', 150);
       tmpMarker = Marker(
-        markerId: MarkerId(name),
-        position: latLng,
-        icon: BitmapDescriptor.fromBytes(markIcons!),
-      );
+          markerId: MarkerId(name),
+          position: latLng,
+          icon: BitmapDescriptor.fromBytes(markIcons!),
+          draggable: true,
+          onDragStart: (dragPosition) {
+            Provider.of<PickupLocationProvider>(context, listen: false)
+                .setString("Loading...");
+          },
+          onDragEnd: (dragPoint) async {
+            startLatitude = dragPoint.latitude;
+            startLongitude = dragPoint.longitude;
+            String point =
+                await getAddressFromLatLng(startLatitude, startLongitude);
+            if (context.mounted) {
+              Provider.of<PickupLocationProvider>(context, listen: false)
+                  .setString(point);
+              Provider.of<PickupLocationProvider>(context, listen: false)
+                  .setPositionLatLng(dragPoint);
+            }
+          });
       pickupMarker = tmpMarker;
       startLatitude = latLng.latitude;
       startLongitude = latLng.longitude;
@@ -227,7 +245,30 @@ class _MapsScreenState extends State<MapsScreen> {
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     LocationData locationData = await getCurrentLocation();
-    setMapMarker(LatLng(locationData.latitude as double, locationData.longitude as double), false);
+    setMapMarker(
+        LatLng(
+            locationData.latitude as double, locationData.longitude as double),
+        false);
+    String point = await getAddressFromLatLng(
+        locationData.latitude as double, locationData.longitude as double);
+    if (context.mounted) {
+      Provider.of<PickupLocationProvider>(context, listen: false)
+          .setString(point);
+    }
+  }
+
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    String host = 'https://maps.google.com/maps/api/geocode/json';
+    final url = '$host?key=$mapApiKey&language=en&latlng=$lat,$lng';
+
+    var response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      Map data = jsonDecode(response.body);
+      String formattedAddress = data["results"][0]["formatted_address"];
+      return formattedAddress;
+    } else {
+      return "Your current Location";
+    }
   }
 
   Widget buildFAB(BuildContext context) {
@@ -335,26 +376,34 @@ class _MapsScreenState extends State<MapsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Expanded(flex: 1,child: Icon(Icons.search)),
-                  Expanded(flex: 5,child: Text(
-                    context.watch<PickupLocationProvider>().location,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      overflow: TextOverflow.ellipsis,
+                  const Expanded(flex: 1, child: Icon(Icons.search)),
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      context.watch<PickupLocationProvider>().location,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),),
-                  Expanded(flex: 1,child: cancelButtonCondition())
+                  ),
+                  Expanded(flex: 1, child: cancelButtonCondition())
                 ],
               )),
         ));
   }
 
   cancelButtonCondition() {
-    if (context.read<PickupLocationProvider>().location != "Your current Location") {
+    if (context.read<PickupLocationProvider>().location !=
+        "Your current Location") {
       return InkWell(
-        onTap: (){
-          context.read<PickupLocationProvider>().setString("Your current Location");
-          context.read<PickupLocationProvider>().setPositionLatLng(const LatLng(0, 0));
+        onTap: () {
+          context
+              .read<PickupLocationProvider>()
+              .setString("Your current Location");
+          context
+              .read<PickupLocationProvider>()
+              .setPositionLatLng(const LatLng(0, 0));
           startLatitude = 0;
           startLongitude = 0;
           setState(() {
