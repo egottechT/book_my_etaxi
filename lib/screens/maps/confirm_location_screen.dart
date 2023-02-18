@@ -9,7 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:provider/provider.dart';
 
-import '../listeners/location_string_listener.dart';
+import '../../listeners/location_string_listener.dart';
 
 class ConfirmLocationScreen extends StatefulWidget {
   const ConfirmLocationScreen({Key? key}) : super(key: key);

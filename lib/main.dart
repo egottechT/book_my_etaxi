@@ -3,6 +3,8 @@ import 'dart:isolate';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
+import 'package:book_my_taxi/screens/balance_screen.dart';
+import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
@@ -14,7 +16,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart' show PlatformDispatcher, kDebugMode;
+import 'package:flutter/foundation.dart' show PlatformDispatcher;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +49,7 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: const MapsScreen(),
+      home: const DriverInfoScreen(),
     ),
   ));
 }
