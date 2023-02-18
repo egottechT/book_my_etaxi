@@ -44,7 +44,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
             LatLng(location.latitude as double, location.longitude as double),
         zoom: zoomLevel);
 
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
     latitude = location.latitude as double;
     longitude = location.longitude as double;

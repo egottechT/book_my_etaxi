@@ -104,7 +104,7 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
         LatLng(currentPoint.latitude as double, currentPoint.longitude as double),
         zoom: zoomLevel);
 
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
     latitude = currentPoint.latitude as double;
     longitude = currentPoint.longitude as double;
