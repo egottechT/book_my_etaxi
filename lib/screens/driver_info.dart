@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -16,6 +17,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   late String stars;
 
   final LatLng _center = const LatLng(20.5937, 78.9629);
+  String moneyWay ="Cash";
 
   @override
   void initState() {
@@ -151,12 +153,25 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
-                          children: const [
-                            Icon(Icons.money_outlined),
-                            Text("Cash"),
+                          children: [
+                            const Icon(Icons.money_outlined),
+                            Text(moneyWay),
                           ],
                         ),
-                        const Text("Change")
+                        InkWell(
+                          child: const Text(
+                            "Change",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          onTap: () async {
+                              final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const PaymentScreen()));
+                              debugPrint("$result");
+                              setState(() {
+                                moneyWay = result;
+                              });
+
+                          },
+                        )
                       ],
                     ),
                   ),

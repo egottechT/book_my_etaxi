@@ -8,7 +8,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  int currentIndex = 0;
+  int currentIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -136,10 +136,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () {},
-                      child: Text("DONE"),
+                      onPressed: () {
+                        String selected = "Credit/Debit";
+                        if(currentIndex==0){
+                          selected = "Paypal";
+                        }
+                        else if(currentIndex == 1){
+                          selected = "Credit/Debit";
+                        }
+                        else{
+                          selected = "Cash";
+                        }
+                        Navigator.pop(context,selected);
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black),
+                      child: const Text("DONE"),
                     )
                   ],
                 ),
