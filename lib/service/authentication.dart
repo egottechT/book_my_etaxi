@@ -17,17 +17,17 @@ Future<User?> doGmailLogin() async {
   final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
   if (googleSignInAccount != null) {
     final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+    await googleSignInAccount.authentication;
     final AuthCredential authCredential = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken);
 
     UserCredential result = await _auth.signInWithCredential(authCredential);
     User? user = result.user;
-    if(user != null){
+    if (user != null) {
       return user;
     }
-    else{
+    else {
       return null;
     }
   }
@@ -54,14 +54,16 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
-      Provider.of<OtpProvider>(context,listen: false).setString(credential.smsCode.toString());
-
-      },
+      Provider.of<OtpProvider>(context, listen: false).setString(
+          credential.smsCode.toString());
+    },
     verificationFailed: (FirebaseAuthException e) {
       debugPrint("verification failed ${e.code}");
     },
     codeSent: (String verificationId, int? resendToken) async {
-      Navigator.push(context,MaterialPageRoute(builder: (BuildContext context)=> OTPVerifyScreen(phoneNumber: number)));
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) =>
+              OTPVerifyScreen(phoneNumber: number)));
       verificationCode = verificationId;
     },
     codeAutoRetrievalTimeout: (String verificationId) {
@@ -70,22 +72,23 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   );
 }
 
-Future<void> checkOTP(String smsCode,BuildContext context) async {
-
-  try{
-    List<String>? values = await readData();
+Future<void> checkOTP(String smsCode, BuildContext context) async {
+  try {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
-    await addUserToDatabase(phoneNumber,UserModel());
-    await _auth.signInWithCredential(credential).then((dynamic result) {
-      if(values.contains(phoneNumber)){
-        Navigator.of(context).pushNamed("/permissionScreen");
-      }
-      else{
-        Navigator.of(context).pushReplacementNamed("/registrationScreen");
+    await _auth.signInWithCredential(credential).then((dynamic result) async {
+      bool isExist = await checkDatabaseForUser(result.user.uid.toString());
+      if (context.mounted) {
+        if (isExist) {
+          Navigator.of(context).pushNamed("/permissionScreen");
+        }
+        else {
+          Navigator.of(context).pushReplacementNamed("/registrationScreen");
+        }
       }
     });
-  }catch(e){
+  } catch (e) {
+    debugPrint("$e");
     context.showErrorSnackBar(message: "Please enter correct OTP");
   }
 }

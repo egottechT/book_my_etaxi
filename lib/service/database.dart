@@ -4,7 +4,6 @@ import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +15,7 @@ String key = "";
 
 Future<void> addUserToDatabase(String name,UserModel model) async {
   try {
-    await databaseReference.child("driver").child(name).set(UserModel().toMap(model));
+    await databaseReference.child("customer").child(name).set(UserModel().toMap(model));
   } catch (e) {
     debugPrint(e.toString());
   }
@@ -24,20 +23,10 @@ Future<void> addUserToDatabase(String name,UserModel model) async {
 
 Future<bool> checkDatabaseForUser(String uid) async{
   bool present = false;
-  databaseReference.child("driver").child(uid).onValue.listen((event) {
+  databaseReference.child("customer").child(uid).onValue.listen((event) {
         present = event.snapshot.exists;
   });
   return present;
-}
-
-Future<List<String>> readData() async {
-  List<String> msg = [];
-  final snapshot = await databaseReference.get();
-  for (var snap in snapshot.children) {
-    final uid = snap.key as String;
-    msg.add(uid);
-  }
-  return msg;
 }
 
 void uploadTripInfo(BuildContext context) async {
