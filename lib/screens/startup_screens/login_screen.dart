@@ -105,25 +105,31 @@ class _LoginScreen extends State<LoginScreen> {
                                   setState(() {
                                     showLoading = true;
                                   });
-                                  User? result = await doGmailLogin();
-                                  if (result != null) {
-                                    bool isExist = await checkDatabaseForUser(result.uid.toString());
-                                    if(context.mounted){
-                                      if(isExist){
-                                        Navigator.of(context)
-                                            .pushNamed("/permissionScreen");
+                                  try{
+                                    User? result = await doGmailLogin();
+                                    if (result != null) {
+                                      bool isExist = await checkDatabaseForUser(result.uid.toString());
+                                      if(context.mounted){
+                                        if(isExist){
+                                          Navigator.of(context)
+                                              .pushNamed("/permissionScreen");
+                                        }
+                                        else{
+                                          Navigator.of(context)
+                                              .pushNamed("/registrationScreen");
+                                        }
                                       }
-                                      else{
-                                        Navigator.of(context)
-                                            .pushNamed("/registrationScreen");
+                                    } else {
+                                      if (context.mounted) {
+                                        context.showErrorSnackBar(
+                                            message:
+                                            "There is some error while LogIn. Please try again later");
                                       }
                                     }
-                                  } else {
-                                    if (context.mounted) {
-                                      context.showErrorSnackBar(
-                                          message:
-                                              "There is some error while LogIn. Please try again later");
-                                    }
+                                  }
+                                  catch(e){
+                                    debugPrint("Some error occured $e");
+                                    context.showErrorSnackBar(message: "Some error occured");
                                   }
                                   setState(() {
                                     showLoading = false;

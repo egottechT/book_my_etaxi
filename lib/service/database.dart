@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
@@ -22,11 +24,11 @@ Future<void> addUserToDatabase(String name,UserModel model) async {
 }
 
 Future<bool> checkDatabaseForUser(String uid) async{
-  bool present = false;
+  Completer<bool> completer = Completer();
   databaseReference.child("customer").child(uid).onValue.listen((event) {
-        present = event.snapshot.exists;
+        completer.complete(event.snapshot.exists);
   });
-  return present;
+  return completer.future;
 }
 
 void uploadTripInfo(BuildContext context) async {
