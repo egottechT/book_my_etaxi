@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,18 @@ final databaseReference = FirebaseDatabase(
             "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
     .ref();
 String key = "";
+
+Future<UserModel> getUserInfo(BuildContext context){
+  Completer<UserModel> complete = Completer();
+  databaseReference.child("customer").child(FirebaseAuth.instance.currentUser!.uid.toString()).once().then((value){
+    Map map = value.snapshot.value as Map;
+    debugPrint("Values :- ${map.toString()}");
+    UserModel model = UserModel().getDataFromMap(map);
+    complete.complete(model);
+    Provider.of<UserModelProvider>(context,listen: false).setData(model);
+  });
+  return complete.future;
+}
 
 Future<void> addUserToDatabase(String name,UserModel model) async {
   try {
@@ -37,9 +51,13 @@ void uploadTripInfo(BuildContext context) async {
   var destination =
       Provider.of<DestinationLocationProvider>(context, listen: false).position;
   final newChildRef = databaseReference.child("trips").push();
+  
+  final userData = Provider.of<UserModelProvider>(context,listen: false).data;
+
   await newChildRef.set({
-    "title": "Abhay sati",
+    "title": userData.name,
     "body": "Please Pickup me",
+    "phoneNumber" : userData.phoneNumber,
     "destination": {
       "lat": destination.latitude,
       "long": destination.longitude,

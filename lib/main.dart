@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
@@ -41,6 +42,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => PickupLocationProvider()),
       ChangeNotifierProvider(create: (_) => DestinationLocationProvider()),
       ChangeNotifierProvider(create: (_) => OtpProvider()),
+      ChangeNotifierProvider(create: (_) => UserModelProvider()),
     ],
     child: MaterialApp(
       title: 'Book My taxi',

@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/utils.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,6 +22,9 @@ class _SplashScreen extends State<SplashScreen> {
   Future<void> _redirect() async {
     await Future.delayed(const Duration(seconds: 2));
     LocationData location = await getCurrentLocation();
+    if(context.mounted) {
+      await getUserInfo(context);
+    }
 
     if (context.mounted) {
       if (FirebaseAuth.instance.currentUser != null) {
