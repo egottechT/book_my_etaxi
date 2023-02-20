@@ -160,7 +160,6 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        uploadTripInfo(context);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const LoadingScreen()));
                       },

@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,11 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
 
+  @override
+  void initState() {
+    super.initState();
+    uploadTripInfo(context);
+  }
   Widget secondSectionView() {
     String pickUp =
         Provider.of<PickupLocationProvider>(context, listen: false).location;
@@ -34,7 +40,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ListTile(
                   title: Text(
                     pickUp,
-                    style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
+                    style: const TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
                   leading: const Icon(
                     Icons.circle,
@@ -52,9 +58,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ListTile(
                   title: Text(
                     destination,
-                    style: TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
+                    style: const TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.location_on,
                     color: Colors.orange,
                   ),
