@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
+import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,10 +68,7 @@ void checkDriveRequest(BuildContext context) {
       .onChildChanged
       .listen((event) {
     debugPrint("Child Changed ${event.snapshot.value.toString()}");
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => DriverInfoScreen()),
-        ModalRoute.withName('/mapScreen'));
+
   });
 
   databaseReference
@@ -80,17 +78,20 @@ void checkDriveRequest(BuildContext context) {
       .listen((event) {
     debugPrint("Child Added : - ${event.snapshot.value.toString()}");
     if (event.snapshot.key == "driver_info") {
-      debugPrint("Driver info added");
       Map map = event.snapshot.value as Map;
-      debugPrint("${map["name"]}");
+      DriverModel model = DriverModel().getDataFromMap(map);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => DriverInfoScreen(driver: model,)),
+          ModalRoute.withName('/mapScreen'));
     }
-    // Navigator.pushAndRemoveUntil(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => DriverInfoScreen()),
-    //     ModalRoute.withName('/mapScreen'));
   });
-  databaseReference.child("active_driver").child(key).child("driver_info").set({
-    "name": "Aryab",
-    "run": "Chup",
-  });
+  // databaseReference.child("active_driver").child(key).child("driver_info").set({
+  //   "name": "Aryan",
+  //   "vehicleNumber" : "UK07AB4976",
+  //   "phoneNumber": "908616413",
+  //   "rating" : "4.6",
+  //   //TODO ADD LAT AND LNG FOR DRIVER
+  //
+  // });
 }
