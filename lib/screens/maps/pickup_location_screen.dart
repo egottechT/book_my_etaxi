@@ -11,7 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart' as locate;
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 class PickUpLocationScreen extends StatefulWidget {
   final Function showMarkers;
@@ -208,7 +207,7 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
   void showLocationFromLatLng(double latitude, double longitude) async {
     try {
-      var text = await getAddressFromLatLng(latitude, longitude);
+      var text = await getAddressFromLatLng(latitude, longitude,location);
       if (mounted) {
         setState(() {
           location = text;
@@ -216,20 +215,6 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
       }
     } catch (e) {
       debugPrint("No address found");
-    }
-  }
-
-  Future<String> getAddressFromLatLng(double lat, double lng) async {
-    String host = 'https://maps.google.com/maps/api/geocode/json';
-    final url = '$host?key=$mapApiKey&language=en&latlng=$lat,$lng';
-
-    var response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      Map data = jsonDecode(response.body);
-      String formattedAddress = data["results"][0]["formatted_address"];
-      return formattedAddress;
-    } else {
-      return location;
     }
   }
 }

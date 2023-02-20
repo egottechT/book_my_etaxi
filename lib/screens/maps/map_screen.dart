@@ -29,7 +29,6 @@ class _MapsScreenState extends State<MapsScreen> {
   late GoogleMapController mapController;
   Marker? pickupMarker, destinationMarker;
   Set<Marker> _makers = {};
-  final LatLng _center = const LatLng(20.5937, 78.9629);
   String drive = "sedan";
   Uint8List? markIcons;
   List<dynamic> list = [];
@@ -99,18 +98,6 @@ class _MapsScreenState extends State<MapsScreen> {
     Permission.location.request();
     panelWidget = PanelWidget(
         function: setMapMarker, removeDestinationMaker: removeDestinationMaker);
-  }
-
-  Future<LocationData> getCurrentLocation() async {
-    locate.Location currentLocation = locate.Location();
-    var location = await currentLocation.getLocation();
-    CameraPosition cameraPosition = CameraPosition(
-        target:
-            LatLng(location.latitude as double, location.longitude as double),
-        zoom: zoomLevel);
-
-    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    return location;
   }
 
   void correctCameraAngle() async {
@@ -197,7 +184,7 @@ class _MapsScreenState extends State<MapsScreen> {
             startLatitude = dragPoint.latitude;
             startLongitude = dragPoint.longitude;
             String point =
-                await getAddressFromLatLng(startLatitude, startLongitude);
+                await getAddressFromLatLng(startLatitude, startLongitude,"Your current Location");
             if (context.mounted) {
               Provider.of<PickupLocationProvider>(context, listen: false)
                   .setString(point);
@@ -244,12 +231,18 @@ class _MapsScreenState extends State<MapsScreen> {
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     LocationData locationData = await getCurrentLocation();
+    CameraPosition cameraPosition = CameraPosition(
+        target:
+        LatLng(locationData.latitude as double, locationData.longitude as double),
+        zoom: zoomLevel);
+
+    mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
     setMapMarker(
         LatLng(
             locationData.latitude as double, locationData.longitude as double),
         false);
     String point = await getAddressFromLatLng(
-        locationData.latitude as double, locationData.longitude as double);
+        locationData.latitude as double, locationData.longitude as double,"Your current Location");
     if (context.mounted) {
       Provider.of<PickupLocationProvider>(context, listen: false)
           .setString(point);
@@ -259,24 +252,16 @@ class _MapsScreenState extends State<MapsScreen> {
     }
   }
 
-  Future<String> getAddressFromLatLng(double lat, double lng) async {
-    String host = 'https://maps.google.com/maps/api/geocode/json';
-    final url = '$host?key=$mapApiKey&language=en&latlng=$lat,$lng';
-
-    var response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      Map data = jsonDecode(response.body);
-      String formattedAddress = data["results"][0]["formatted_address"];
-      return formattedAddress;
-    } else {
-      return "Your current Location";
-    }
-  }
-
   Widget buildFAB(BuildContext context) {
     return FloatingActionButton(
       onPressed: () async {
-        await getCurrentLocation();
+        LocationData locationData = await getCurrentLocation();
+        CameraPosition cameraPosition = CameraPosition(
+            target:
+            LatLng(locationData.latitude as double, locationData.longitude as double),
+            zoom: zoomLevel);
+
+        mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
       },
       backgroundColor: Colors.white,
       child: const Icon(
@@ -291,6 +276,7 @@ class _MapsScreenState extends State<MapsScreen> {
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.35;
     final panelHeightOpened = MediaQuery.of(context).size.height * 0.8;
     double fabHeightBottom = 300;
+    final args = ModalRoute.of(context)!.settings.arguments as LatLng;
 
     return SafeArea(
       child: Scaffold(
@@ -320,7 +306,7 @@ class _MapsScreenState extends State<MapsScreen> {
                 myLocationButtonEnabled: false,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: CameraPosition(
-                  target: _center,
+                  target: args,
                   zoom: zoomLevel,
                 ),
                 markers: _makers, //MARKERS IN MAP

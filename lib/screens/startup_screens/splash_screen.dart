@@ -1,6 +1,8 @@
-import 'package:book_my_taxi/service/authentication.dart';
+import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -17,12 +19,16 @@ class _SplashScreen extends State<SplashScreen> {
   }
 
   Future<void> _redirect() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
+    LocationData location = await getCurrentLocation();
+
     if (context.mounted) {
       if (FirebaseAuth.instance.currentUser != null) {
-        Navigator.of(context).pushReplacementNamed('/mapScreen');
+        Navigator.of(context).pushReplacementNamed('/mapScreen',
+            arguments: LatLng(
+                location.latitude as double, location.latitude as double));
       } else {
-      // signOut();
+        // signOut();
         Navigator.of(context).pushReplacementNamed('/loginScreen');
       }
     }
