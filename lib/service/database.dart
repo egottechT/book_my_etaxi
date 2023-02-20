@@ -36,7 +36,7 @@ void uploadTripInfo(BuildContext context) async {
       Provider.of<PickupLocationProvider>(context, listen: false).position;
   var destination =
       Provider.of<DestinationLocationProvider>(context, listen: false).position;
-  final newChildRef = databaseReference.child("active_driver").push();
+  final newChildRef = databaseReference.child("trips").push();
   await newChildRef.set({
     "title": "Abhay sati",
     "body": "Please Pickup me",
