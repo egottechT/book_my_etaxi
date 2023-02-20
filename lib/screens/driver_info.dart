@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/payment_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +24,10 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   late String stars;
   late String phoneNumber;
   TextEditingController textController = TextEditingController();
-  final LatLng _center = const LatLng(20.5937, 78.9629);
+  late LatLng _center;
   String moneyWay = "Cash";
+  Set<Marker> _makers = {};
+  late GoogleMapController mapController;
 
   @override
   void initState() {
@@ -31,6 +36,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     driverName = widget.driver.name;
     stars = widget.driver.rating;
     phoneNumber = widget.driver.phoneNumber;
+    _center = LatLng(widget.driver.latitude, widget.driver.longitude);
+    setUpTheMarker();
   }
 
   @override
@@ -264,10 +271,16 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
           body: GoogleMap(
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
+            onMapCreated: (controller){
+              mapController = controller;
+              CameraPosition cameraPosition = CameraPosition(target: _center,zoom: zoomLevel);
+              mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+            },
             initialCameraPosition: CameraPosition(
               target: _center,
               zoom: zoomLevel,
             ),
+            markers: _makers,
           ),
         ),
       ),
@@ -335,5 +348,17 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
         ),
       ),
     );
+  }
+
+  void setUpTheMarker() async {
+    Uint8List? markIcons = await getImages('assets/images/driver_car.png', 150);
+    Marker tmpMarker = Marker(
+      markerId: const MarkerId("car_pickup"),
+      position: _center,
+      icon: BitmapDescriptor.fromBytes(markIcons),
+    );
+    setState(() {
+      _makers.add(tmpMarker);
+    });
   }
 }

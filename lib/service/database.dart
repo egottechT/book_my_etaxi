@@ -81,7 +81,7 @@ void uploadTripInfo(BuildContext context) async {
 
 void checkDriveRequest(BuildContext context) {
   databaseReference
-      .child("active_driver")
+      .child("trips")
       .child(key)
       .onChildChanged
       .listen((event) {
@@ -90,7 +90,7 @@ void checkDriveRequest(BuildContext context) {
   });
 
   databaseReference
-      .child("active_driver")
+      .child("trips")
       .child(key)
       .onChildAdded
       .listen((event) {
