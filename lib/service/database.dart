@@ -1,6 +1,7 @@
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,12 +14,20 @@ final databaseReference = FirebaseDatabase(
     .ref();
 String key = "";
 
-Future<void> addUserToDatabase(String name) async {
+Future<void> addUserToDatabase(String name,UserModel model) async {
   try {
-    await databaseReference.child(name).set({"created": true});
+    await databaseReference.child("driver").child(name).set(UserModel().toMap(model));
   } catch (e) {
-    print(e.toString());
+    debugPrint(e.toString());
   }
+}
+
+Future<bool> checkDatabaseForUser(String uid) async{
+  bool present = false;
+  databaseReference.child("driver").child(uid).onValue.listen((event) {
+        present = event.snapshot.exists;
+  });
+  return present;
 }
 
 Future<List<String>> readData() async {

@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/otp_verify_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,11 +24,12 @@ Future<User?> doGmailLogin() async {
 
     UserCredential result = await _auth.signInWithCredential(authCredential);
     User? user = result.user;
-
-    if (result != null) {
+    if(user != null){
       return user;
     }
-    return null;
+    else{
+      return null;
+    }
   }
 }
 
@@ -39,7 +41,7 @@ Future<void> signOut() async {
     }
     await FirebaseAuth.instance.signOut();
   } catch (e) {
-    print("There is some error");
+    debugPrint("There is some error");
   }
 }
 
@@ -56,14 +58,14 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
 
       },
     verificationFailed: (FirebaseAuthException e) {
-      print("verification failed ${e.code}");
+      debugPrint("verification failed ${e.code}");
     },
     codeSent: (String verificationId, int? resendToken) async {
       Navigator.push(context,MaterialPageRoute(builder: (BuildContext context)=> OTPVerifyScreen(phoneNumber: number)));
       verificationCode = verificationId;
     },
     codeAutoRetrievalTimeout: (String verificationId) {
-      print("Auto reterival time out");
+      debugPrint("Auto reterival time out");
     },
   );
 }
@@ -74,7 +76,7 @@ Future<void> checkOTP(String smsCode,BuildContext context) async {
     List<String>? values = await readData();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
-    await addUserToDatabase(phoneNumber);
+    await addUserToDatabase(phoneNumber,UserModel());
     await _auth.signInWithCredential(credential).then((dynamic result) {
       if(values.contains(phoneNumber)){
         Navigator.of(context).pushNamed("/permissionScreen");
