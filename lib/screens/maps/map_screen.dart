@@ -159,7 +159,7 @@ class _MapsScreenState extends State<MapsScreen> {
       destinationMarker = tmpMarker;
       destinationLatitude = latLng.latitude;
       destinationLongitude = latLng.longitude;
-      if (startLongitude == 0 && startLongitude == 0) {
+      if (startLatitude == 0 && startLongitude == 0) {
         var currentLocate = await getCurrentLocation();
         startLatitude = currentLocate.latitude as double;
         startLongitude = currentLocate.longitude as double;
@@ -169,7 +169,6 @@ class _MapsScreenState extends State<MapsScreen> {
             currentLocate.longitude as double);
 
         var first = addresses.first;
-
         if (context.mounted) {
           Provider.of<PickupLocationProvider>(context, listen: false).setString(
               "${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}");
@@ -254,6 +253,9 @@ class _MapsScreenState extends State<MapsScreen> {
     if (context.mounted) {
       Provider.of<PickupLocationProvider>(context, listen: false)
           .setString(point);
+      Provider.of<PickupLocationProvider>(context, listen: false)
+          .setPositionLatLng(LatLng(locationData.latitude as double,
+              locationData.longitude as double));
     }
   }
 
