@@ -6,7 +6,9 @@ import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:book_my_taxi/screens/home_screen.dart';
+import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
+import 'package:book_my_taxi/screens/payment_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
 import 'package:book_my_taxi/screens/startup_screens/login_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/permission_screen.dart';
@@ -49,7 +51,8 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      home: const DriverInfoScreen(),
+      initialRoute: "splash",
+      // home: const LoadingScreen(),
     ),
   ));
 }

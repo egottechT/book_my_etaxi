@@ -1,4 +1,7 @@
+import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/widget/phone_number_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -50,7 +53,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   )),
                   ElevatedButton(
                     onPressed: () {
-                      if(_ownerFormKey.currentState!.validate()){
+                      if(_ownerFormKey.currentState!.validate() && phoneNumber.text.isNotEmpty){
+                        UserModel model = UserModel();
+                        model.name = "${firstName.text} ${lastName.text}";
+                        model.email = ownerEmail.text;
+                        model.phoneNumber = phoneNumber.text;
+                        User? result = FirebaseAuth.instance.currentUser;
+                        addUserToDatabase(result?.uid.toString() as String,model);
                         Navigator.of(context).pushNamed("/permissionScreen");
                       }
                     },

@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/otp_verify_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,18 +17,19 @@ Future<User?> doGmailLogin() async {
   final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
   if (googleSignInAccount != null) {
     final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+    await googleSignInAccount.authentication;
     final AuthCredential authCredential = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken);
 
     UserCredential result = await _auth.signInWithCredential(authCredential);
     User? user = result.user;
-
-    if (result != null) {
+    if (user != null) {
       return user;
     }
-    return null;
+    else {
+      return null;
+    }
   }
 }
 
@@ -39,7 +41,7 @@ Future<void> signOut() async {
     }
     await FirebaseAuth.instance.signOut();
   } catch (e) {
-    print("There is some error");
+    debugPrint("There is some error");
   }
 }
 
@@ -52,38 +54,41 @@ Future<void> signInWithPhoneNumber(String number, BuildContext context) async {
   await _auth.verifyPhoneNumber(
     phoneNumber: number,
     verificationCompleted: (PhoneAuthCredential credential) async {
-      Provider.of<OtpProvider>(context,listen: false).setString(credential.smsCode.toString());
-
-      },
+      Provider.of<OtpProvider>(context, listen: false).setString(
+          credential.smsCode.toString());
+    },
     verificationFailed: (FirebaseAuthException e) {
-      print("verification failed ${e.code}");
+      debugPrint("verification failed ${e.code}");
     },
     codeSent: (String verificationId, int? resendToken) async {
-      Navigator.push(context,MaterialPageRoute(builder: (BuildContext context)=> OTPVerifyScreen(phoneNumber: number)));
+      Navigator.push(context, MaterialPageRoute(
+          builder: (BuildContext context) =>
+              OTPVerifyScreen(phoneNumber: number)));
       verificationCode = verificationId;
     },
     codeAutoRetrievalTimeout: (String verificationId) {
-      print("Auto reterival time out");
+      debugPrint("Auto reterival time out");
     },
   );
 }
 
-Future<void> checkOTP(String smsCode,BuildContext context) async {
-
-  try{
-    List<String>? values = await readData();
+Future<void> checkOTP(String smsCode, BuildContext context) async {
+  try {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationCode, smsCode: smsCode);
-    await addUserToDatabase(phoneNumber);
-    await _auth.signInWithCredential(credential).then((dynamic result) {
-      if(values.contains(phoneNumber)){
-        Navigator.of(context).pushNamed("/permissionScreen");
-      }
-      else{
-        Navigator.of(context).pushReplacementNamed("/registrationScreen");
+    await _auth.signInWithCredential(credential).then((dynamic result) async {
+      bool isExist = await checkDatabaseForUser(result.user.uid.toString());
+      if (context.mounted) {
+        if (isExist) {
+          Navigator.of(context).pushNamed("/permissionScreen");
+        }
+        else {
+          Navigator.of(context).pushReplacementNamed("/registrationScreen");
+        }
       }
     });
-  }catch(e){
+  } catch (e) {
+    debugPrint("$e");
     context.showErrorSnackBar(message: "Please enter correct OTP");
   }
 }

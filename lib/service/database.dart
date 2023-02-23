@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/driver_info.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,22 +15,20 @@ final databaseReference = FirebaseDatabase(
     .ref();
 String key = "";
 
-Future<void> addUserToDatabase(String name) async {
+Future<void> addUserToDatabase(String name,UserModel model) async {
   try {
-    await databaseReference.child(name).set({"created": true});
+    await databaseReference.child("customer").child(name).set(UserModel().toMap(model));
   } catch (e) {
-    print(e.toString());
+    debugPrint(e.toString());
   }
 }
 
-Future<List<String>> readData() async {
-  List<String> msg = [];
-  final snapshot = await databaseReference.get();
-  for (var snap in snapshot.children) {
-    final uid = snap.key as String;
-    msg.add(uid);
-  }
-  return msg;
+Future<bool> checkDatabaseForUser(String uid) async{
+  Completer<bool> completer = Completer();
+  databaseReference.child("customer").child(uid).onValue.listen((event) {
+        completer.complete(event.snapshot.exists);
+  });
+  return completer.future;
 }
 
 void uploadTripInfo(BuildContext context) async {
@@ -36,7 +36,7 @@ void uploadTripInfo(BuildContext context) async {
       Provider.of<PickupLocationProvider>(context, listen: false).position;
   var destination =
       Provider.of<DestinationLocationProvider>(context, listen: false).position;
-  final newChildRef = databaseReference.child("active_driver").push();
+  final newChildRef = databaseReference.child("trips").push();
   await newChildRef.set({
     "title": "Abhay sati",
     "body": "Please Pickup me",
