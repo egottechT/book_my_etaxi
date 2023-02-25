@@ -30,44 +30,48 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               title: const Text("Register"),
             ),
-            body: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Flexible(
-                      child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 150,
-                      ),
-                      registrationForm(),
-                      const SizedBox(
-                        height: 100,
-                      ),
-                    ],
-                  )),
-                  ElevatedButton(
-                    onPressed: () {
-                      if(_ownerFormKey.currentState!.validate() && phoneNumber.text.isNotEmpty){
-                        UserModel model = UserModel();
-                        model.name = "${firstName.text} ${lastName.text}";
-                        model.email = ownerEmail.text;
-                        model.phoneNumber = phoneNumber.text;
-                        User? result = FirebaseAuth.instance.currentUser;
-                        addUserToDatabase(result?.uid.toString() as String,model);
-                        Navigator.of(context).pushNamed("/permissionScreen");
-                      }
-                    },
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                    child: const Text("Next"),
-                  )
-                ],
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        const SizedBox(
+                          height: 150,
+                        ),
+                        registrationForm(),
+                        const SizedBox(
+                          height: 100,
+                        )
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_ownerFormKey.currentState!.validate() &&
+                            phoneNumber.text.isNotEmpty) {
+                          UserModel model = UserModel();
+                          model.name = "${firstName.text} ${lastName.text}";
+                          model.email = ownerEmail.text;
+                          model.phoneNumber = phoneNumber.text;
+                          User? result = FirebaseAuth.instance.currentUser;
+                          addUserToDatabase(
+                              result?.uid.toString() as String, model);
+                          Navigator.of(context).pushNamed("/permissionScreen");
+                        }
+                      },
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                      child: const Text("Next"),
+                    )
+                  ],
+                ),
               ),
             )));
   }
@@ -154,6 +158,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   TextStyle get _textStyle => const TextStyle(
-    fontSize: 18,
-  );
+        fontSize: 18,
+      );
 }
