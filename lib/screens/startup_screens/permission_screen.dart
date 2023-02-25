@@ -1,5 +1,8 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionScreen extends StatefulWidget {
@@ -107,9 +110,12 @@ class _PermissionScreenState extends State<PermissionScreen> {
               ],
             )),
             ElevatedButton(
-              onPressed: () {
-                if (location && phone) {
-                  Navigator.of(context).pushNamed("/mapScreen");
+              onPressed: () async {
+                LocationData currentLocation = await getCurrentLocation();
+                if (location && phone && context.mounted) {
+                  Navigator.of(context).pushNamed("/mapScreen",
+                      arguments: LatLng(
+                          currentLocation.latitude as double, currentLocation.latitude as double));
                 } else {
                   context.showErrorSnackBar(
                       message: "Please allow both the permission first");

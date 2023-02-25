@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/utils.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,9 +25,12 @@ class _SplashScreen extends State<SplashScreen> {
 
     if (context.mounted) {
       if (FirebaseAuth.instance.currentUser != null) {
-        Navigator.of(context).pushReplacementNamed('/mapScreen',
+        await getUserInfo(context);
+        if(context.mounted) {
+          Navigator.of(context).pushReplacementNamed('/mapScreen',
             arguments: LatLng(
                 location.latitude as double, location.latitude as double));
+        }
       } else {
         // signOut();
         Navigator.of(context).pushReplacementNamed('/loginScreen');
