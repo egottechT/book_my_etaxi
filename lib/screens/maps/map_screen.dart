@@ -100,35 +100,6 @@ class _MapsScreenState extends State<MapsScreen> {
         function: setMapMarker, removeDestinationMaker: removeDestinationMaker);
   }
 
-  void correctCameraAngle() async {
-    double miny = (startLatitude <= destinationLatitude)
-        ? startLatitude
-        : destinationLatitude;
-    double minx = (startLongitude <= destinationLongitude)
-        ? startLongitude
-        : destinationLongitude;
-    double maxy = (startLatitude <= destinationLatitude)
-        ? destinationLatitude
-        : startLatitude;
-    double maxx = (startLongitude <= destinationLongitude)
-        ? destinationLongitude
-        : startLongitude;
-
-    double southWestLatitude = miny;
-    double southWestLongitude = minx;
-    double northEastLatitude = maxy;
-    double northEastLongitude = maxx;
-    mapController.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        LatLngBounds(
-          northeast: LatLng(northEastLatitude, northEastLongitude),
-          southwest: LatLng(southWestLatitude, southWestLongitude),
-        ),
-        100.0,
-      ),
-    );
-  }
-
   Future<void> setMapMarker(LatLng latLng, bool destination) async {
     String name = "Pick-up";
     if (destination) {
@@ -166,7 +137,8 @@ class _MapsScreenState extends State<MapsScreen> {
 
         await setMapMarker(LatLng(startLatitude, startLongitude), false);
       }
-      correctCameraAngle();
+      correctCameraAngle(startLatitude, startLongitude, destinationLatitude,
+          destinationLongitude,mapController);
       _createPolylines(startLatitude, startLongitude, destinationLatitude,
           destinationLongitude);
     } else {

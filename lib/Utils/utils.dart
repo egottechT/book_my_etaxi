@@ -3,6 +3,7 @@ import 'dart:convert' as jsonData;
 import 'dart:ui';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,4 +35,39 @@ Future<String> getAddressFromLatLng(double lat, double lng,String previousLocati
   } else {
     return previousLocation;
   }
+}
+
+void correctCameraAngle(
+    double startLatitude,
+    double startLongitude,
+    double destinationLatitude,
+    double destinationLongitude,
+    GoogleMapController mapController
+    ) async {
+  double miny = (startLatitude <= destinationLatitude)
+      ? startLatitude
+      : destinationLatitude;
+  double minx = (startLongitude <= destinationLongitude)
+      ? startLongitude
+      : destinationLongitude;
+  double maxy = (startLatitude <= destinationLatitude)
+      ? destinationLatitude
+      : startLatitude;
+  double maxx = (startLongitude <= destinationLongitude)
+      ? destinationLongitude
+      : startLongitude;
+
+  double southWestLatitude = miny;
+  double southWestLongitude = minx;
+  double northEastLatitude = maxy;
+  double northEastLongitude = maxx;
+  mapController.animateCamera(
+    CameraUpdate.newLatLngBounds(
+      LatLngBounds(
+        northeast: LatLng(northEastLatitude, northEastLongitude),
+        southwest: LatLng(southWestLatitude, southWestLongitude),
+      ),
+      100.0,
+    ),
+  );
 }

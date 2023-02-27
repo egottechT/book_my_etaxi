@@ -24,9 +24,11 @@ class _SplashScreen extends State<SplashScreen> {
     LocationData location = await getCurrentLocation();
 
     if (context.mounted) {
+      debugPrint("First case passed");
       if (FirebaseAuth.instance.currentUser != null) {
         await getUserInfo(context);
         if(context.mounted) {
+          debugPrint("2 case passed");
           Navigator.of(context).pushReplacementNamed('/mapScreen',
             arguments: LatLng(
                 location.latitude as double, location.latitude as double));

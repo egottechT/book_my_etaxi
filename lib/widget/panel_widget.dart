@@ -78,50 +78,6 @@ class _PanelWidgetState extends State<PanelWidget> {
     return Colors.grey[800] as Color;
   }
 
-  Widget carInfoWidget() {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          Container(
-            height: 5,
-            width: 50,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            carInfoWithIcon(
-                0,
-                Image.asset(
-                  "assets/images/mini.png",
-                  scale: scaleCondition(0),
-                  color: colorCondition(0),
-                ),
-                "Micro"),
-            carInfoWithIcon(
-                1,
-                Image.asset(
-                  "assets/images/micro.png",
-                  scale: scaleCondition(1),
-                  color: colorCondition(1),
-                ),
-                "Mini"),
-            carInfoWithIcon(
-                2,
-                Image.asset(
-                  "assets/images/sedan.png",
-                  scale: scaleCondition(2),
-                  color: colorCondition(2),
-                ),
-                "Sedan"),
-          ]),
-        ],
-      ),
-    );
-  }
-
   Widget searchBarWidget() {
     return InkWell(
         onTap: () async {
@@ -199,7 +155,6 @@ class _PanelWidgetState extends State<PanelWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                carInfoWidget(),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                   onPressed: () async {

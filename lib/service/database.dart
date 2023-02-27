@@ -17,16 +17,17 @@ final databaseReference = FirebaseDatabase(
     .ref();
 String key = "";
 
-Future<UserModel> getUserInfo(BuildContext context){
-  Completer<UserModel> complete = Completer();
-  databaseReference.child("customer").child(FirebaseAuth.instance.currentUser!.uid.toString()).once().then((value){
+Future<void> getUserInfo(BuildContext context) async {
+  // Completer<UserModel> complete = Completer();
+  String uid = FirebaseAuth.instance.currentUser!.uid.toString();
+  debugPrint("uid is:- $uid");
+  databaseReference.child("customer").child(uid).once().then((value){
     Map map = value.snapshot.value as Map;
     debugPrint("Values :- ${map.toString()}");
     UserModel model = UserModel().getDataFromMap(map);
-    complete.complete(model);
+    // complete.complete(model);
     Provider.of<UserModelProvider>(context,listen: false).setData(model);
   });
-  return complete.future;
 }
 
 Future<void> addUserToDatabase(String name,UserModel model) async {
