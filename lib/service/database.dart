@@ -17,17 +17,25 @@ final databaseReference = FirebaseDatabase(
     .ref();
 String key = "";
 
-Future<void> getUserInfo(BuildContext context) async {
-  // Completer<UserModel> complete = Completer();
+Future<void> getUserInfo(BuildContext context,bool wait) async {
   String uid = FirebaseAuth.instance.currentUser!.uid.toString();
   debugPrint("uid is:- $uid");
-  databaseReference.child("customer").child(uid).once().then((value){
-    Map map = value.snapshot.value as Map;
-    debugPrint("Values :- ${map.toString()}");
-    UserModel model = UserModel().getDataFromMap(map);
-    // complete.complete(model);
-    Provider.of<UserModelProvider>(context,listen: false).setData(model);
-  });
+  if(wait){
+    await databaseReference.child("customer").child(uid).once().then((value){
+      Map map = value.snapshot.value as Map;
+      debugPrint("Values :- ${map.toString()}");
+      UserModel model = UserModel().getDataFromMap(map);
+      Provider.of<UserModelProvider>(context,listen: false).setData(model);
+    });
+  }
+  else{
+    databaseReference.child("customer").child(uid).once().then((value){
+      Map map = value.snapshot.value as Map;
+      debugPrint("Values :- ${map.toString()}");
+      UserModel model = UserModel().getDataFromMap(map);
+      Provider.of<UserModelProvider>(context,listen: false).setData(model);
+    });
+  }
 }
 
 Future<void> addUserToDatabase(String name,UserModel model) async {

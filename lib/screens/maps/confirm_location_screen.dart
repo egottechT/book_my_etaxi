@@ -2,7 +2,10 @@ import 'dart:typed_data';
 
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/loading_screen.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/selectCarView.dart';
 import 'package:flutter/material.dart';
@@ -226,7 +229,9 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   Widget bottomPanelLayout() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-      child: Column(children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
         SizedBox(
           width: 50,
           child: Container(color: Colors.grey),
@@ -291,9 +296,15 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
+              onPressed: () async {
+                UserModel user = Provider.of<UserModelProvider>(context,listen: false).data;
+                if(user.name.isEmpty){
+                  await getUserInfo(context,true);
+                }
+                if(context.mounted) {
+                  Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const LoadingScreen()));
+                }
               },
               style:
                   ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),

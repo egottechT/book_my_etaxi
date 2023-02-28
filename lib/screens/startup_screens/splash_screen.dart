@@ -26,7 +26,7 @@ class _SplashScreen extends State<SplashScreen> {
     if (context.mounted) {
       debugPrint("First case passed");
       if (FirebaseAuth.instance.currentUser != null) {
-        await getUserInfo(context);
+        getUserInfo(context,false);
         if(context.mounted) {
           debugPrint("2 case passed");
           Navigator.of(context).pushReplacementNamed('/mapScreen',
