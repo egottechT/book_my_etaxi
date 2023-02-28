@@ -4,6 +4,7 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/payment_screen.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -26,7 +27,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   TextEditingController textController = TextEditingController();
   late LatLng _center;
   String moneyWay = "Cash";
-  Set<Marker> _makers = {};
+  Set<Marker> makers = {};
   late GoogleMapController mapController;
 
   @override
@@ -37,7 +38,17 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     stars = widget.driver.rating;
     phoneNumber = widget.driver.phoneNumber;
     _center = LatLng(widget.driver.latitude, widget.driver.longitude);
-    setUpTheMarker();
+    setUpTheMarker(_center);
+  }
+
+  void readData(){
+    driveLocationUpdate(mapController,setUpTheMarker);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
   }
 
   @override
@@ -273,6 +284,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
             myLocationButtonEnabled: false,
             onMapCreated: (controller){
               mapController = controller;
+              readData();
               CameraPosition cameraPosition = CameraPosition(target: _center,zoom: zoomLevel);
               mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
             },
@@ -280,7 +292,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
               target: _center,
               zoom: zoomLevel,
             ),
-            markers: _makers,
+            markers: makers,
           ),
         ),
       ),
@@ -350,15 +362,15 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     );
   }
 
-  void setUpTheMarker() async {
+  void setUpTheMarker(LatLng position) async {
     Uint8List? markIcons = await getImages('assets/images/driver_car.png', 150);
     Marker tmpMarker = Marker(
       markerId: const MarkerId("car_pickup"),
-      position: _center,
+      position: position,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
     setState(() {
-      _makers.add(tmpMarker);
+      makers.add(tmpMarker);
     });
   }
 }
