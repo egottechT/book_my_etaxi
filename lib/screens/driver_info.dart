@@ -29,6 +29,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   String moneyWay = "Cash";
   Set<Marker> makers = {};
   late GoogleMapController mapController;
+  String cancelReason = "";
 
   @override
   void initState() {
@@ -130,6 +131,24 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                           ],
                         ),
 
+                        Divider(
+                          thickness: 2,
+                          height: 10,
+                          color: Colors.grey[300],
+                        ),
+                        //OTP
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("OTP ",style: TextStyle(fontSize: 18),),
+                            Text(widget.driver.otp.toString(),style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
+                          ],
+                        ),
+                        Divider(
+                          thickness: 2,
+                          height: 10,
+                          color: Colors.grey[300],
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -334,6 +353,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
         ),
         showIconWithText(() {
           debugPrint("Cancel trip");
+
           showDialog(
               context: context,
               builder: (context) {
@@ -411,6 +431,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
       ),
       ElevatedButton(
         onPressed: () {
+          cancelRequest(cancelReason);
           Navigator.of(context)
             ..pop()
             ..pop();
@@ -435,7 +456,9 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
 
   cardMenuItem(String title) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        cancelReason = title;
+      },
       child: Card(
         color: Colors.grey[300],
         child: Padding(

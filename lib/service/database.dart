@@ -110,27 +110,22 @@ void checkDriveRequest(BuildContext context) {
           ModalRoute.withName('/mapScreen'));
     }
   });
-  // databaseReference.child("active_driver").child(key).child("driver_info").set({
-  //   "name": "Aryan",
-  //   "vehicleNumber" : "UK07AB4976",
-  //   "phoneNumber": "908616413",
-  //   "rating" : "4.6",
-  //   //TODO ADD LAT AND LNG FOR DRIVER
-  //
-  // });
 }
 
-void driveLocationUpdate(GoogleMapController mapController,Function function) {
+void driveLocationUpdate(GoogleMapController mapController, Function function) {
+  databaseReference.child("trips").child(key).onChildChanged.listen((event) {
+    Map map = event.snapshot.value as Map;
+    LatLng center = LatLng(map["lat"], map["long"]);
+    CameraPosition cameraPosition = CameraPosition(target: center, zoom: 17);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    function(center);
+    // debugPrint("Driver Location Update:-  ${map["lat"]} ${map["long"]}");
+  });
+}
+
+Future<void> cancelRequest(String reason) async {
   databaseReference
       .child("trips")
       .child(key)
-      .onChildChanged
-      .listen((event) {
-    Map map = event.snapshot.value as Map;
-    LatLng center = LatLng(map["lat"],map["long"]);
-    CameraPosition cameraPosition = CameraPosition(target: center,zoom: 17);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    function(center);
-    debugPrint("Driver Location Update:-  ${map["lat"]} ${map["long"]}");
-  });
+      .update({"cancel": true, "reason": reason});
 }
