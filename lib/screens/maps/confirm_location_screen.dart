@@ -32,7 +32,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   final panelController = PanelController();
   late GoogleMapController mapController;
   int currentIndex = 1;
-  Set<Marker> _makers = {};
+  Set<Marker> makers = {};
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
   String _placeDistance = "0.0";
@@ -46,6 +46,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   ) async {
     // Initializing PolylinePoints
     polylinePoints = polygonPoint.PolylinePoints();
+
     polygonPoint.PolylineResult result =
         await polylinePoints.getRouteBetweenCoordinates(
       mapApiKey, // Google Maps API Key
@@ -54,6 +55,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
       travelMode: polygonPoint.TravelMode.transit,
     );
 
+    debugPrint("Confirm Screen Route info complete");
     // Adding the coordinates to the list
     polylineCoordinates.clear();
     if (result.points.isNotEmpty) {
@@ -166,7 +168,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
       );
     }
     setState(() {
-      _makers.add(tmpMarker!);
+      makers.add(tmpMarker!);
     });
   }
 
@@ -234,19 +236,19 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
           children: [
         SizedBox(
           width: 50,
-          child: Container(color: Colors.grey),
           height: 5,
+          child: Container(color: Colors.grey),
         ),
-        SizedBox(
+        const SizedBox(
           height: 15,
         ),
         locationShowingCard(),
-        Divider(
+            const Divider(
           height: 10,
           thickness: 2,
           color: Colors.grey,
         ),
-        Text(
+            const Text(
           "Available Vehicles",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
@@ -351,9 +353,10 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Confirm Location"),
+          title: const Text("Confirm Location"),
         ),
         body: SlidingUpPanel(
+          parallaxEnabled: true,
           controller: panelController,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
           minHeight: panelHeightClosed,
@@ -366,10 +369,10 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
             myLocationButtonEnabled: false,
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
-              target: LatLng(0, 0),
+              target: const LatLng(0, 0),
               zoom: zoomLevel,
             ),
-            markers: _makers,
+            markers: makers,
           ),
         ));
   }

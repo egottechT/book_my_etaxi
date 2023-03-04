@@ -64,12 +64,15 @@ class _MapsScreenState extends State<MapsScreen> {
   ) async {
     // Initializing PolylinePoints
     polylinePoints = PolylinePoints();
+    debugPrint("Map Screen Getting route info");
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       mapApiKey, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
       PointLatLng(destinationLatitude, destinationLongitude),
       travelMode: TravelMode.transit,
     );
+
+    debugPrint("Map Screen Route info complete");
 
     // Adding the coordinates to the list
     polylineCoordinates.clear();

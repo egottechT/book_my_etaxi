@@ -59,6 +59,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
 
     return SafeArea(
       child: SlidingUpPanel(
+        parallaxEnabled: true,
         minHeight: panelHeightClosed,
         maxHeight: panelHeightOpen,
         panelBuilder: (controller) {
@@ -140,8 +141,15 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("OTP ",style: TextStyle(fontSize: 18),),
-                            Text(widget.driver.otp.toString(),style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
+                            Text(
+                              "OTP ",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              widget.driver.otp.toString(),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            )
                           ],
                         ),
                         Divider(
@@ -357,40 +365,44 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
           showDialog(
               context: context,
               builder: (context) {
-                return Scaffold(
-                  body: SlidingUpPanel(
-                      minHeight: 400,
-                      panelBuilder: (controller) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 5),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                "$driverName will reach in 10 min",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 22),
+                return StatefulBuilder(
+                  builder: (context,changeSet){
+                    return Scaffold(
+                      body: SlidingUpPanel(
+                          minHeight: 400,
+                          panelBuilder: (controller) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 5),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    "$driverName will reach in 10 min",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold, fontSize: 22),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    "Still want to cancel? Please tell us why",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.grey),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  cancelOptionMenu(changeSet),
+                                ],
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                "Still want to cancel? Please tell us why",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.grey),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              cancelOptionMenu(),
-                            ],
-                          ),
-                        );
-                      }),
+                            );
+                          }),
+                    );
+                  },
                 );
               });
         }, const Icon(Icons.cancel_outlined), "Cancel"),
@@ -409,16 +421,16 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     );
   }
 
-  cancelOptionMenu() {
+  cancelOptionMenu(changeSet) {
     List<Widget> list = [
-      cardMenuItem("Driver denied pickup"),
-      cardMenuItem("Driver wanted cash"),
-      cardMenuItem("Driver unresponsive in chat/call"),
-      cardMenuItem("Driver insisted on taking directly/offline"),
-      cardMenuItem("Expected a shorter wait time"),
-      cardMenuItem("Driver not moving"),
-      cardMenuItem("Selected wrong pickup"),
-      cardMenuItem("My reason is not listed"),
+      cardMenuItem("Driver denied pickup",changeSet),
+      cardMenuItem("Driver wanted cash",changeSet),
+      cardMenuItem("Driver unresponsive in chat/call",changeSet),
+      cardMenuItem("Driver insisted on taking directly/offline",changeSet),
+      cardMenuItem("Expected a shorter wait time",changeSet),
+      cardMenuItem("Driver not moving",changeSet),
+      cardMenuItem("Selected wrong pickup",changeSet),
+      cardMenuItem("My reason is not listed",changeSet),
       ElevatedButton(
         onPressed: () {
           Navigator.of(context).pop();
@@ -454,20 +466,33 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     );
   }
 
-  cardMenuItem(String title) {
-    return InkWell(
-      onTap: () {
-        cancelReason = title;
-      },
-      child: Card(
-        color: Colors.grey[300],
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            title,
-            textAlign: TextAlign.start,
-            overflow: TextOverflow.clip,
-            style: const TextStyle(fontSize: 14),
+  cardMenuItem(String title,changeSet) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: (cancelReason == title) ? primaryColor : Colors.white,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(20)),
+      child: InkWell(
+        onTap: () {
+          changeSet(() {
+            cancelReason = title;
+          });
+        },
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: Colors.grey[300],
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              title,
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.clip,
+              style: const TextStyle(fontSize: 14),
+            ),
           ),
         ),
       ),

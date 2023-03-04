@@ -116,7 +116,7 @@ void driveLocationUpdate(GoogleMapController mapController, Function function) {
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
     Map map = event.snapshot.value as Map;
     LatLng center = LatLng(map["lat"], map["long"]);
-    CameraPosition cameraPosition = CameraPosition(target: center, zoom: 17);
+    CameraPosition cameraPosition = CameraPosition(target: center, zoom: 16);
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     function(center);
     // debugPrint("Driver Location Update:-  ${map["lat"]} ${map["long"]}");
