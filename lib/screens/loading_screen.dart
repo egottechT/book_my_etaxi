@@ -6,7 +6,9 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class LoadingScreen extends StatefulWidget {
-  const LoadingScreen({Key? key}) : super(key: key);
+  final String price;
+  final String distance;
+  const LoadingScreen({Key? key,required this.price,required this.distance}) : super(key: key);
 
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
@@ -17,8 +19,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    uploadTripInfo(context);
+    uploadTripInfo(context,widget.price,widget.distance);
   }
+
   Widget secondSectionView() {
     String pickUp =
         Provider.of<PickupLocationProvider>(context, listen: false).location;

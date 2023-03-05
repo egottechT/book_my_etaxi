@@ -123,7 +123,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Last Activity",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),

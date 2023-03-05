@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -37,6 +36,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   Map<PolylineId, Polyline> polylines = {};
   String _placeDistance = "0.0";
   late polygonPoint.PolylinePoints polylinePoints;
+  String costTravelling = "";
 
   void _createPolylines(
     double startLatitude,
@@ -52,7 +52,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
       mapApiKey, // Google Maps API Key
       polygonPoint.PointLatLng(startLatitude, startLongitude),
       polygonPoint.PointLatLng(destinationLatitude, destinationLongitude),
-      travelMode: polygonPoint.TravelMode.transit,
+      travelMode: polygonPoint.TravelMode.driving,
     );
 
     debugPrint("Confirm Screen Route info complete");
@@ -79,7 +79,8 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
         destinationLongitude, mapController);
   }
 
-  void changeCar(int index) {
+  void changeCar(int index, String price) {
+    costTravelling = price;
     setState(() {
       currentIndex = index;
     });
@@ -231,9 +232,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   Widget bottomPanelLayout() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         SizedBox(
           width: 50,
           height: 5,
@@ -243,12 +242,12 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
           height: 15,
         ),
         locationShowingCard(),
-            const Divider(
+        const Divider(
           height: 10,
           thickness: 2,
           color: Colors.grey,
         ),
-            const Text(
+        const Text(
           "Available Vehicles",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
@@ -299,13 +298,17 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                UserModel user = Provider.of<UserModelProvider>(context,listen: false).data;
-                if(user.name.isEmpty){
-                  await getUserInfo(context,true);
+                UserModel user =
+                    Provider.of<UserModelProvider>(context, listen: false).data;
+                if (user.name.isEmpty) {
+                  await getUserInfo(context, true);
                 }
-                if(context.mounted) {
+                if (context.mounted) {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const LoadingScreen()));
+                      builder: (context) => LoadingScreen(
+                            price: costTravelling,
+                            distance: _placeDistance,
+                          )));
                 }
               },
               style:
@@ -380,7 +383,11 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   String calculateFare(int price) {
     double distance = double.parse(_placeDistance);
     String fare = "₹";
-    price = price*distance.round();
+    price = price * distance.round();
+
+    if (costTravelling == "0") {
+      costTravelling = price.toString();
+    }
     return fare + price.toString();
   }
 }

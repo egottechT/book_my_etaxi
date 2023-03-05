@@ -69,7 +69,7 @@ class _MapsScreenState extends State<MapsScreen> {
       mapApiKey, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
       PointLatLng(destinationLatitude, destinationLongitude),
-      travelMode: TravelMode.transit,
+      travelMode: TravelMode.driving,
     );
 
     debugPrint("Map Screen Route info complete");

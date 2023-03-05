@@ -57,7 +57,7 @@ Future<bool> checkDatabaseForUser(String uid) async {
   return completer.future;
 }
 
-void uploadTripInfo(BuildContext context) async {
+void uploadTripInfo(BuildContext context,String price,String distance) async {
   var pickUp =
       Provider.of<PickupLocationProvider>(context, listen: false).position;
   var destination =
@@ -83,6 +83,8 @@ void uploadTripInfo(BuildContext context) async {
       "lat": pickUp.latitude,
       "long": pickUp.longitude,
     },
+    "price": price,
+    "distance": distance,
     "driver": false
   });
   key = newChildRef.key.toString();
