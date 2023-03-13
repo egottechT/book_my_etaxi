@@ -5,6 +5,7 @@ import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
+import 'package:book_my_taxi/screens/share_app_earn.dart';
 import 'package:book_my_taxi/screens/startup_screens/login_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/permission_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/registration_screen.dart';
@@ -47,8 +48,8 @@ void main() async {
             color: Colors.grey[800]
         ),
       ),
-      initialRoute: "splash",
-      // home: const LoadingScreen(),
+      // initialRoute: "splash",
+      home: const ShareAppEarnScreen(),
     ),
   ));
 }

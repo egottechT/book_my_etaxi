@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 String mapApiKey = "AIzaSyB9veCDeodL87QObk_JXfVvdNvG-JQKafU";
 Color primaryColor = const Color(0xFF6d1872);
+Color secondaryColor = const Color(0xffecdbed);
 Color lightGrey = Colors.grey[300] as Color;
 double zoomLevel = 16;
 
