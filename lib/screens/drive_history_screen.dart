@@ -12,6 +12,9 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("History"),
+      ),
       body: Column(
         children: [
           Container(

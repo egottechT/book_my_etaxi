@@ -4,6 +4,7 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/drive_history_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
+import 'package:book_my_taxi/screens/notification_screen.dart';
 import 'package:book_my_taxi/screens/share_app_earn.dart';
 import 'package:book_my_taxi/service/authentication.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
@@ -395,7 +396,7 @@ class _MapsScreenState extends State<MapsScreen> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.grey.shade500),
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 CircleAvatar(
@@ -427,42 +428,97 @@ class _MapsScreenState extends State<MapsScreen> {
               ],
             ),
           ),
-
-          //Here you place your menu items
-          ListTile(
-            leading: Icon(Icons.attach_money_rounded),
-            title: Text('Refer and Earn', style: TextStyle(fontSize: 18)),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ShareAppEarnScreen()));
-              // Here you can give your route to navigate
-            },
-          ),
-          Divider(height: 3.0),
-          ListTile(
-            leading: Icon(Icons.car_rental_rounded),
-            title: Text('Your Rides', style: TextStyle(fontSize: 18)),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const DriverHistoryScreen()));
-              // Here you can give your route to navigate
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home', style: TextStyle(fontSize: 18)),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const BalanceScreen()));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.close),
-            title: Text('LogOut', style: TextStyle(fontSize: 18)),
-            onTap: () {
-              signOut();
-              Navigator.of(context).pushNamedAndRemoveUntil('/loginScreen',(route)=>false);
-            },
-          ),
+          drawerItems(
+              () {},
+              Icon(
+                Icons.home,
+                color: primaryColor,
+              ),
+              "Home"),
+          drawerItems(
+              () {},
+              Icon(
+                Icons.car_rental,
+                color: primaryColor,
+              ),
+              "Your Rides"),
+          drawerItems(() {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const BalanceScreen()));
+          },
+              Icon(
+                Icons.wallet,
+                color: primaryColor,
+              ),
+              "BOOK MY ETAXI Money"),
+          drawerItems(() {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const ShareAppEarnScreen()));
+          },
+              Icon(
+                Icons.people_alt_rounded,
+                color: primaryColor,
+              ),
+              "Refer & Earn"),
+          drawerItems(
+              () {},
+              Icon(
+                Icons.payments,
+                color: primaryColor,
+              ),
+              "Payment"),
+          drawerItems(() {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const DriverHistoryScreen()));
+          },
+              Icon(
+                Icons.history,
+                color: primaryColor,
+              ),
+              "History"),
+          drawerItems(() {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const NotificationScreen()));
+          },
+              Icon(
+                Icons.notifications,
+                color: primaryColor,
+              ),
+              "Notification"),
+          drawerItems(
+              () {},
+              Icon(
+                Icons.settings,
+                color: primaryColor,
+              ),
+              "Setting"),
+          drawerItems(
+              () {},
+              Icon(
+                Icons.help,
+                color: primaryColor,
+              ),
+              "Help & Support"),
+          drawerItems(() {
+            signOut();
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/loginScreen', (route) => false);
+          },
+              Icon(
+                Icons.login_sharp,
+                color: primaryColor,
+              ),
+              "Logout"),
         ],
       ),
+    );
+  }
+
+  drawerItems(Function function, Icon icon, String title) {
+    return ListTile(
+      leading: icon,
+      title: Text(title, style: TextStyle(fontSize: 18)),
+      onTap: function(),
     );
   }
 }
