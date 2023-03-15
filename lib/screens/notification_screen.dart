@@ -14,21 +14,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
       appBar: AppBar(
         title: Text("Notifications"),
       ),
-      body: Expanded(
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return Card(
-              color: Colors.grey[300],
+      body: ListView.builder(
+        itemBuilder: (context, index) {
+          return Card(
+            color: Colors.grey[300],
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
                   Text("20% off on first 5"),
                   Text("Offer automatically applied for limited"),
                 ],
               ),
-            );
-          },
-          itemCount: 1,
-        ),
+            ),
+          );
+        },
+        itemCount: 1,
       ),
     );
   }

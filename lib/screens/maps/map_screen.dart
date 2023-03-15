@@ -1,6 +1,7 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/drive_history_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
@@ -396,10 +397,10 @@ class _MapsScreenState extends State<MapsScreen> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.grey.shade500),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                CircleAvatar(
+                const CircleAvatar(
                   backgroundImage: NetworkImage(
                       'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg'),
                   radius: 40.0,
@@ -409,16 +410,16 @@ class _MapsScreenState extends State<MapsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Tom Cruise',
-                      style: TextStyle(
+                      Provider.of<UserModelProvider>(context).data.name,
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 25.0),
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     Text(
-                      'tomcruise@gmail.com',
-                      style: TextStyle(
+                      Provider.of<UserModelProvider>(context).data.email,
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontSize: 14.0),
@@ -514,11 +515,11 @@ class _MapsScreenState extends State<MapsScreen> {
     );
   }
 
-  drawerItems(Function function, Icon icon, String title) {
+  drawerItems(dynamic function, Icon icon, String title) {
     return ListTile(
       leading: icon,
       title: Text(title, style: TextStyle(fontSize: 18)),
-      onTap: function(),
+      onTap: function,
     );
   }
 }
