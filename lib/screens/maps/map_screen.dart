@@ -1,9 +1,11 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
+import 'package:book_my_taxi/screens/balance_screen.dart';
+import 'package:book_my_taxi/screens/drive_history_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
+import 'package:book_my_taxi/screens/share_app_earn.dart';
+import 'package:book_my_taxi/service/authentication.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,6 @@ import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:http/http.dart' as http;
 
 class MapsScreen extends StatefulWidget {
   const MapsScreen({Key? key}) : super(key: key);
@@ -141,7 +142,7 @@ class _MapsScreenState extends State<MapsScreen> {
         await setMapMarker(LatLng(startLatitude, startLongitude), false);
       }
       correctCameraAngle(startLatitude, startLongitude, destinationLatitude,
-          destinationLongitude,mapController);
+          destinationLongitude, mapController);
       _createPolylines(startLatitude, startLongitude, destinationLatitude,
           destinationLongitude);
     } else {
@@ -158,8 +159,8 @@ class _MapsScreenState extends State<MapsScreen> {
           onDragEnd: (dragPoint) async {
             startLatitude = dragPoint.latitude;
             startLongitude = dragPoint.longitude;
-            String point =
-                await getAddressFromLatLng(startLatitude, startLongitude,"Your current Location");
+            String point = await getAddressFromLatLng(
+                startLatitude, startLongitude, "Your current Location");
             if (context.mounted) {
               Provider.of<PickupLocationProvider>(context, listen: false)
                   .setString(point);
@@ -207,8 +208,8 @@ class _MapsScreenState extends State<MapsScreen> {
     mapController = controller;
     LocationData locationData = await getCurrentLocation();
     CameraPosition cameraPosition = CameraPosition(
-        target:
-        LatLng(locationData.latitude as double, locationData.longitude as double),
+        target: LatLng(
+            locationData.latitude as double, locationData.longitude as double),
         zoom: zoomLevel);
 
     mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
@@ -216,8 +217,8 @@ class _MapsScreenState extends State<MapsScreen> {
         LatLng(
             locationData.latitude as double, locationData.longitude as double),
         false);
-    String point = await getAddressFromLatLng(
-        locationData.latitude as double, locationData.longitude as double,"Your current Location");
+    String point = await getAddressFromLatLng(locationData.latitude as double,
+        locationData.longitude as double, "Your current Location");
     if (context.mounted) {
       Provider.of<PickupLocationProvider>(context, listen: false)
           .setString(point);
@@ -232,11 +233,12 @@ class _MapsScreenState extends State<MapsScreen> {
       onPressed: () async {
         LocationData locationData = await getCurrentLocation();
         CameraPosition cameraPosition = CameraPosition(
-            target:
-            LatLng(locationData.latitude as double, locationData.longitude as double),
+            target: LatLng(locationData.latitude as double,
+                locationData.longitude as double),
             zoom: zoomLevel);
 
-        mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
+        mapController
+            .moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
       },
       backgroundColor: Colors.white,
       child: const Icon(
@@ -255,6 +257,10 @@ class _MapsScreenState extends State<MapsScreen> {
 
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Book My Etaxi"),
+        ),
+        drawer: appDrawerView(),
         resizeToAvoidBottomInset: true,
         body: SlidingUpPanel(
           controller: panelController,
@@ -379,6 +385,84 @@ class _MapsScreenState extends State<MapsScreen> {
     }
     return const SizedBox(
       width: 2,
+    );
+  }
+
+  appDrawerView() {
+    return Drawer(
+      elevation: 10.0,
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+            decoration: BoxDecoration(color: Colors.grey.shade500),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg'),
+                  radius: 40.0,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Tom Cruise',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 25.0),
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      'tomcruise@gmail.com',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 14.0),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+
+          //Here you place your menu items
+          ListTile(
+            leading: Icon(Icons.attach_money_rounded),
+            title: Text('Refer and Earn', style: TextStyle(fontSize: 18)),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const ShareAppEarnScreen()));
+              // Here you can give your route to navigate
+            },
+          ),
+          Divider(height: 3.0),
+          ListTile(
+            leading: Icon(Icons.car_rental_rounded),
+            title: Text('Your Rides', style: TextStyle(fontSize: 18)),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const DriverHistoryScreen()));
+              // Here you can give your route to navigate
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('Home', style: TextStyle(fontSize: 18)),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const BalanceScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.close),
+            title: Text('LogOut', style: TextStyle(fontSize: 18)),
+            onTap: () {
+              signOut();
+              Navigator.of(context).pushNamedAndRemoveUntil('/loginScreen',(route)=>false);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

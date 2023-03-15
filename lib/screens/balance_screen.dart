@@ -10,6 +10,7 @@ class BalanceScreen extends StatefulWidget {
 
 class _BalanceScreenState extends State<BalanceScreen> {
   String moneyText = "Rs. 500";
+  bool showCardView = true;
 
   Widget currentBalance() {
     return Card(
@@ -118,12 +119,12 @@ class _BalanceScreenState extends State<BalanceScreen> {
   Widget lastActivity() {
     return Card(
       color: lightGrey,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
+      child: const Padding(
+        padding: EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Last Activity",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -160,35 +161,40 @@ class _BalanceScreenState extends State<BalanceScreen> {
   }
 
   Widget cashbackView() {
-    return Card(
-      color: lightGrey,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Cashback & Discounts",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.cancel_outlined,
-                      color: primaryColor,
-                    )),
-              ],
-            ),
-            Text(
-              "Make your money go step up",
-              style: TextStyle(
-                color: primaryColor,
+    return Visibility(
+      visible: showCardView,
+      child: Card(
+        color: lightGrey,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Cashback & Discounts",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        showCardView = false;
+                      },
+                      icon: Icon(
+                        Icons.cancel_outlined,
+                        color: primaryColor,
+                      )),
+                ],
               ),
-            )
-          ],
+              Text(
+                "Make your money go step up",
+                style: TextStyle(
+                  color: primaryColor,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -241,17 +247,19 @@ class _BalanceScreenState extends State<BalanceScreen> {
       appBar: AppBar(
         title: Text("BOOK MY ETAXI Money"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-        child: Column(
-          children: [
-            Expanded(flex: 3, child: Icon(Icons.money)),
-            Expanded(flex: 2, child: currentBalance()),
-            Expanded(flex: 2, child: serviceList()),
-            Expanded(flex: 2, child: lastActivity()),
-            Expanded(flex: 2, child: cashbackView()),
-            Expanded(flex: 2, child: addressList()),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+          child: Column(
+            children: [
+              Image.asset("assets/images/permission_page.png"),
+              currentBalance(),
+              serviceList(),
+              lastActivity(),
+              cashbackView(),
+              addressList(),
+            ],
+          ),
         ),
       ),
     );
