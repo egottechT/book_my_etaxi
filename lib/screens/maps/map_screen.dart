@@ -2,12 +2,14 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/drive_history_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/notification_screen.dart';
 import 'package:book_my_taxi/screens/share_app_earn.dart';
 import 'package:book_my_taxi/service/authentication.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/panel_widget.dart';
 import 'package:flutter/material.dart';
@@ -104,6 +106,14 @@ class _MapsScreenState extends State<MapsScreen> {
     Permission.location.request();
     panelWidget = PanelWidget(
         function: setMapMarker, removeDestinationMaker: removeDestinationMaker);
+    readData();
+  }
+
+  void readData() async {
+    UserModel model = await getUserInfo(context, true);
+    if(context.mounted) {
+      Provider.of<UserModelProvider>(context,listen: false).setData(model);
+    }
   }
 
   Future<void> setMapMarker(LatLng latLng, bool destination) async {
@@ -391,6 +401,7 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   appDrawerView() {
+    UserModel model =  Provider.of<UserModelProvider>(context,listen: true).data;
     return Drawer(
       elevation: 10.0,
       child: ListView(
@@ -410,7 +421,7 @@ class _MapsScreenState extends State<MapsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      Provider.of<UserModelProvider>(context).data.name,
+                      Provider.of<UserModelProvider>(context,listen: true).data.name.isEmpty ? "Loading.." : Provider.of<UserModelProvider>(context,listen: true).data.name,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -418,7 +429,7 @@ class _MapsScreenState extends State<MapsScreen> {
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      Provider.of<UserModelProvider>(context).data.email,
+                      Provider.of<UserModelProvider>(context,listen: true).data.email,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,

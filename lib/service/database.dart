@@ -18,24 +18,26 @@ final databaseReference = FirebaseDatabase(
     .ref();
 String key = "";
 
-Future<void> getUserInfo(BuildContext context, bool wait) async {
+Future<UserModel> getUserInfo(BuildContext context, bool wait) async {
+  Completer<UserModel> completer = Completer();
   String uid = FirebaseAuth.instance.currentUser!.uid.toString();
   debugPrint("uid is:- $uid");
   if (wait) {
     await databaseReference.child("customer").child(uid).once().then((value) {
       Map map = value.snapshot.value as Map;
-      debugPrint("Values :- ${map.toString()}");
+      debugPrint("Values with wait:- ${map.toString()}");
       UserModel model = UserModel().getDataFromMap(map);
-      Provider.of<UserModelProvider>(context, listen: false).setData(model);
+      completer.complete(model);
     });
   } else {
     databaseReference.child("customer").child(uid).once().then((value) {
       Map map = value.snapshot.value as Map;
-      debugPrint("Values :- ${map.toString()}");
+      debugPrint("Values without wait:- ${map.toString()}");
       UserModel model = UserModel().getDataFromMap(map);
-      Provider.of<UserModelProvider>(context, listen: false).setData(model);
+      completer.complete(model);
     });
   }
+  return completer.future;
 }
 
 Future<void> addUserToDatabase(String name, UserModel model) async {
@@ -57,7 +59,7 @@ Future<bool> checkDatabaseForUser(String uid) async {
   return completer.future;
 }
 
-void uploadTripInfo(BuildContext context,String price,String distance) async {
+void uploadTripInfo(BuildContext context, String price, String distance) async {
   var pickUp =
       Provider.of<PickupLocationProvider>(context, listen: false).position;
   var destination =
