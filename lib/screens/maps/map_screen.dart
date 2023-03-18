@@ -3,8 +3,10 @@ import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/screens/account_setting_screen.dart';
 import 'package:book_my_taxi/screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/drive_history_screen.dart';
+import 'package:book_my_taxi/screens/help_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/notification_screen.dart';
 import 'package:book_my_taxi/screens/share_app_earn.dart';
@@ -498,14 +500,20 @@ class _MapsScreenState extends State<MapsScreen> {
               ),
               "Notification"),
           drawerItems(
-              () {},
+              () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const AccountSettingScreen()));
+              },
               Icon(
                 Icons.settings,
                 color: primaryColor,
               ),
               "Setting"),
           drawerItems(
-              () {},
+              () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const HelpScreen()));
+              },
               Icon(
                 Icons.help,
                 color: primaryColor,
