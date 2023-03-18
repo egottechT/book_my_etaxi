@@ -6,6 +6,7 @@ import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
+import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +87,7 @@ void uploadTripInfo(BuildContext context, String price, String distance) async {
     },
     "price": price,
     "distance": distance,
-    "driver": false,
+    "isFinished": false,
     'id': FirebaseAuth.instance.currentUser!.uid.toString()
   };
   await newChildRef.set(data);
@@ -136,15 +137,30 @@ Future<void> cancelRequest(String reason) async {
       .update({"cancel": true, "reason": reason});
 }
 
-Future<void> uploadRatingUser(DriverModel driverModel, int stars, String title, String name) async {
+Future<void> uploadRatingUser(
+    DriverModel driverModel, int stars, String title, String name) async {
   await databaseReference
       .child("driver")
       .child(driverModel.id)
       .child("rating")
       .push()
-      .set({
-        "rating": stars,
-        "description": title,
-        "customerName": name
-      });
+      .set({"rating": stars, "description": title, "customerName": name});
+}
+
+Future<void> checkIsTripEnd(
+    BuildContext context, DriverModel model, Map map) async {
+  databaseReference.child("trips").child(key).onChildChanged.listen((event) {
+    if (event.snapshot.key == "isFinished") {
+      Map map = event.snapshot.value as Map;
+      DriverModel model = DriverModel().getDataFromMap(map);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReviewTripScreen(
+                  driver: model,
+                  map: map,
+                )),
+      );
+    }
+  });
 }

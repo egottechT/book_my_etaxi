@@ -43,6 +43,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
 
   void readData() {
     driveLocationUpdate(mapController, setUpTheMarker);
+    checkIsTripEnd(context,widget.driver,widget.data);
   }
 
   @override
