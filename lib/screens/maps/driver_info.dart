@@ -1,9 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
-import 'package:book_my_taxi/screens/payment_screen.dart';
+import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,8 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DriverInfoScreen extends StatefulWidget {
   final DriverModel driver;
-
-  const DriverInfoScreen({Key? key, required this.driver}) : super(key: key);
+  final Map data;
+  const DriverInfoScreen({Key? key, required this.driver,required this.data}) : super(key: key);
 
   @override
   State<DriverInfoScreen> createState() => _DriverInfoScreenState();
@@ -141,13 +140,13 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "OTP ",
                               style: TextStyle(fontSize: 18),
                             ),
                             Text(
                               widget.driver.otp.toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             )
                           ],

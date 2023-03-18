@@ -25,3 +25,29 @@ extension ShowSnackBar on BuildContext {
     showSnackBar(message: message, backgroundColor: Colors.red);
   }
 }
+
+Map getDummyData(){
+  Map map = {
+    "title": "Aryan text",
+    "body": "Please Pickup me",
+    "phoneNumber": "84492",
+    "destination": {
+      "lat": 30.2939471,
+      "long": 78.0578826,
+      "location":
+      "Rispana Pull, Dehradun,248001 ,jksdf ajlsdf ajllsadfl fasdfjl, Uttarakhand, India",
+    },
+    "pick-up": {
+      "location":
+      "73JM+573, Nehrugram, Dehradun, Uttarakhand 248005, India",
+      "lat":30.2803492,
+      "long": 78.0831859,
+    },
+    "price": 300,
+    "distance": "10.5",
+    "driver": false,
+    "id": "9Tae9quZkEREdLErYUqUDmhmegk2"
+  };
+  // uploadDummyData(map);
+  return map;
+}

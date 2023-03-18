@@ -5,7 +5,7 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
-import 'package:book_my_taxi/screens/driver_info.dart';
+import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -67,8 +67,7 @@ void uploadTripInfo(BuildContext context, String price, String distance) async {
   final newChildRef = databaseReference.child("trips").push();
 
   final userData = Provider.of<UserModelProvider>(context, listen: false).data;
-
-  await newChildRef.set({
+  Map data = {
     "title": userData.name,
     "body": "Please Pickup me",
     "phoneNumber": userData.phoneNumber,
@@ -87,15 +86,17 @@ void uploadTripInfo(BuildContext context, String price, String distance) async {
     },
     "price": price,
     "distance": distance,
-    "driver": false
-  });
+    "driver": false,
+    'id': FirebaseAuth.instance.currentUser!.uid.toString()
+  };
+  await newChildRef.set(data);
   key = newChildRef.key.toString();
   if (context.mounted) {
-    checkDriveRequest(context);
+    checkDriveRequest(context, data);
   }
 }
 
-void checkDriveRequest(BuildContext context) {
+void checkDriveRequest(BuildContext context, Map data) {
   // databaseReference.child("trips").child(key).onChildChanged.listen((event) {
   //   debugPrint("Child Changed ${event.snapshot.value.toString()}");
   // });
@@ -110,6 +111,7 @@ void checkDriveRequest(BuildContext context) {
           MaterialPageRoute(
               builder: (context) => DriverInfoScreen(
                     driver: model,
+                    data: data,
                   )),
           ModalRoute.withName('/mapScreen'));
     }
@@ -132,4 +134,17 @@ Future<void> cancelRequest(String reason) async {
       .child("trips")
       .child(key)
       .update({"cancel": true, "reason": reason});
+}
+
+Future<void> uploadRatingUser(DriverModel driverModel, int stars, String title, String name) async {
+  await databaseReference
+      .child("driver")
+      .child(driverModel.id)
+      .child("rating")
+      .push()
+      .set({
+        "rating": stars,
+        "description": title,
+        "customerName": name
+      });
 }
