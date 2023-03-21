@@ -9,14 +9,12 @@ import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/selectCarView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart'
-    as polygonPoint;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart' as polygonPoint;
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 import '../../Utils/utils.dart';
 import '../../listeners/location_string_listener.dart';
 
@@ -36,7 +34,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   Map<PolylineId, Polyline> polylines = {};
   String _placeDistance = "0.0";
   late polygonPoint.PolylinePoints polylinePoints;
-  String costTravelling = "";
+  String costTravelling = "0";
 
   void _createPolylines(
     double startLatitude,
@@ -384,7 +382,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     double distance = double.parse(_placeDistance);
     String fare = "₹";
     price = price * distance.round();
-
+    debugPrint(costTravelling);
     if (costTravelling == "0") {
       costTravelling = price.toString();
     }

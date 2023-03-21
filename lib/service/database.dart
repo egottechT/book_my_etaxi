@@ -121,11 +121,14 @@ void checkDriveRequest(BuildContext context, Map data) {
 
 void driveLocationUpdate(GoogleMapController mapController, Function function) {
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
-    Map map = event.snapshot.value as Map;
-    LatLng center = LatLng(map["lat"], map["long"]);
-    CameraPosition cameraPosition = CameraPosition(target: center, zoom: 16);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    function(center);
+    debugPrint(event.snapshot.key.toString());
+    if(event.snapshot.key.toString() == "driver_info"){
+      Map map = event.snapshot.value as Map;
+      LatLng center = LatLng(map["lat"], map["long"]);
+      CameraPosition cameraPosition = CameraPosition(target: center, zoom: 16);
+      mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      function(center);
+    }
     // debugPrint("Driver Location Update:-  ${map["lat"]} ${map["long"]}");
   });
 }
@@ -138,7 +141,7 @@ Future<void> cancelRequest(String reason) async {
 }
 
 Future<void> uploadRatingUser(
-    DriverModel driverModel, int stars, String title, String name) async {
+    DriverModel driverModel, double stars, String title, String name) async {
   await databaseReference
       .child("driver")
       .child(driverModel.id)
@@ -150,9 +153,9 @@ Future<void> uploadRatingUser(
 Future<void> checkIsTripEnd(
     BuildContext context, DriverModel model, Map map) async {
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
+    debugPrint("Changed key is:- ${event.snapshot.key}");
     if (event.snapshot.key == "isFinished") {
-      Map map = event.snapshot.value as Map;
-      DriverModel model = DriverModel().getDataFromMap(map);
+      debugPrint(event.snapshot.value.toString());
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

@@ -17,7 +17,7 @@ class ReviewTripScreen extends StatefulWidget {
 
 class _ReviewScreenState extends State<ReviewTripScreen> {
   TextEditingController textEditingController = TextEditingController();
-  int star = 0;
+  double star = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,7 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
     );
   }
 
-  void onStarChange(int value) {
+  void onStarChange(double value) {
     star = value;
   }
 
@@ -129,9 +129,9 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
       children: [
         Text(
           value,
-          style: TextStyle(fontSize: 25, color: secondaryColor),
+          style: TextStyle(fontSize: 25, color: primaryColor),
         ),
-        Text(title, style: TextStyle(color: secondaryColor))
+        Text(title, style: TextStyle(color: primaryColor))
       ],
     );
   }
