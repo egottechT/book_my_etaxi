@@ -1,6 +1,5 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -17,7 +16,7 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Share & Earn"),
+        title: const Text("Share & Earn"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -76,12 +75,12 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                   ElevatedButton(
                     onPressed: () {
                       String referral = FirebaseAuth.instance.currentUser!.uid.toString();
-                      Share.share('$referral',
+                      Share.share(referral,
                           subject: 'Share your referral Code');
                     },
-                    child: Text("Share Code"),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    child: const Text("Share Code"),
                   )
                 ],
               ),

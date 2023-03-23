@@ -1,18 +1,15 @@
 import 'dart:isolate';
 
-import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
-import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/maps/map_screen.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/phone_number_setup.dart';
 import 'package:book_my_taxi/screens/startup_screens/login_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/permission_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/registration_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/splash_screen.dart';
-import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show PlatformDispatcher;
@@ -36,10 +33,6 @@ void main() async {
     );
   }).sendPort);
 
-  // Map map = getDummyData();
-  DriverModel model = DriverModel();
-  model.id = "9Tae9quZkEREdLErYUqUDmhmegk2";
-  uploadRatingUser(model, 2, "Aryan not nive", "Swaastik");
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => PickupLocationProvider()),

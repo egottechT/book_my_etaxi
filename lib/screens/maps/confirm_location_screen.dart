@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -9,12 +10,15 @@ import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/selectCarView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart' as polygonPoint;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart'
+    as polygonPoint;
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:lottie/lottie.dart' as lottie;
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
 import '../../Utils/utils.dart';
 import '../../listeners/location_string_listener.dart';
 
@@ -35,8 +39,9 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   String _placeDistance = "0.0";
   late polygonPoint.PolylinePoints polylinePoints;
   String costTravelling = "0";
+  bool loading = true;
 
-  void _createPolylines(
+  Future<void> _createPolylines(
     double startLatitude,
     double startLongitude,
     double destinationLatitude,
@@ -131,9 +136,17 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
     readData();
+    testingAppTimer();
   }
 
-  void readData() {
+  void testingAppTimer() async {
+    await Future.delayed(const Duration(seconds: 8));
+    setState(() {
+      loading = false;
+    });
+  }
+
+  void readData() async {
     LatLng start =
         Provider.of<PickupLocationProvider>(context, listen: false).position;
     LatLng destination =
@@ -141,8 +154,11 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
             .position;
     setMarker(start, false);
     setMarker(destination, true);
-    _createPolylines(start.latitude, start.longitude, destination.latitude,
-        destination.longitude);
+    await _createPolylines(start.latitude, start.longitude,
+        destination.latitude, destination.longitude);
+    // setState(() {
+    //   loading = false;
+    // });
   }
 
   void setMarker(LatLng location, bool destination) async {
@@ -230,121 +246,139 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   Widget bottomPanelLayout() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
-          width: 50,
-          height: 5,
-          child: Container(color: Colors.grey),
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        locationShowingCard(),
-        const Divider(
-          height: 10,
-          thickness: 2,
-          color: Colors.grey,
-        ),
-        const Text(
-          "Available Vehicles",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        DecoratedBox(
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: (currentIndex == 1) ? primaryColor : Colors.white,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20)),
-            child: carCardView(
-                Image.asset("assets/images/mini_car.png"),
-                "Mini",
-                "Comfy, Small cozy Cars",
-                calculateFare(20),
-                1,
-                changeCar)),
-        DecoratedBox(
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: (currentIndex == 2) ? primaryColor : Colors.white,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20)),
-            child: carCardView(
-                Image.asset("assets/images/sedan_car.png"),
-                "Sedan",
-                "Spacious, luxury premium Cars",
-                calculateFare(75),
-                2,
-                changeCar)),
-        DecoratedBox(
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: (currentIndex == 3) ? primaryColor : Colors.white,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20)),
-            child: carCardView(
-                Image.asset("assets/images/suv.png"),
-                "SUV",
-                "Spacious, big 8 seater capacity",
-                calculateFare(150),
-                3,
-                changeCar)),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                UserModel user =
-                    Provider.of<UserModelProvider>(context, listen: false).data;
-                if (user.name.isEmpty) {
-                  await getUserInfo(context, true);
-                }
-                if (context.mounted) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => LoadingScreen(
-                            price: costTravelling,
-                            distance: _placeDistance,
-                          )));
-                }
-              },
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),
-              child: const Text("CONFIRM REQUEST"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text(
-                            "Are you sure you want to cancel request?"),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                  ..pop()
-                                  ..pop();
-                              },
-                              child: const Text("Yes")),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("No"))
-                        ],
-                      );
-                    });
-              },
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),
-              child: const Text("CANCEL REQUEST"),
-            ),
-          ],
-        )
-      ]),
+      child: loading
+          ? SizedBox(
+              height: 80,
+              width: 50,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20,),
+                  const Text("Requesting Ride..",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                  lottie.Lottie.asset(
+                      // 'assets/animation/taxi_animation.json',
+                      'assets/animation/driver_animation.json',
+                      fit: BoxFit.scaleDown),
+                ],
+              ))
+          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SizedBox(
+                width: 50,
+                height: 5,
+                child: Container(color: Colors.grey),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              locationShowingCard(),
+              const Divider(
+                height: 10,
+                thickness: 2,
+                color: Colors.grey,
+              ),
+              const Text(
+                "Available Vehicles",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color:
+                            (currentIndex == 1) ? primaryColor : Colors.white,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: carCardView(
+                      Image.asset("assets/images/mini_car.png"),
+                      "Mini",
+                      "Comfy, Small cozy Cars",
+                      calculateFare(20),
+                      1,
+                      changeCar)),
+              DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color:
+                            (currentIndex == 2) ? primaryColor : Colors.white,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: carCardView(
+                      Image.asset("assets/images/sedan_car.png"),
+                      "Sedan",
+                      "Spacious, luxury premium Cars",
+                      calculateFare(75),
+                      2,
+                      changeCar)),
+              DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color:
+                            (currentIndex == 3) ? primaryColor : Colors.white,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: carCardView(
+                      Image.asset("assets/images/suv.png"),
+                      "SUV",
+                      "Spacious, big 8 seater capacity",
+                      calculateFare(150),
+                      3,
+                      changeCar)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      UserModel user =
+                          Provider.of<UserModelProvider>(context, listen: false)
+                              .data;
+                      if (user.name.isEmpty) {
+                        await getUserInfo(context, true);
+                      }
+                      if (context.mounted) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => LoadingScreen(
+                                  price: costTravelling,
+                                  distance: _placeDistance,
+                                )));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[700]),
+                    child: const Text("CONFIRM REQUEST"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                  "Are you sure you want to cancel request?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                        ..pop()
+                                        ..pop();
+                                    },
+                                    child: const Text("Yes")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text("No"))
+                              ],
+                            );
+                          });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[700]),
+                    child: const Text("CANCEL REQUEST"),
+                  ),
+                ],
+              )
+            ]),
     );
   }
 

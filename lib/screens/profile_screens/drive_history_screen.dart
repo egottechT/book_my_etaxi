@@ -13,7 +13,7 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("History"),
+        title: const Text("History"),
       ),
       body: Column(
         children: [

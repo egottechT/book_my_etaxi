@@ -12,14 +12,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Notifications"),
+        title: const Text("Notifications"),
       ),
       body: ListView.builder(
         itemBuilder: (context, index) {
           return Card(
             color: Colors.grey[300],
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
+            child: const Padding(
+              padding: EdgeInsets.all(10.0),
               child: Column(
                 children: [
                   Text("20% off on first 5"),

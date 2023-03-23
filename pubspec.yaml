@@ -52,6 +52,7 @@ dependencies:
   google_maps_webservice: ^0.0.19
   google_api_headers: ^1.5.0
   google_maps_flutter: ^2.2.3
+  animated_text_kit: ^4.2.2
   location: ^4.4.0
   lottie: ^2.2.0
   firebase_crashlytics: ^3.0.12

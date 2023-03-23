@@ -26,7 +26,7 @@ class _HelpScreenState extends State<HelpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Help"),
+        title: const Text("Help"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -85,7 +85,7 @@ class _HelpScreenState extends State<HelpScreen> {
     return Container(
       color: primaryColor,
       child: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(8.0),

@@ -272,7 +272,7 @@ class _MapsScreenState extends State<MapsScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Book My Etaxi"),
+          title: const Text("Book My Etaxi"),
         ),
         drawer: appDrawerView(),
         resizeToAvoidBottomInset: true,
@@ -537,7 +537,7 @@ class _MapsScreenState extends State<MapsScreen> {
   drawerItems(dynamic function, Icon icon, String title) {
     return ListTile(
       leading: icon,
-      title: Text(title, style: TextStyle(fontSize: 18)),
+      title: Text(title, style: const TextStyle(fontSize: 18)),
       onTap: function,
     );
   }

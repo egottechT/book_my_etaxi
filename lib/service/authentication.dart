@@ -1,10 +1,8 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
-import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/phone_verification_screens/otp_verify_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -31,6 +29,7 @@ Future<User?> doGmailLogin() async {
       return null;
     }
   }
+  return null;
 }
 
 Future<void> signOut() async {

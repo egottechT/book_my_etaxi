@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -41,7 +40,7 @@ class PhoneNumberInput extends StatelessWidget {
         onInputChanged: (PhoneNumber value) {
           onValueChange(value.phoneNumber.toString());
         },
-        countries: ["IN","US","GB","NL","MR","SL","CG","SO"],
+        countries: const ["IN","US","GB","NL","MR","SL","CG","SO"],
       ),
     );
   }

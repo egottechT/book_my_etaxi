@@ -14,7 +14,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
 
   Widget currentBalance() {
     return Card(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         //<-- SEE HERE
         side: BorderSide(
           color: Colors.black,
@@ -27,18 +27,18 @@ class _BalanceScreenState extends State<BalanceScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Current Balance",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(moneyText),
-                Text(
+                const Text(
                   "ADD ETAXI Money",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 )
@@ -73,7 +73,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "  Service",
           style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
         ),
@@ -173,7 +173,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "Cashback & Discounts",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -211,7 +211,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
               Icons.home,
               color: primaryColor,
             ),
-            label: Text(
+            label: const Text(
               "ADD YOUR HOME ADDRESS",
               style: TextStyle(color: Colors.black,),
             ),
@@ -226,7 +226,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
               Icons.warehouse_rounded,
               color: primaryColor,
             ),
-            label: Text(
+            label: const Text(
               "ADD YOUR WORK/OFFICE ADDRESS",
               textAlign: TextAlign.left,
               style: TextStyle(color: Colors.black),
@@ -245,7 +245,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("BOOK MY ETAXI Money"),
+        title: const Text("BOOK MY ETAXI Money"),
       ),
       body: SingleChildScrollView(
         child: Padding(

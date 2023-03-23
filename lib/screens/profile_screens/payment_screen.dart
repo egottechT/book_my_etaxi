@@ -25,9 +25,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
             flex: 1,
             child: Container(
               color: Colors.grey,
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.max,
-                children: const [
+                children: [
                   Expanded(
                     flex: 3,
                     child: Center(
