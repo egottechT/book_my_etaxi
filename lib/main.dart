@@ -10,6 +10,7 @@ import 'package:book_my_taxi/screens/startup_screens/login_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/permission_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/registration_screen.dart';
 import 'package:book_my_taxi/screens/startup_screens/splash_screen.dart';
+import 'package:book_my_taxi/service/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show PlatformDispatcher;
@@ -19,6 +20,8 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService().init();
+
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: false);

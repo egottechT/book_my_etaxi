@@ -360,8 +360,6 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
           ),
         ),
         showIconWithText(() {
-          debugPrint("Cancel trip");
-
           showDialog(
               context: context,
               builder: (context) {

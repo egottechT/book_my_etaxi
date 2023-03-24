@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -7,6 +6,7 @@ import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
+import 'package:book_my_taxi/service/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -18,22 +18,20 @@ final databaseReference = FirebaseDatabase(
             "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
     .ref();
 String key = "";
+String amount = "";
 
 Future<UserModel> getUserInfo(BuildContext context, bool wait) async {
   Completer<UserModel> completer = Completer();
   String uid = FirebaseAuth.instance.currentUser!.uid.toString();
-  debugPrint("uid is:- $uid");
   if (wait) {
     await databaseReference.child("customer").child(uid).once().then((value) {
       Map map = value.snapshot.value as Map;
-      debugPrint("Values with wait:- ${map.toString()}");
       UserModel model = UserModel().getDataFromMap(map);
       completer.complete(model);
     });
   } else {
     databaseReference.child("customer").child(uid).once().then((value) {
       Map map = value.snapshot.value as Map;
-      debugPrint("Values without wait:- ${map.toString()}");
       UserModel model = UserModel().getDataFromMap(map);
       completer.complete(model);
     });
@@ -61,6 +59,7 @@ Future<bool> checkDatabaseForUser(String uid) async {
 }
 
 void uploadTripInfo(BuildContext context, String price, String distance) async {
+  amount = price;
   var pickUp =
       Provider.of<PickupLocationProvider>(context, listen: false).position;
   var destination =
@@ -88,6 +87,7 @@ void uploadTripInfo(BuildContext context, String price, String distance) async {
     "price": price,
     "distance": distance,
     "isFinished": false,
+    "tripStarted": false,
     'id': FirebaseAuth.instance.currentUser!.uid.toString()
   };
   await newChildRef.set(data);
@@ -107,6 +107,8 @@ void checkDriveRequest(BuildContext context, Map data) {
     if (event.snapshot.key == "driver_info") {
       Map map = event.snapshot.value as Map;
       DriverModel model = DriverModel().getDataFromMap(map);
+      NotificationService()
+          .showNotification("Driver Accepted the Request", "Driver on the way");
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -121,12 +123,12 @@ void checkDriveRequest(BuildContext context, Map data) {
 
 void driveLocationUpdate(GoogleMapController mapController, Function function) {
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
-    debugPrint(event.snapshot.key.toString());
-    if(event.snapshot.key.toString() == "driver_info"){
+    if (event.snapshot.key.toString() == "driver_info") {
       Map map = event.snapshot.value as Map;
       LatLng center = LatLng(map["lat"], map["long"]);
       CameraPosition cameraPosition = CameraPosition(target: center, zoom: 16);
-      mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      mapController
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
       function(center);
     }
     // debugPrint("Driver Location Update:-  ${map["lat"]} ${map["long"]}");
@@ -137,7 +139,8 @@ Future<void> cancelRequest(String reason) async {
   databaseReference
       .child("trips")
       .child(key)
-      .update({"cancel": true, "reason": reason});
+      .child("cancel_trip")
+      .set({"reason": reason});
 }
 
 Future<void> uploadRatingUser(
@@ -153,9 +156,13 @@ Future<void> uploadRatingUser(
 Future<void> checkIsTripEnd(
     BuildContext context, DriverModel model, Map map) async {
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
-    debugPrint("Changed key is:- ${event.snapshot.key}");
+    // debugPrint("Changed key is:- ${event.snapshot.key}");
+    // debugPrint("Value key is:- ${event.snapshot.value}");
+    if (event.snapshot.key == "tripStarted"){
+      NotificationService().showNotification("Your Ride is started", "Enjoy Your Ride");
+    }
     if (event.snapshot.key == "isFinished") {
-      debugPrint(event.snapshot.value.toString());
+      NotificationService().showNotification("Your Ride is completed", "Please pay driver to Rs.$amount");
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
