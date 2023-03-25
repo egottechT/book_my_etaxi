@@ -31,54 +31,54 @@ class _MessageScreenState extends State<MessageScreen> {
             children: [
               Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    itemBuilder: (context, index) {
-                      bool self = (messages[index].sender == "customer");
-                      return Align(
-                        alignment:
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                itemBuilder: (context, index) {
+                  bool self = (messages[index].sender == "customer");
+                  return Align(
+                    alignment:
                         self ? Alignment.centerRight : Alignment.centerLeft,
-                        child: Column(
-                          children: [
-                            Container(
-                              constraints: BoxConstraints(
-                                  maxWidth:
+                    child: Column(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                              maxWidth:
                                   MediaQuery.of(context).size.width * 0.75),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: self ? Colors.green : Colors.grey),
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(messages[index].msg),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            )
-                          ],
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0),
+                              color: self ? Colors.green : Colors.grey),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(messages[index].msg),
+                          ),
                         ),
-                      );
-                    },
-                    itemCount: messages.length,
-                  )),
+                        const SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                  );
+                },
+                itemCount: messages.length,
+              )),
               SizedBox(
                 height: 50,
                 child: Row(
                   children: [
                     Expanded(
                         child: TextField(
-                          controller: textController,
-                          decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                  onPressed: () {
-                                    uploadChatData(textController.text);
-                                    textController.text = "";
-                                    readData();
-                                  },
-                                  icon: const Icon(Icons.send)),
-                              border: const OutlineInputBorder(),
-                              hintText: "Message your driver..",
-                              hintStyle: const TextStyle(color: Colors.grey)),
-                        ))
+                      controller: textController,
+                      decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                uploadChatData(textController.text);
+                                textController.text = "";
+                                readData();
+                              },
+                              icon: const Icon(Icons.send)),
+                          border: const OutlineInputBorder(),
+                          hintText: "Message your driver..",
+                          hintStyle: const TextStyle(color: Colors.grey)),
+                    ))
                   ],
                 ),
               )

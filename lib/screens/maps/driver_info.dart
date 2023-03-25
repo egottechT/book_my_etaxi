@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
@@ -13,7 +14,9 @@ import 'package:url_launcher/url_launcher.dart';
 class DriverInfoScreen extends StatefulWidget {
   final DriverModel driver;
   final Map data;
-  const DriverInfoScreen({Key? key, required this.driver,required this.data}) : super(key: key);
+
+  const DriverInfoScreen({Key? key, required this.driver, required this.data})
+      : super(key: key);
 
   @override
   State<DriverInfoScreen> createState() => _DriverInfoScreenState();
@@ -44,7 +47,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
 
   void readData() {
     driveLocationUpdate(mapController, setUpTheMarker);
-    checkIsTripEnd(context,widget.driver,widget.data);
+    checkIsTripEnd(context, widget.driver, widget.data);
   }
 
   @override
@@ -351,7 +354,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
           ),
         ),
         showIconWithText(() {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const MessageScreen()));
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const MessageScreen()));
         }, const Icon(Icons.message), "Message"),
         const SizedBox(
           height: 40,
@@ -366,7 +370,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
               context: context,
               builder: (context) {
                 return StatefulBuilder(
-                  builder: (context,changeSet){
+                  builder: (context, changeSet) {
                     return Scaffold(
                       body: SlidingUpPanel(
                           minHeight: 400,
@@ -381,7 +385,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                                   Text(
                                     "$driverName will reach in 10 min",
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold, fontSize: 22),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22),
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -423,14 +428,14 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
 
   cancelOptionMenu(changeSet) {
     List<Widget> list = [
-      cardMenuItem("Driver denied pickup",changeSet),
-      cardMenuItem("Driver wanted cash",changeSet),
-      cardMenuItem("Driver unresponsive in chat/call",changeSet),
-      cardMenuItem("Driver insisted on taking directly/offline",changeSet),
-      cardMenuItem("Expected a shorter wait time",changeSet),
-      cardMenuItem("Driver not moving",changeSet),
-      cardMenuItem("Selected wrong pickup",changeSet),
-      cardMenuItem("My reason is not listed",changeSet),
+      cardMenuItem("Driver denied pickup", changeSet),
+      cardMenuItem("Driver wanted cash", changeSet),
+      cardMenuItem("Driver unresponsive in chat/call", changeSet),
+      cardMenuItem("Driver insisted on taking directly/offline", changeSet),
+      cardMenuItem("Expected a shorter wait time", changeSet),
+      cardMenuItem("Driver not moving", changeSet),
+      cardMenuItem("Selected wrong pickup", changeSet),
+      cardMenuItem("My reason is not listed", changeSet),
       ElevatedButton(
         onPressed: () {
           Navigator.of(context).pop();
@@ -466,7 +471,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     );
   }
 
-  cardMenuItem(String title,changeSet) {
+  cardMenuItem(String title, changeSet) {
     return DecoratedBox(
       decoration: BoxDecoration(
           border: Border.all(

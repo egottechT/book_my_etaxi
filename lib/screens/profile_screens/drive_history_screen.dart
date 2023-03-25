@@ -20,11 +20,11 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
           Container(
             height: 75,
             color: const Color(0xff143f5d),
-            child: const Align(
+            child: Align(
               alignment: Alignment.bottomCenter,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
+                children: const [
                   Text(
                     "On Going Details",
                     style: TextStyle(
@@ -53,8 +53,8 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Row(
-                            children: [
+                          Row(
+                            children: const [
                               Text("Booking ID : "),
                               Text("50690"),
                             ],

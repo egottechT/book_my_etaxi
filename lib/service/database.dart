@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -159,11 +160,13 @@ Future<void> checkIsTripEnd(
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
     // debugPrint("Changed key is:- ${event.snapshot.key}");
     // debugPrint("Value key is:- ${event.snapshot.value}");
-    if (event.snapshot.key == "tripStarted"){
-      NotificationService().showNotification("Your Ride is started", "Enjoy Your Ride");
+    if (event.snapshot.key == "tripStarted") {
+      NotificationService()
+          .showNotification("Your Ride is started", "Enjoy Your Ride");
     }
     if (event.snapshot.key == "isFinished") {
-      NotificationService().showNotification("Your Ride is completed", "Please pay driver to Rs.$amount");
+      NotificationService().showNotification(
+          "Your Ride is completed", "Please pay driver to Rs.$amount");
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -176,14 +179,13 @@ Future<void> checkIsTripEnd(
   });
 }
 
-
 Future<void> uploadChatData(String msg) async {
-  databaseReference.child("trips").child(key).child("messages").push().set(
-    {
-      "message": msg,
-      "sender": "customer"
-    }
-  );
+  databaseReference
+      .child("trips")
+      .child(key)
+      .child("messages")
+      .push()
+      .set({"message": msg, "sender": "customer"});
 }
 
 Future<List<MessageModel>> fetchMessageData() async {

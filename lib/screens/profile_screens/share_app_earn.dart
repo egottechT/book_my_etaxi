@@ -57,11 +57,11 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                   ),
                   Container(
                     color: Colors.grey[200],
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                        children: const [
                           Text("Referral Code"),
                           Text(
                             "GPRR1U",
@@ -112,9 +112,9 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
               ),
               InkWell(
                 onTap: () {},
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: const [
                     Text(
                       "See All",
                       style: TextStyle(
