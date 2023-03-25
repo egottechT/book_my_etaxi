@@ -3,6 +3,7 @@ import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/model/message_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
@@ -173,4 +174,31 @@ Future<void> checkIsTripEnd(
       );
     }
   });
+}
+
+
+Future<void> uploadChatData(String msg) async {
+  databaseReference.child("trips").child(key).child("messages").push().set(
+    {
+      "message": msg,
+      "sender": "customer"
+    }
+  );
+}
+
+Future<List<MessageModel>> fetchMessageData() async {
+  List<MessageModel> list = [];
+  await databaseReference
+      .child("trips")
+      .child(key)
+      .child("messages")
+      .once()
+      .then((value) {
+    for (var event in value.snapshot.children) {
+      Map map = event.value as Map;
+      MessageModel model = MessageModel().fromMap(map);
+      list.add(model);
+    }
+  });
+  return list;
 }

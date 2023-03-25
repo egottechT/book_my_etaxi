@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/screens/message_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
@@ -191,6 +192,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                               decoration: InputDecoration(
                                   suffixIcon: IconButton(
                                       onPressed: () {
+                                        uploadChatData(textController.text);
                                         textController.text = "";
                                       },
                                       icon: const Icon(Icons.send)),
@@ -349,7 +351,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
           ),
         ),
         showIconWithText(() {
-          debugPrint("Start call");
+          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const MessageScreen()));
         }, const Icon(Icons.message), "Message"),
         const SizedBox(
           height: 40,

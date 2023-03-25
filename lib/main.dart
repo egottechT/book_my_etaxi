@@ -1,5 +1,4 @@
 import 'dart:isolate';
-
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
@@ -51,7 +50,7 @@ void main() async {
         appBarTheme: AppBarTheme(color: Colors.grey[800]),
       ),
       initialRoute: "splash",
-      // home: const BalanceScreen(),
+      // home: const MessageScreen(),
     ),
   ));
 }
