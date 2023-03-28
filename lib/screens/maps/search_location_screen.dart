@@ -1,3 +1,4 @@
+import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
@@ -6,13 +7,12 @@ import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart';
-import 'package:provider/provider.dart';
 import 'package:location/location.dart' as locate;
+import 'package:provider/provider.dart';
 
 class DestinationLocationScreen extends StatefulWidget {
   final Function setMapMarker;
@@ -25,7 +25,8 @@ class DestinationLocationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<DestinationLocationScreen> createState() => _DestinationLocationScreen();
+  State<DestinationLocationScreen> createState() =>
+      _DestinationLocationScreen();
 }
 
 class _DestinationLocationScreen extends State<DestinationLocationScreen> {
@@ -46,7 +47,7 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
       position: latLng,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
-    if(mounted){
+    if (mounted) {
       setState(() {
         markerList.add(tmpMarker);
       });
@@ -90,7 +91,6 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
     }
   }
 
-
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
     getCurrentLocation();
@@ -100,15 +100,20 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
     locate.Location currentLocation = locate.Location();
     var currentPoint = await currentLocation.getLocation();
     CameraPosition cameraPosition = CameraPosition(
-        target:
-        LatLng(currentPoint.latitude as double, currentPoint.longitude as double),
+        target: LatLng(
+            currentPoint.latitude as double, currentPoint.longitude as double),
         zoom: zoomLevel);
 
     mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
     latitude = currentPoint.latitude as double;
     longitude = currentPoint.longitude as double;
-    showLocationFromLatLng(latitude,longitude);
+    var text = await showLocationFromLatLng(latitude, longitude, location);
+    if (mounted) {
+      setState(() {
+        location = text;
+      });
+    }
     showDestinationMarker(LatLng(latitude, longitude));
     return currentPoint;
   }
@@ -136,12 +141,19 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                     target: widget.startLatLng,
                     zoom: zoomLevel,
                   ),
-                  markers: markerList, //MARKERS IN MAP
+                  markers: markerList,
+                  //MARKERS IN MAP
                   onCameraMove: (position) async {
                     latitude = position.target.latitude;
                     longitude = position.target.longitude;
                     showDestinationMarker(LatLng(latitude, longitude));
-                    showLocationFromLatLng(latitude,longitude);
+                    var text = await showLocationFromLatLng(
+                        latitude, longitude, location);
+                    if (mounted) {
+                      setState(() {
+                        location = text;
+                      });
+                    }
                   },
                 ),
                 Positioned(
@@ -156,14 +168,14 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                           InkWell(
                             onTap: () async {
                               var data = await getCurrentLocation();
-                              if(context.mounted){
+                              if (context.mounted) {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => PickUpLocationScreen(
-                                      showMarkers: widget.setMapMarker,
-                                      startLatLng: LatLng(
-                                          data.latitude as double,
-                                          data.longitude as double),
-                                    )));
+                                          showMarkers: widget.setMapMarker,
+                                          startLatLng: LatLng(
+                                              data.latitude as double,
+                                              data.longitude as double),
+                                        )));
                               }
                             },
                             child: ListTile(
@@ -235,10 +247,13 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                             onPressed: () {
                               var position = LatLng(latitude, longitude);
                               if (context.mounted) {
-                                context.read<DestinationLocationProvider>().setString(location);
                                 context
                                     .read<DestinationLocationProvider>()
-                                    .setPositionLatLng(LatLng(latitude, longitude));
+                                    .setString(location);
+                                context
+                                    .read<DestinationLocationProvider>()
+                                    .setPositionLatLng(
+                                        LatLng(latitude, longitude));
                               }
                               Navigator.pop(context);
                               widget.setMapMarker(position, true);
@@ -248,7 +263,8 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ElevatedButton.icon(
-                                icon: const Icon(Icons.location_searching_rounded,
+                                icon: const Icon(
+                                    Icons.location_searching_rounded,
                                     color: Colors.black),
                                 onPressed: () async {
                                   locate.Location currentLocation =
@@ -266,8 +282,8 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                                 ),
                                 style: _buttonStyle),
                             ElevatedButton.icon(
-                              icon:
-                                  const Icon(Icons.location_on, color: Colors.black),
+                              icon: const Icon(Icons.location_on,
+                                  color: Colors.black),
                               onPressed: () {},
                               label: Text(
                                 "Location on Map",
@@ -285,17 +301,6 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
             )));
   }
 
-  void showLocationFromLatLng(double latitude, double longitude) async {
-    List<Placemark> addresses =
-    await placemarkFromCoordinates(latitude, longitude);
-    var first = addresses.first;
-    if(mounted){
-      setState(() {
-        location =
-        "${first.subLocality}, ${first.administrativeArea} ${first.postalCode}, ${first.country}";
-      });
-    }
-  }
   final ButtonStyle _buttonStyle =
       ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);
   final TextStyle _textStyle = const TextStyle(color: Colors.black);

@@ -21,12 +21,13 @@ class _SplashScreen extends State<SplashScreen> {
 
   Future<void> _redirect() async {
     await Future.delayed(const Duration(seconds: 2));
-    LocationData location = await getCurrentLocation();
+
 
     if (context.mounted) {
       debugPrint("First case passed");
       if (FirebaseAuth.instance.currentUser != null) {
         getUserInfo(context,false);
+        LocationData location = await getCurrentLocation();
         if(context.mounted) {
           debugPrint("2 case passed");
           Navigator.of(context).pushReplacementNamed('/mapScreen',

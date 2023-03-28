@@ -1,4 +1,4 @@
-
+import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
@@ -36,19 +36,23 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
 
   Future<locate.LocationData> getCurrentLocation() async {
     locate.Location currentLocation = locate.Location();
-    var location = await currentLocation.getLocation();
+    var current = await currentLocation.getLocation();
     CameraPosition cameraPosition = CameraPosition(
-        target:
-            LatLng(location.latitude as double, location.longitude as double),
+        target: LatLng(current.latitude as double, current.longitude as double),
         zoom: zoomLevel);
 
     mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-    latitude = location.latitude as double;
-    longitude = location.longitude as double;
-    showLocationFromLatLng(latitude, longitude);
+    latitude = current.latitude as double;
+    longitude = current.longitude as double;
+    var text = await showLocationFromLatLng(latitude, longitude, location);
+    if (mounted) {
+      setState(() {
+        location = text;
+      });
+    }
     showDestinationMarker(LatLng(latitude, longitude));
-    return location;
+    return current;
   }
 
   void showDestinationMarker(LatLng latLng) async {
@@ -126,8 +130,13 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                 latitude = position.target.latitude;
                 longitude = position.target.longitude;
                 showDestinationMarker(LatLng(latitude, longitude));
-
-                showLocationFromLatLng(latitude, longitude);
+                var text =
+                    await showLocationFromLatLng(latitude, longitude, location);
+                if (mounted) {
+                  setState(() {
+                    location = text;
+                  });
+                }
               },
             ),
             Positioned(
@@ -145,15 +154,18 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Expanded(flex: 1,child: Icon(Icons.search)),
-                            Expanded(flex: 5,child: Text(
-                              location,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                overflow: TextOverflow.ellipsis,
+                            const Expanded(flex: 1, child: Icon(Icons.search)),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                location,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),),
-                            Expanded(flex: 1,child: cancelButtonCondition())
+                            ),
+                            Expanded(flex: 1, child: cancelButtonCondition())
                           ],
                         )),
                   )),
@@ -202,18 +214,5 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
   void dispose() {
     super.dispose();
     mapController.dispose();
-  }
-
-  void showLocationFromLatLng(double latitude, double longitude) async {
-    try {
-      var text = await getAddressFromLatLng(latitude, longitude,location);
-      if (mounted) {
-        setState(() {
-          location = text;
-        });
-      }
-    } catch (e) {
-      debugPrint("No address found");
-    }
   }
 }
