@@ -13,7 +13,7 @@ class PermissionScreen extends StatefulWidget {
 }
 
 class _PermissionScreenState extends State<PermissionScreen> {
-  bool location = false, phone = true;
+  bool location = false, phone = false;
 
   @override
   void initState() {
@@ -40,7 +40,9 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 const SizedBox(
                   height: 150,
                 ),
-                Image.asset("assets/images/permission_page.png",),
+                Image.asset(
+                  "assets/images/permission_page.png",
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -61,61 +63,20 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.do_not_disturb_on_total_silence,
-                        size: 12, color: primaryColor),
-                    Flexible(
-                      child: TextButton(
-                          onPressed: () async {
-                            var status = await Permission.location.request();
-                            if (status.isGranted) {
-                              location = true;
-                              if(context.mounted) {
-                                context.showSnackBar(
-                                  message: "Location Permission is Granted");
-                              }
-                            }
-                          },
-                          child: Text(
-                            "Location (Please find the available rides)",
-                            style: _textStyle,
-                          )),
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.do_not_disturb_on_total_silence,
-                        size: 12, color: primaryColor),
-                    Flexible(
-                      child: TextButton(
-                          onPressed: () async {
-                            var status = await Permission.contacts.request();
-                            if (status.isGranted && context.mounted) {
-                              context.showSnackBar(
-                                  message: "Contact Permission is Granted");
-                              phone = true;
-                            }
-                          },
-                          child: Text(
-                            "Phone (Security verification for account)",
-                            style: _textStyle,
-                          )),
-                    )
-                  ],
-                ),
+                permissionTextRow(
+                    "Location (Please find the available rides)", true),
+                permissionTextRow(
+                    "Phone (Security verification for account)", false),
               ],
             )),
             ElevatedButton(
               onPressed: () async {
                 LocationData currentLocation = await getCurrentLocation();
+                // debugPrint("$location $phone");
                 if (location && phone && context.mounted) {
                   Navigator.of(context).pushNamed("/mapScreen",
-                      arguments: LatLng(
-                          currentLocation.latitude as double, currentLocation.latitude as double));
+                      arguments: LatLng(currentLocation.latitude as double,
+                          currentLocation.latitude as double));
                 } else {
                   context.showErrorSnackBar(
                       message: "Please allow both the permission first");
@@ -130,8 +91,49 @@ class _PermissionScreenState extends State<PermissionScreen> {
     );
   }
 
+  Widget permissionTextRow(String title, bool isLocation) {
+    String message = "${isLocation ? "Location" : "Contact"} Permission is Granted";
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        iconCondition(isLocation),
+        Flexible(
+          child: TextButton(
+              onPressed: () async {
+                var status = await (isLocation
+                    ? Permission.location.request()
+                    : Permission.contacts.request());
+                if (status.isGranted) {
+                  setState(() {
+                    if (isLocation) {
+                      location = true;
+                    } else {
+                      phone = true;
+                    }
+                  });
+                  if (context.mounted) {
+                    context.showSnackBar(message: message);
+                  }
+                }
+              },
+              child: Text(
+                title,
+                style: _textStyle,
+              )),
+        )
+      ],
+    );
+  }
+
   TextStyle get _textStyle => const TextStyle(
         color: Colors.black,
         fontSize: 16,
       );
+
+  iconCondition(bool isLocation) {
+      if((isLocation && location) || (!isLocation && phone)){
+            return const Icon(Icons.check_circle,color: Colors.green,);
+      }
+      return const Icon(Icons.circle_outlined,color: Colors.red,);
+  }
 }
