@@ -1,4 +1,5 @@
 import 'dart:math' show cos, sqrt, asin;
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 double _coordinateDistance(lat1, lon1, lat2, lon2) {
@@ -10,7 +11,7 @@ double _coordinateDistance(lat1, lon1, lat2, lon2) {
   return 12742 * asin(sqrt(a));
 }
 
-String caluclateDistance(List<LatLng> polylineCoordinates){
+String calculateDistance(List<LatLng> polylineCoordinates) {
   double totalDistance = 0.0;
 
   for (int i = 0; i < polylineCoordinates.length - 1; i++) {

@@ -76,7 +76,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     );
     setState(() {
       polylines[id] = polyline;
-      _placeDistance = caluclateDistance(polylineCoordinates);
+      _placeDistance = calculateDistance(polylineCoordinates);
     });
     correctCameraAngle(startLatitude, startLongitude, destinationLatitude,
         destinationLongitude, mapController);
@@ -252,8 +252,13 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
               width: 50,
               child: Column(
                 children: [
-                  const SizedBox(height: 20,),
-                  const Text("Requesting Ride..",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Requesting Ride..",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                   lottie.Lottie.asset(
                       // 'assets/animation/taxi_animation.json',
                       'assets/animation/driver_animation.json',

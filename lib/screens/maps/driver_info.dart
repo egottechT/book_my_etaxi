@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-
+import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
@@ -8,6 +8,7 @@ import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,6 +28,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   late String driverName;
   late String stars;
   late String phoneNumber;
+  String time = "0 Min.";
   TextEditingController textController = TextEditingController();
   late LatLng _center;
   String moneyWay = "Cash";
@@ -79,9 +81,9 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          "Your ride is confirmed",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Text(
+                          "Drive is arriving in $time",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                         Divider(
@@ -523,6 +525,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   }
 
   void setUpTheMarker(LatLng position) async {
+    updateDriverTiming(position);
     Uint8List? markIcons = await getImages('assets/images/driver_car.png', 150);
     Marker tmpMarker = Marker(
       markerId: const MarkerId("car_pickup"),
@@ -531,6 +534,17 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     );
     setState(() {
       makers.add(tmpMarker);
+    });
+  }
+
+  void updateDriverTiming(LatLng destination) async {
+    LocationData currentLocation = await getCurrentLocation();
+    LatLng start = LatLng(currentLocation.latitude as double,
+        currentLocation.longitude as double);
+    final travelTime = await calculateTravelTime(start, destination);
+    String totalTime = formatDuration(travelTime);
+    setState(() {
+      time = totalTime;
     });
   }
 }

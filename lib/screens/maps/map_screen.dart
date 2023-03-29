@@ -3,8 +3,8 @@ import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
-import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
+import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/balance_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/drive_history_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/help_screen.dart';
@@ -98,7 +98,7 @@ class _MapsScreenState extends State<MapsScreen> {
     );
     setState(() {
       polylines[id] = polyline;
-      _placeDistance = caluclateDistance(polylineCoordinates);
+      _placeDistance = calculateDistance(polylineCoordinates);
     });
   }
 
@@ -113,8 +113,8 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void readData() async {
     UserModel model = await getUserInfo(context, true);
-    if(context.mounted) {
-      Provider.of<UserModelProvider>(context,listen: false).setData(model);
+    if (context.mounted) {
+      Provider.of<UserModelProvider>(context, listen: false).setData(model);
     }
   }
 
@@ -403,7 +403,8 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   appDrawerView() {
-    UserModel model =  Provider.of<UserModelProvider>(context,listen: true).data;
+    UserModel model =
+        Provider.of<UserModelProvider>(context, listen: true).data;
     return Drawer(
       elevation: 10.0,
       child: ListView(
@@ -423,7 +424,15 @@ class _MapsScreenState extends State<MapsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      Provider.of<UserModelProvider>(context,listen: true).data.name.isEmpty ? "Loading.." : Provider.of<UserModelProvider>(context,listen: true).data.name,
+                      Provider.of<UserModelProvider>(context, listen: true)
+                              .data
+                              .name
+                              .isEmpty
+                          ? "Loading.."
+                          : Provider.of<UserModelProvider>(context,
+                                  listen: true)
+                              .data
+                              .name,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -431,7 +440,9 @@ class _MapsScreenState extends State<MapsScreen> {
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      Provider.of<UserModelProvider>(context,listen: true).data.email,
+                      Provider.of<UserModelProvider>(context, listen: true)
+                          .data
+                          .email,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -499,21 +510,19 @@ class _MapsScreenState extends State<MapsScreen> {
                 color: primaryColor,
               ),
               "Notification"),
-          drawerItems(
-              () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const AccountSettingScreen()));
-              },
+          drawerItems(() {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const AccountSettingScreen()));
+          },
               Icon(
                 Icons.settings,
                 color: primaryColor,
               ),
               "Setting"),
-          drawerItems(
-              () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const HelpScreen()));
-              },
+          drawerItems(() {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const HelpScreen()));
+          },
               Icon(
                 Icons.help,
                 color: primaryColor,
