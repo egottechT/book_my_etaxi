@@ -152,7 +152,7 @@ Future<void> uploadRatingUser(
       .child(driverModel.id)
       .child("rating")
       .push()
-      .set({"rating": stars, "description": title, "customerName": name});
+      .set({"rating": stars, "description": title, "customerName": name,"date": DateTime.now().toString()});
 }
 
 Future<void> checkIsTripEnd(
@@ -188,6 +188,15 @@ Future<void> uploadChatData(String msg) async {
       .set({"message": msg, "sender": "customer"});
 }
 
+Future<void> listenChangeMessages(Function readData) async {
+    databaseReference
+        .child("trips")
+        .child(key)
+        .child("messages")
+        .onChildAdded.listen((event) {
+      readData();
+    });
+}
 Future<List<MessageModel>> fetchMessageData() async {
   List<MessageModel> list = [];
   await databaseReference

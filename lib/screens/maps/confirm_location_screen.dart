@@ -389,7 +389,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final panelHeightClosed = MediaQuery.of(context).size.height * 0.5;
+    final panelHeightClosed = MediaQuery.of(context).size.height * 0.7;
 
     return Scaffold(
         appBar: AppBar(
