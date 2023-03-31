@@ -17,17 +17,17 @@ class _LoginScreen extends State<LoginScreen> {
   Widget centerCircularWidget() {
     return Flexible(
         child: Row(
-        children: const [
-          SizedBox(
-            width: 150,
-          ),
-          CircularProgressIndicator(
-            color: Colors.blue,
-          ),
-          Flexible(
-              child: SizedBox(
-            width: 150,
-          ))
+      children: const [
+        SizedBox(
+          width: 150,
+        ),
+        CircularProgressIndicator(
+          color: Colors.blue,
+        ),
+        Flexible(
+            child: SizedBox(
+          width: 150,
+        ))
       ],
     ));
   }
@@ -37,7 +37,7 @@ class _LoginScreen extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
           body: Column(
-          children: [
+        children: [
           const SizedBox(
             height: 15,
           ),
@@ -100,52 +100,48 @@ class _LoginScreen extends State<LoginScreen> {
                                     backgroundColor: Colors.black),
                                 child: const Text("Continue with Phone Number"),
                               ),
-                              ElevatedButton.icon(
-                                onPressed: () async {
-                                  setState(() {
-                                    showLoading = true;
-                                  });
-                                  try{
-                                    User? result = await doGmailLogin();
-                                    if (result != null) {
-                                      bool isExist = await checkDatabaseForUser(result.uid.toString());
-                                      if(context.mounted){
-                                        if(isExist){
-                                          Navigator.of(context)
-                                              .pushNamed("/permissionScreen");
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      showLoading = true;
+                                    });
+                                    try {
+                                      User? result = await doGmailLogin();
+                                      if (result != null) {
+                                        bool isExist =
+                                            await checkDatabaseForUser(
+                                                result.uid.toString());
+                                        if (context.mounted) {
+                                          if (isExist) {
+                                            Navigator.of(context)
+                                                .pushNamed("/permissionScreen");
+                                          } else {
+                                            Navigator.of(context).pushNamed(
+                                                "/registrationScreen");
+                                          }
                                         }
-                                        else{
-                                          Navigator.of(context)
-                                              .pushNamed("/registrationScreen");
+                                      } else {
+                                        if (context.mounted) {
+                                          context.showErrorSnackBar(
+                                              message:
+                                                  "There is some error while LogIn. Please try again later");
                                         }
                                       }
-                                    } else {
-                                      if (context.mounted) {
-                                        context.showErrorSnackBar(
-                                            message:
-                                            "There is some error while LogIn. Please try again later");
-                                      }
+                                    } catch (e) {
+                                      debugPrint("Some error occured $e");
+                                      context.showErrorSnackBar(
+                                          message: "Some error occured");
                                     }
-                                  }
-                                  catch(e){
-                                    debugPrint("Some error occured $e");
-                                    context.showErrorSnackBar(message: "Some error occured");
-                                  }
-                                  setState(() {
-                                    showLoading = false;
-                                  });
-                                },
-                                icon: Image.asset(
-                                  'assets/images/google.png',
-                                  scale: 1.5,
-                                ),
-                                label: const Text(
-                                  "Google",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white),
-                              ),
+                                    setState(() {
+                                      showLoading = false;
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white),
+                                  child: Image.asset(
+                                    "assets/images/google_icon.png",
+                                    height: 30,
+                                  )),
                             ],
                           ),
                     const SizedBox(

@@ -1,5 +1,5 @@
-import 'package:book_my_taxi/widget/phone_number_view.dart';
 import 'package:book_my_taxi/service/authentication.dart';
+import 'package:book_my_taxi/widget/phone_number_view.dart';
 import 'package:flutter/material.dart';
 
 class PhoneNumberSetup extends StatefulWidget {
@@ -33,7 +33,7 @@ class _PhoneNumberSetupState extends State<PhoneNumberSetup> {
                     child: Column(
                   children: [
                     const SizedBox(
-                      height: 100,
+                      height: 50,
                     ),
                     phoneNumberForm(),
                     const SizedBox(
