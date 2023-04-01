@@ -48,7 +48,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   leading: const Icon(
                     Icons.circle,
                     color: Colors.green,
-                    size: 16,
+                    // size: 16,
                   ),
                   dense: true,
                 ),
@@ -96,7 +96,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     );
                   });
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
             child: const Text("CANCEL REQUEST"),
           )
         ],

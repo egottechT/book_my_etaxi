@@ -68,6 +68,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
         parallaxEnabled: true,
         minHeight: panelHeightClosed,
         maxHeight: panelHeightOpen,
+        parallaxOffset: 1,
         panelBuilder: (controller) {
           final bottom = MediaQuery.of(context).viewInsets.bottom;
 

@@ -110,7 +110,7 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
           leading: Icon(
             Icons.circle,
             color: Colors.green,
-            size: 16,
+            // size: 16,
           ),
           dense: true,
         ),

@@ -140,7 +140,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   }
 
   void testingAppTimer() async {
-    await Future.delayed(const Duration(seconds: 8));
+    // await Future.delayed(const Duration(seconds: 8));
     setState(() {
       loading = false;
     });
@@ -208,7 +208,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
               leading: const Icon(
                 Icons.circle,
                 color: Colors.green,
-                size: 16,
+                // size: 16,
               ),
               dense: true,
             ),
@@ -265,125 +265,138 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                       fit: BoxFit.scaleDown),
                 ],
               ))
-          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SizedBox(
-                width: 50,
-                height: 5,
-                child: Container(color: Colors.grey),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              locationShowingCard(),
-              const Divider(
-                height: 10,
-                thickness: 2,
-                color: Colors.grey,
-              ),
-              const Text(
-                "Available Vehicles",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              DecoratedBox(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        color:
-                            (currentIndex == 1) ? primaryColor : Colors.white,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: carCardView(
-                      Image.asset("assets/images/mini_car.png"),
-                      "Mini",
-                      "Comfy, Small cozy Cars",
-                      calculateFare(20),
-                      1,
-                      changeCar)),
-              DecoratedBox(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        color:
-                            (currentIndex == 2) ? primaryColor : Colors.white,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: carCardView(
-                      Image.asset("assets/images/sedan_car.png"),
-                      "Sedan",
-                      "Spacious, luxury premium Cars",
-                      calculateFare(75),
-                      2,
-                      changeCar)),
-              DecoratedBox(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        color:
-                            (currentIndex == 3) ? primaryColor : Colors.white,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: carCardView(
-                      Image.asset("assets/images/suv.png"),
-                      "SUV",
-                      "Spacious, big 8 seater capacity",
-                      calculateFare(150),
-                      3,
-                      changeCar)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      UserModel user =
-                          Provider.of<UserModelProvider>(context, listen: false)
-                              .data;
-                      if (user.name.isEmpty) {
-                        await getUserInfo(context, true);
-                      }
-                      if (context.mounted) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => LoadingScreen(
-                                  price: costTravelling,
-                                  distance: _placeDistance,
-                                )));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[700]),
-                    child: const Text("CONFIRM REQUEST"),
+          : ListView(
+            children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Center(
+                  child: SizedBox(
+                    width: 50,
+                    height: 5,
+                    child: Container(color: Colors.grey),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                  "Are you sure you want to cancel request?"),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                        ..pop()
-                                        ..pop();
-                                    },
-                                    child: const Text("Yes")),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("No"))
-                              ],
-                            );
-                          });
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[700]),
-                    child: const Text("CANCEL REQUEST"),
-                  ),
-                ],
-              )
-            ]),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                locationShowingCard(),
+                const Divider(
+                  height: 10,
+                  thickness: 2,
+                  color: Colors.grey,
+                ),
+                const Text(
+                  "Available Vehicles",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              (currentIndex == 1) ? primaryColor : Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: carCardView(
+                        Image.asset("assets/images/mini_car.png"),
+                        "Mini",
+                        "Comfy, Small cozy Cars",
+                        calculateFare(20),
+                        1,
+                        changeCar)),
+                const SizedBox(
+                  height: 10,
+                ),
+                DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              (currentIndex == 2) ? primaryColor : Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: carCardView(
+                        Image.asset("assets/images/sedan_car.png"),
+                        "Sedan",
+                        "Spacious, luxury premium Cars",
+                        calculateFare(75),
+                        2,
+                        changeCar)),
+                const SizedBox(
+                  height: 10,
+                ),
+                DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              (currentIndex == 3) ? primaryColor : Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: carCardView(
+                        Image.asset("assets/images/suv.png"),
+                        "SUV",
+                        "Spacious, big 8 seater capacity",
+                        calculateFare(150),
+                        3,
+                        changeCar)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        UserModel user =
+                            Provider.of<UserModelProvider>(context, listen: false)
+                                .data;
+                        if (user.name.isEmpty) {
+                          await getUserInfo(context, true);
+                        }
+                        if (context.mounted) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => LoadingScreen(
+                                    price: costTravelling,
+                                    distance: _placeDistance,
+                                  )));
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black),
+                      child: const Text("CONFIRM REQUEST"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text(
+                                    "Are you sure you want to cancel request?"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                          ..pop()
+                                          ..pop();
+                                      },
+                                      child: const Text("Yes")),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("No"))
+                                ],
+                              );
+                            });
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black),
+                      child: const Text("CANCEL REQUEST"),
+                    ),
+                  ],
+                )
+              ]),]
+          ),
     );
   }
 
@@ -400,6 +413,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
           controller: panelController,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
           minHeight: panelHeightClosed,
+          parallaxOffset: 2,
           panelBuilder: (controller) {
             return bottomPanelLayout();
           },

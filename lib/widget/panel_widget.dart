@@ -2,10 +2,13 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/screens/maps/confirm_location_screen.dart';
 import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
+import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PanelWidget extends StatefulWidget {
   ScrollController? controller;
@@ -154,12 +157,16 @@ class _PanelWidgetState extends State<PanelWidget> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   onPressed: () async {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const ConfirmLocationScreen()));
                   },
-                  child: const Text("Book the ride"),
+                  child: const Text(
+                    "Book The Ride",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
                 Card(
                   child: Column(
@@ -171,49 +178,23 @@ class _PanelWidgetState extends State<PanelWidget> {
                           child: searchBarWidget(),
                         ),
                       ),
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                            splashColor: Colors.grey,
-                            icon: Icon(
-                              Icons.home,
-                              color: primaryColor,
-                            ),
-                            onPressed: () {},
+                      iconTextView(
+                          Icon(
+                            Icons.home,
+                            color: primaryColor,
                           ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                "ADD YOUR HOME ADDRESS",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ),
-                        ],
+                          "ADD YOUR HOME ADDRESS"),
+                      const SizedBox(
+                        height: 10,
                       ),
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                            splashColor: Colors.grey,
-                            icon: Icon(
-                              Icons.warehouse_rounded,
-                              color: primaryColor,
-                            ),
-                            onPressed: () {},
+                      iconTextView(
+                          Icon(
+                            Icons.warehouse_rounded,
+                            color: primaryColor,
                           ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                "ADD YOUR WORK/OFFICE ADDRESS",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ),
-                        ],
+                          "ADD YOUR WORK/OFFICE ADDRESS"),
+                      const SizedBox(
+                        height: 10,
                       ),
                     ],
                   ),
@@ -230,6 +211,28 @@ class _PanelWidgetState extends State<PanelWidget> {
     );
   }
 
+  Widget iconTextView(Icon icon, String title) {
+    return Center(
+      child: GestureDetector(
+        onTap: () {},
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            icon,
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              title,
+              textAlign: TextAlign.left,
+              style: const TextStyle(color: Colors.black),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget sharingLayout() {
     return Column(
       children: [
@@ -237,20 +240,29 @@ class _PanelWidgetState extends State<PanelWidget> {
             "Share Referral Code to Friend/Family. Earn Rs. 50 per Referral",
             "Apply before 5 august 2022, enjoy the ride with your loved ones.",
             "Apply Now",
-            Image.asset("assets/images/share_code.png")),
+            Image.asset(
+              "assets/images/share_code.png",
+            ),
+            () {}),
         cardView("Invite your Family & Friends to ride with BOOK MY ETAXI",
-            "GPRR1U", "Share", Image.asset("assets/images/share_app.png")),
+            "GPRR1U", "Share", Image.asset("assets/images/share_app.png"), () {
+          String referral = FirebaseAuth.instance.currentUser!.uid.toString();
+          Share.share(referral, subject: 'Share your referral Code');
+        }),
         cardView(
             "Email Verification",
             "Please verify Email ID to protect your account. After verifing your email can link with your profile",
             "View Profile",
-            Image.asset("assets/images/message.png"))
+            Image.asset("assets/images/message.png"), () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const AccountSettingScreen()));
+        })
       ],
     );
   }
 
-  Widget cardView(
-      String title, String subtitle, String buttonText, Image icon) {
+  Widget cardView(String title, String subtitle, String buttonText, Image icon,
+      dynamic function) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
@@ -291,7 +303,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                     height: 20,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: function,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
                         shape: RoundedRectangleBorder(
@@ -302,7 +314,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ],
               ),
             ),
-            Expanded(flex: 1, child: icon)
+            Expanded(flex: 2, child: icon)
           ],
         ),
       ),

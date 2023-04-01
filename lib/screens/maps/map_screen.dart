@@ -283,7 +283,7 @@ class _MapsScreenState extends State<MapsScreen> {
             return panelWidget;
           },
           parallaxEnabled: true,
-          parallaxOffset: 0.5,
+          parallaxOffset: 1,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
           minHeight: panelHeightClosed,
           maxHeight: panelHeightOpened,
@@ -403,8 +403,6 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   appDrawerView() {
-    UserModel model =
-        Provider.of<UserModelProvider>(context, listen: true).data;
     return Drawer(
       elevation: 10.0,
       child: ListView(

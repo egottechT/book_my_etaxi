@@ -258,7 +258,7 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                               Navigator.pop(context);
                               widget.setMapMarker(position, true);
                             },
-                            child: const Text("Confirm Location")),
+                            child: const Text("Confirm Location",style: TextStyle(fontSize: 18),)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -267,14 +267,18 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                                     Icons.location_searching_rounded,
                                     color: Colors.black),
                                 onPressed: () async {
-                                  locate.Location currentLocation =
-                                      locate.Location();
-                                  var currentPoint =
-                                      await currentLocation.getLocation();
-                                  var newlatlang = LatLng(
-                                      currentPoint.latitude as double,
-                                      currentPoint.longitude as double);
-                                  widget.setMapMarker(newlatlang, true);
+                                  var currentLocation =
+                                      await getCurrentLocation();
+                                  var position = LatLng(
+                                      currentLocation.latitude as double,
+                                      currentLocation.longitude as double);
+                                  CameraPosition cameraPosition = CameraPosition(
+                                      target: LatLng(
+                                          position.latitude, position.longitude),
+                                      zoom: zoomLevel);
+                                  showDestinationMarker(position);
+                                  mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
+                                  widget.setMapMarker(position, true);
                                 },
                                 label: Text(
                                   "Current Location",
