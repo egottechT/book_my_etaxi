@@ -93,7 +93,6 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    getCurrentLocation();
   }
 
   Future<LocationData> getCurrentLocation() async {
@@ -288,7 +287,9 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                             ElevatedButton.icon(
                               icon: const Icon(Icons.location_on,
                                   color: Colors.black),
-                              onPressed: () {},
+                              onPressed: () {
+                                getCurrentLocation();
+                              },
                               label: Text(
                                 "Location on Map",
                                 style: _textStyle,

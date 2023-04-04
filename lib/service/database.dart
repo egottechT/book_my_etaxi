@@ -152,7 +152,12 @@ Future<void> uploadRatingUser(
       .child(driverModel.id)
       .child("rating")
       .push()
-      .set({"rating": stars, "description": title, "customerName": name,"date": DateTime.now().toString()});
+      .set({
+    "rating": stars,
+    "description": title,
+    "customerName": name,
+    "date": DateTime.now().toString()
+  });
 }
 
 Future<void> checkIsTripEnd(
@@ -189,14 +194,30 @@ Future<void> uploadChatData(String msg) async {
 }
 
 Future<void> listenChangeMessages(Function readData) async {
-    databaseReference
-        .child("trips")
-        .child(key)
-        .child("messages")
-        .onChildAdded.listen((event) {
-      readData();
-    });
+  databaseReference
+      .child("trips")
+      .child(key)
+      .child("messages")
+      .onChildAdded
+      .listen((event) {
+    readData();
+  });
 }
+
+Future<void> notificationChangeMessages() async {
+  databaseReference
+      .child("trips")
+      .child(key)
+      .child("messages")
+      .onChildAdded
+      .listen((event) {
+        Map map = event.snapshot.value as Map;
+        if(map['sender']=='driver'){
+          NotificationService().showNotification("Message from Driver",map["message"]);
+        }
+  });
+}
+
 Future<List<MessageModel>> fetchMessageData() async {
   List<MessageModel> list = [];
   await databaseReference

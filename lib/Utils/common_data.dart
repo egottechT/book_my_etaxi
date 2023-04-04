@@ -41,5 +41,5 @@ String formatDuration(Duration duration) {
   if (hourString == "00") {
     return '$minutesString minutes';
   }
-  return '$hourString : $minutesString hours';
+  return '$hourString hours, $minutesString minutes';
 }

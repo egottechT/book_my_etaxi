@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
@@ -7,8 +8,10 @@ import 'package:book_my_taxi/screens/message_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,6 +38,9 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   Set<Marker> makers = {};
   late GoogleMapController mapController;
   String cancelReason = "";
+  late PolylinePoints polylinePoints;
+  List<LatLng> polylineCoordinates = [];
+  Map<PolylineId, Polyline> polylines = {};
 
   @override
   void initState() {
@@ -45,6 +51,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     phoneNumber = widget.driver.phoneNumber;
     _center = LatLng(widget.driver.latitude, widget.driver.longitude);
     setUpTheMarker(_center);
+    notificationChangeMessages();
   }
 
   void readData() {
@@ -83,7 +90,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          "Drive is arriving in $time",
+                          "Driver is arriving in $time",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
@@ -322,9 +329,16 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
         body: GoogleMap(
           myLocationEnabled: true,
           myLocationButtonEnabled: false,
-          onMapCreated: (controller) {
+          polylines: Set<Polyline>.of(polylines.values),
+          onMapCreated: (controller) async {
             mapController = controller;
             readData();
+            LocationData locationData = await getCurrentLocation();
+            _createPolylines(
+                widget.driver.latitude,
+                widget.driver.longitude,
+                locationData.latitude as double,
+                locationData.longitude as double);
             CameraPosition cameraPosition =
                 CameraPosition(target: _center, zoom: zoomLevel);
             mapController
@@ -338,6 +352,44 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
         ),
       ),
     );
+  }
+
+  void _createPolylines(
+    double startLatitude,
+    double startLongitude,
+    double destinationLatitude,
+    double destinationLongitude,
+  ) async {
+    // Initializing PolylinePoints
+    polylinePoints = PolylinePoints();
+    debugPrint("Map Screen Getting route info");
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      mapApiKey, // Google Maps API Key
+      PointLatLng(startLatitude, startLongitude),
+      PointLatLng(destinationLatitude, destinationLongitude),
+      travelMode: TravelMode.driving,
+    );
+
+    debugPrint("Map Screen Route info complete");
+
+    // Adding the coordinates to the list
+    polylineCoordinates.clear();
+    if (result.points.isNotEmpty) {
+      for (var point in result.points) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+    }
+
+    PolylineId id = const PolylineId('poly');
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.black,
+      points: polylineCoordinates,
+      width: 3,
+    );
+    setState(() {
+      polylines[id] = polyline;
+    });
   }
 
   buttonRowLayout() {
@@ -422,8 +474,12 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
             color: Colors.grey,
           ),
         ),
-        showIconWithText(() {
-          debugPrint("Start call");
+        showIconWithText(() async {
+          LocationData currentLocation = await getCurrentLocation();
+          String locationData =
+              "https://www.google.com/maps/search/?api=1&query=${currentLocation.latitude},${currentLocation.longitude}";
+          Share.share(locationData,
+              subject: 'Share your live location with anyone');
         }, const Icon(Icons.share), "Share"),
       ],
     );
