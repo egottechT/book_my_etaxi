@@ -139,7 +139,10 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                                   size: 35,
                                 ),
                                 Image.asset(
-                                  "assets/images/mini.png",
+                                  "assets/images/${widget.data['car']}.png",
+                                  width: 100,
+                                  height: 50,
+                                  fit: BoxFit.contain,
                                 )
                               ],
                             )

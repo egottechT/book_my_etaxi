@@ -11,14 +11,16 @@ extension ShowSnackBar on BuildContext {
     required String message,
     Color backgroundColor = Colors.green,
   }) {
-    ScaffoldMessenger.of(this)..removeCurrentSnackBar()..showSnackBar(SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(color: Colors.white),
-        maxLines: 2,
-      ),
-      backgroundColor: backgroundColor,
-    ));
+    ScaffoldMessenger.of(this)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+          maxLines: 2,
+        ),
+        backgroundColor: backgroundColor,
+      ));
   }
 
   void showErrorSnackBar({required String message}) {
@@ -26,7 +28,7 @@ extension ShowSnackBar on BuildContext {
   }
 }
 
-Map getDummyData(){
+Map getDummyData() {
   Map map = {
     "title": "Aryan text",
     "body": "Please Pickup me",
@@ -35,18 +37,18 @@ Map getDummyData(){
       "lat": 30.2939471,
       "long": 78.0578826,
       "location":
-      "Rispana Pull, Dehradun,248001 ,jksdf ajlsdf ajllsadfl fasdfjl, Uttarakhand, India",
+          "Rispana Pull, Dehradun,248001 ,jksdf ajlsdf ajllsadfl fasdfjl, Uttarakhand, India",
     },
     "pick-up": {
-      "location":
-      "73JM+573, Nehrugram, Dehradun, Uttarakhand 248005, India",
-      "lat":30.2803492,
+      "location": "73JM+573, Nehrugram, Dehradun, Uttarakhand 248005, India",
+      "lat": 30.2803492,
       "long": 78.0831859,
     },
     "price": 300,
     "distance": "10.5",
     "isFinished": false,
-    "id": "9Tae9quZkEREdLErYUqUDmhmegk2"
+    "id": "9Tae9quZkEREdLErYUqUDmhmegk2",
+    "car": "mini",
   };
   // uploadDummyData(map);
   return map;

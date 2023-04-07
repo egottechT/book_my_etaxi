@@ -60,7 +60,8 @@ Future<bool> checkDatabaseForUser(String uid) async {
   return completer.future;
 }
 
-void uploadTripInfo(BuildContext context, String price, String distance) async {
+void uploadTripInfo(
+    BuildContext context, String price, String distance, String carName) async {
   amount = price;
   var pickUp =
       Provider.of<PickupLocationProvider>(context, listen: false).position;
@@ -90,7 +91,8 @@ void uploadTripInfo(BuildContext context, String price, String distance) async {
     "distance": distance,
     "isFinished": false,
     "tripStarted": false,
-    'id': FirebaseAuth.instance.currentUser!.uid.toString()
+    'id': FirebaseAuth.instance.currentUser!.uid.toString(),
+    'car': carName,
   };
   await newChildRef.set(data);
   key = newChildRef.key.toString();
@@ -211,10 +213,11 @@ Future<void> notificationChangeMessages() async {
       .child("messages")
       .onChildAdded
       .listen((event) {
-        Map map = event.snapshot.value as Map;
-        if(map['sender']=='driver'){
-          NotificationService().showNotification("Message from Driver",map["message"]);
-        }
+    Map map = event.snapshot.value as Map;
+    if (map['sender'] == 'driver') {
+      NotificationService()
+          .showNotification("Message from Driver", map["message"]);
+    }
   });
 }
 

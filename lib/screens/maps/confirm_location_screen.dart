@@ -265,8 +265,8 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                       fit: BoxFit.scaleDown),
                 ],
               ))
-          : ListView(
-            children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          : ListView(children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Center(
                   child: SizedBox(
                     width: 50,
@@ -299,7 +299,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                         ),
                         borderRadius: BorderRadius.circular(20)),
                     child: carCardView(
-                        Image.asset("assets/images/mini_car.png"),
+                        Image.asset("assets/images/mini.png"),
                         "Mini",
                         "Comfy, Small cozy Cars",
                         calculateFare(20),
@@ -317,7 +317,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                         ),
                         borderRadius: BorderRadius.circular(20)),
                     child: carCardView(
-                        Image.asset("assets/images/sedan_car.png"),
+                        Image.asset("assets/images/sedan.png"),
                         "Sedan",
                         "Spacious, luxury premium Cars",
                         calculateFare(75),
@@ -346,9 +346,9 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        UserModel user =
-                            Provider.of<UserModelProvider>(context, listen: false)
-                                .data;
+                        UserModel user = Provider.of<UserModelProvider>(context,
+                                listen: false)
+                            .data;
                         if (user.name.isEmpty) {
                           await getUserInfo(context, true);
                         }
@@ -357,6 +357,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                               builder: (context) => LoadingScreen(
                                     price: costTravelling,
                                     distance: _placeDistance,
+                                    carInfo: getCarName(),
                                   )));
                         }
                       },
@@ -395,8 +396,8 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                     ),
                   ],
                 )
-              ]),]
-          ),
+              ]),
+            ]),
     );
   }
 
@@ -440,5 +441,15 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
       costTravelling = price.toString();
     }
     return fare + price.toString();
+  }
+
+  getCarName() {
+    if (currentIndex == 1) {
+      return "mini";
+    } else if (currentIndex == 2) {
+      return "sedan";
+    } else {
+      return "suv";
+    }
   }
 }

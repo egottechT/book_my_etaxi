@@ -17,6 +17,8 @@ import 'package:flutter/foundation.dart' show PlatformDispatcher;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'Utils/constant.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -36,6 +38,7 @@ void main() async {
     );
   }).sendPort);
 
+  Map map = getDummyData();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => PickupLocationProvider()),

@@ -1,7 +1,7 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/screens/maps/confirm_location_screen.dart';
-import 'package:book_my_taxi/screens/maps/search_location_screen.dart';
+import 'package:book_my_taxi/screens/maps/destination_location_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

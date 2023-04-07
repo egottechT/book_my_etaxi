@@ -8,18 +8,24 @@ import 'package:provider/provider.dart';
 class LoadingScreen extends StatefulWidget {
   final String price;
   final String distance;
-  const LoadingScreen({Key? key,required this.price,required this.distance}) : super(key: key);
+  final String carInfo;
+
+  const LoadingScreen(
+      {Key? key,
+      required this.price,
+      required this.distance,
+      required this.carInfo})
+      : super(key: key);
 
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-
   @override
   void initState() {
     super.initState();
-    uploadTripInfo(context,widget.price,widget.distance);
+    uploadTripInfo(context, widget.price, widget.distance, widget.carInfo);
   }
 
   Widget secondSectionView() {
@@ -43,7 +49,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ListTile(
                   title: Text(
                     pickUp,
-                    style: const TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   leading: const Icon(
                     Icons.circle,
@@ -61,7 +70,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ListTile(
                   title: Text(
                     destination,
-                    style: const TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis,),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   leading: const Icon(
                     Icons.location_on,
@@ -78,7 +90,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text("Are you sure you want to cancel request?"),
+                      title: const Text(
+                          "Are you sure you want to cancel request?"),
                       actions: [
                         TextButton(
                             onPressed: () {
