@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:flutter/material.dart';
 
 class BalanceScreen extends StatefulWidget {
@@ -75,7 +76,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
       children: [
         const Text(
           "  Service",
-          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         Card(
           color: primaryColor,
@@ -92,11 +93,13 @@ class _BalanceScreenState extends State<BalanceScreen> {
                 Expanded(
                   flex: 1,
                   child: serviceRowListItem(
-                      Icon(Icons.send_outlined, color: primaryColor), "Send Money"),
+                      Icon(Icons.send_outlined, color: primaryColor),
+                      "Send Money"),
                 ),
                 Expanded(
                   flex: 1,
-                  child: serviceRowListItem(Icon(Icons.receipt_long, color: primaryColor),
+                  child: serviceRowListItem(
+                      Icon(Icons.receipt_long, color: primaryColor),
                       "Bill payment"),
                 ),
                 Expanded(
@@ -206,36 +209,36 @@ class _BalanceScreenState extends State<BalanceScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ElevatedButton.icon(
-            onPressed: () {},
-            icon: Icon(
-              Icons.home,
-              color: primaryColor,
-            ),
-            label: const Text(
-              "ADD YOUR HOME ADDRESS",
-              style: TextStyle(color: Colors.black,),
-            ),
+              onPressed: () {
+                showAddressSaveField(context, true);
+              },
+              icon: Icon(
+                Icons.home,
+                color: primaryColor,
+              ),
+              label: const Text(
+                "ADD YOUR HOME ADDRESS",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                elevation: 0
-              )
-          ),
+                  backgroundColor: Colors.white, elevation: 0)),
           ElevatedButton.icon(
-            onPressed: () {},
-            icon: Icon(
-              Icons.warehouse_rounded,
-              color: primaryColor,
-            ),
-            label: const Text(
-              "ADD YOUR WORK/OFFICE ADDRESS",
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.black),
-            ),
+              onPressed: () {
+                showAddressSaveField(context, false);
+              },
+              icon: Icon(
+                Icons.warehouse_rounded,
+                color: primaryColor,
+              ),
+              label: const Text(
+                "ADD YOUR WORK/OFFICE ADDRESS",
+                textAlign: TextAlign.left,
+                style: TextStyle(color: Colors.black),
+              ),
               style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                elevation: 0
-              )
-          ),
+                  backgroundColor: Colors.white, elevation: 0)),
         ],
       ),
     );

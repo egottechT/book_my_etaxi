@@ -1,6 +1,7 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,6 +42,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             profileSection(),
             spaceBetweenWidget(),
@@ -60,7 +62,8 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
   }
 
   profileSection() {
-    UserModel model = Provider.of<UserModelProvider>(context,listen: false).data;
+    UserModel model =
+        Provider.of<UserModelProvider>(context, listen: false).data;
     return Container(
       color: Colors.white,
       child: Padding(
@@ -96,39 +99,42 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                   Icons.home,
                   color: primaryColor,
                 ),
-                "Add your Home Address"),
+                "Add your Home Address", () {
+              showAddressSaveField(context, true);
+            }),
             iconWithText(
                 Icon(
                   Icons.storefront_outlined,
                   color: primaryColor,
                 ),
-                "Add your Work Address"),
+                "Add your Office/Work Address", () {
+              showAddressSaveField(context, false);
+            }),
             iconWithText(
                 Icon(
                   Icons.location_on,
                   color: primaryColor,
                 ),
-                "Others"),
+                "Others",
+                () {}),
           ],
         ),
       ),
     );
   }
 
-  iconWithText(Icon icon, String title) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        icon,
-        const SizedBox(
-          width: 5,
-        ),
-        Text(
+  iconWithText(Icon icon, String title, dynamic onTap) {
+    return ElevatedButton.icon(
+        onPressed: onTap,
+        icon: icon,
+        label: Text(
           title,
-          style: const TextStyle(overflow: TextOverflow.clip),
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
-      ],
-    );
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white, elevation: 0));
   }
 
   secondCardView() {
@@ -144,7 +150,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
               style: customStyle(true),
             ),
             iconWithText(Icon(Icons.cloud, color: primaryColor),
-                "2-step verification to add an extra layer of\nsecurity")
+                "2-step verification to add an extra layer of\nsecurity", () {})
           ],
         ),
       ),
@@ -161,7 +167,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
           children: [
             Text("Manage your reliable Contacts", style: customStyle(true)),
             iconWithText(Icon(Icons.contact_page, color: primaryColor),
-                "Share your trip with friends & family in one click"),
+                "Share your trip with friends & family in one click", () {}),
           ],
         ),
       ),
@@ -182,7 +188,8 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                   Icons.document_scanner_sharp,
                   color: primaryColor,
                 ),
-                "We manage all the data with security & privacy\nterms")
+                "We manage all the data with security & privacy\nterms",
+                () {})
           ],
         ),
       ),

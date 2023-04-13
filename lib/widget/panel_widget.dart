@@ -1,5 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/screens/maps/confirm_location_screen.dart';
 import 'package:book_my_taxi/screens/maps/destination_location_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
@@ -183,16 +184,17 @@ class _PanelWidgetState extends State<PanelWidget> {
                             Icons.home,
                             color: primaryColor,
                           ),
-                          "ADD YOUR HOME ADDRESS"),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                          "Add your Home Address", () {
+                        showAddressSaveField(context, true);
+                      }),
                       iconTextView(
                           Icon(
-                            Icons.warehouse_rounded,
+                            Icons.storefront_outlined,
                             color: primaryColor,
                           ),
-                          "ADD YOUR WORK/OFFICE ADDRESS"),
+                          "Add your Office/Work Address", () {
+                        showAddressSaveField(context, false);
+                      }),
                       const SizedBox(
                         height: 10,
                       ),
@@ -211,26 +213,18 @@ class _PanelWidgetState extends State<PanelWidget> {
     );
   }
 
-  Widget iconTextView(Icon icon, String title) {
-    return Center(
-      child: GestureDetector(
-        onTap: () {},
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon,
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              title,
-              textAlign: TextAlign.left,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ],
+  Widget iconTextView(Icon icon, String title, dynamic onTap) {
+    return ElevatedButton.icon(
+        onPressed: onTap,
+        icon: icon,
+        label: Text(
+          title,
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
-      ),
-    );
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white, elevation: 0));
   }
 
   Widget sharingLayout() {

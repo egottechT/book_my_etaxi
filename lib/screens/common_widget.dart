@@ -33,3 +33,35 @@ Widget editableRatingBar(onStarChange) {
           )),
       onRatingUpdate: onStarChange);
 }
+
+void showAddressSaveField(
+  context,
+  bool isHomeAddress,
+) async {
+  String label = "Work/Office Address";
+  if (isHomeAddress) label = "Home Address";
+
+  TextEditingController controller = TextEditingController();
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Update you $label'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: 'Enter your address',
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                String value = controller.text;
+                Navigator.of(context).pop();
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      });
+}
