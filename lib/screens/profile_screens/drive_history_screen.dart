@@ -1,5 +1,8 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/model/trip_model.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DriverHistoryScreen extends StatefulWidget {
   const DriverHistoryScreen({Key? key}) : super(key: key);
@@ -9,6 +12,26 @@ class DriverHistoryScreen extends StatefulWidget {
 }
 
 class _DriverHistoryState extends State<DriverHistoryScreen> {
+  List<TripModel> tripList = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    readData();
+  }
+
+  void readData() async {
+    debugPrint("Checking data");
+    List<TripModel> list = await fetchTripHistory();
+
+    debugPrint("Checking data  finished ${list.length}");
+    setState(() {
+      tripList = list;
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,73 +64,79 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
               ),
             ),
           ),
-          Expanded(
-              child: ListView.builder(
-            itemBuilder: (context, index) {
-              return Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: const [
-                              Text("Booking ID : "),
-                              Text("50690"),
-                            ],
-                          ),
-                          Card(
-                            color: primaryColor,
-                            child: const Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text(
-                                "August 20,10:10 AM",
-                                style: TextStyle(color: Colors.white),
-                              ),
+          isLoading
+              ? const CircularProgressIndicator(
+                  color: Colors.black,
+                )
+              : Expanded(
+                  child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text("Booking ID"),
+                                    Text(tripList[index].key),
+                                  ],
+                                ),
+                                Card(
+                                  color: primaryColor,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      formatDate(tripList[index].dateTime),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                            showLocationText(index),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text(
+                              "Completed",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            )
+                          ],
+                        ),
                       ),
-                      showLocationText(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        "Confirm",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-            itemCount: 3,
-            shrinkWrap: true,
-            primary: false,
-          ))
+                    );
+                  },
+                  itemCount: tripList.length,
+                  shrinkWrap: true,
+                  primary: false,
+                ))
         ],
       ),
     );
   }
 
-  showLocationText() {
+  showLocationText(index) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const ListTile(
+        ListTile(
           title: Text(
-            "Rispana pull Dehradun",
-            style: TextStyle(
+            tripList[index].pickUpLocation,
+            style: const TextStyle(
               fontSize: 16,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          leading: Icon(
+          leading: const Icon(
             Icons.circle,
             color: Colors.green,
             // size: 16,
@@ -120,15 +149,15 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
             color: Colors.grey,
           ),
         ),
-        const ListTile(
+        ListTile(
           title: Text(
-            "Lower Nehrugram Dehradun",
-            style: TextStyle(
+            tripList[index].destinationLocation,
+            style: const TextStyle(
               fontSize: 16,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          leading: Icon(
+          leading: const Icon(
             Icons.location_on,
             color: Colors.orange,
           ),
@@ -136,5 +165,11 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
         ),
       ],
     );
+  }
+
+  String formatDate(String dateTime) {
+    DateTime now = DateTime.parse(dateTime);
+    String formattedDate = DateFormat('MMMM d, h:mm a').format(now);
+    return formattedDate;
   }
 }

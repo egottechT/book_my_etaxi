@@ -5,6 +5,7 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/message_model.dart';
+import 'package:book_my_taxi/model/trip_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
@@ -172,6 +173,7 @@ Future<void> checkIsTripEnd(
           .showNotification("Your Ride is started", "Enjoy Your Ride");
     }
     if (event.snapshot.key == "isFinished") {
+      uploadTripDataInHistory(map);
       NotificationService().showNotification(
           "Your Ride is completed", "Please pay driver to Rs.$amount");
       Navigator.pushReplacement(
@@ -184,6 +186,36 @@ Future<void> checkIsTripEnd(
       );
     }
   });
+}
+
+Future<void> uploadTripDataInHistory(Map map) async {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  TripModel model = TripModel().convertFromTrip(map);
+  databaseReference
+      .child("customer")
+      .child(uid)
+      .child("history")
+      .push()
+      .set(TripModel().toMap(model));
+}
+
+Future<List<TripModel>> fetchTripHistory() async {
+  List<TripModel> list = [];
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  await databaseReference
+      .child("customer")
+      .child(uid)
+      .child("history")
+      .once()
+      .then((value) {
+    for (var data in value.snapshot.children) {
+      Map map = data.value as Map;
+      TripModel model = TripModel().fromMap(map);
+      model.key = data.key.toString();
+      list.add(model);
+    }
+  });
+  return list;
 }
 
 Future<void> uploadChatData(String msg) async {
