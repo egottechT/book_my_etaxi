@@ -2,7 +2,7 @@ class UserModel{
   String name = "";
   String phoneNumber = "";
   String email = "";
-
+  String profilePic = "";
   UserModel();
 
   Map<String,dynamic> toMap(UserModel model){
@@ -17,6 +17,7 @@ class UserModel{
     model.phoneNumber = map["phoneNumber"] ?? "";
     model.email = map["email"] ?? "";
     model.name = map["name"] ?? "";
+    model.profilePic = map["profile_pic"] ?? "";
     return model;
   }
 }

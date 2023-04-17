@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
@@ -33,6 +36,7 @@ class MapsScreen extends StatefulWidget {
 }
 
 class _MapsScreenState extends State<MapsScreen> {
+  File? imgFile;
   late GoogleMapController mapController;
   Marker? pickupMarker, destinationMarker;
   Set<Marker> _makers = {};
@@ -403,6 +407,9 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   appDrawerView() {
+    UserModel userModel =
+        Provider.of<UserModelProvider>(context, listen: true).data;
+
     return Drawer(
       elevation: 10.0,
       child: ListView(
@@ -412,25 +419,28 @@ class _MapsScreenState extends State<MapsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg'),
-                  radius: 40.0,
+                GestureDetector(
+                  onTap: () async {
+                    File? img = await selectImage(context);
+                    if (img != null) {
+                      setState(() {
+                        imgFile = img;
+                      });
+                      uploadPhotoToStorage(img, "profile_pic");
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    backgroundImage: showProfileImage(userModel),
+                    radius: 40.0,
+                  ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      Provider.of<UserModelProvider>(context, listen: true)
-                              .data
-                              .name
-                              .isEmpty
-                          ? "Loading.."
-                          : Provider.of<UserModelProvider>(context,
-                                  listen: true)
-                              .data
-                              .name,
+                      userModel.name.isEmpty ? "Loading.." : userModel.name,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -438,9 +448,7 @@ class _MapsScreenState extends State<MapsScreen> {
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      Provider.of<UserModelProvider>(context, listen: true)
-                          .data
-                          .email,
+                      userModel.email,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -547,5 +555,17 @@ class _MapsScreenState extends State<MapsScreen> {
       title: Text(title, style: const TextStyle(fontSize: 18)),
       onTap: function,
     );
+  }
+
+  showProfileImage(UserModel userModel) {
+    if (imgFile != null) {
+      return Image(image: FileImage(File(imgFile!.path))).image;
+    }
+    if (userModel.profilePic.isEmpty) {
+      return Image.asset(
+        "assets/images/profile.png",
+      ).image;
+    }
+    return NetworkImage(userModel.profilePic);
   }
 }

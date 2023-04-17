@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
@@ -12,6 +13,7 @@ import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:book_my_taxi/service/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,9 @@ final databaseReference = FirebaseDatabase(
         databaseURL:
             "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
     .ref();
+
+final FirebaseStorage storage = FirebaseStorage.instance;
+
 String key = "";
 String amount = "";
 
@@ -268,4 +273,23 @@ Future<List<MessageModel>> fetchMessageData() async {
     }
   });
   return list;
+}
+
+Future<void> uploadPhotoToStorage(File file, String name) async {
+  String uid = FirebaseAuth.instance.currentUser!.uid.toString();
+  Reference ref = storage.ref().child('images/$uid/$name.jpg');
+  UploadTask uploadTask = ref.putFile(file);
+  String url= "a";
+  await uploadTask.then((res) async {
+    String downloadURL = await res.ref.getDownloadURL();
+    debugPrint("url:- $downloadURL");
+    url =downloadURL;
+  }).catchError((err) {
+    // Handle the error.
+  });
+
+  await databaseReference
+      .child("customer")
+      .child(FirebaseAuth.instance.currentUser!.uid.toString())
+      .update({name: url});
 }

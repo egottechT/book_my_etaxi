@@ -49,17 +49,16 @@ void showAddressSaveField(
           title: Text('Update you $label'),
           content: TextField(
             controller: controller,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter your address',
             ),
           ),
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
-                String value = controller.text;
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
