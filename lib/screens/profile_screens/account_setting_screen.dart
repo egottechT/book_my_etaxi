@@ -2,6 +2,7 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
+import 'package:book_my_taxi/screens/profile_screens/verify_email_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -150,7 +151,10 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
               style: customStyle(true),
             ),
             iconWithText(Icon(Icons.cloud, color: primaryColor),
-                "2-step verification to add an extra layer of\nsecurity", () {})
+                "2-step verification to add an extra layer of\nsecurity", () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const VerifyEmailScreen()));
+            })
           ],
         ),
       ),

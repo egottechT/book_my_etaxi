@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -278,7 +278,8 @@ Future<List<MessageModel>> fetchMessageData() async {
 Future<void> uploadPhotoToStorage(File file, String name) async {
   String uid = FirebaseAuth.instance.currentUser!.uid.toString();
   Reference ref = storage.ref().child('images/$uid/$name.jpg');
-  UploadTask uploadTask = ref.putFile(file);
+  File compressedFile = await compressImage(file);
+  UploadTask uploadTask = ref.putFile(compressedFile);
   String url= "a";
   await uploadTask.then((res) async {
     String downloadURL = await res.ref.getDownloadURL();
@@ -293,3 +294,12 @@ Future<void> uploadPhotoToStorage(File file, String name) async {
       .child(FirebaseAuth.instance.currentUser!.uid.toString())
       .update({name: url});
 }
+
+Future<File> compressImage(File file) async {
+  var result = await FlutterImageCompress.compressWithFile(
+    file.absolute.path,
+    quality: 50,
+  );
+  return File.fromRawPath(result!);
+}
+
