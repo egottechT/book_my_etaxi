@@ -1,5 +1,9 @@
+import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_maps_webservice/directions.dart';
+import 'package:google_maps_webservice/places.dart';
 
 Widget showRatingBar(int rating) {
   return Row(
@@ -40,27 +44,71 @@ void showAddressSaveField(
 ) async {
   String label = "Work/Office Address";
   if (isHomeAddress) label = "Home Address";
+  String location = "Enter your address";
 
-  TextEditingController controller = TextEditingController();
   showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Update you $label'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'Enter your address',
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
+        return StatefulBuilder(builder: (context, StateSetter changeState) {
+          return AlertDialog(
+            title: Text('Update you $label'),
+            content: InkWell(
+                onTap: () async {
+                  String stateLocation = await showSearchBar(context,changeState);
+                  changeState((){
+                     location = stateLocation;
+                  });
+                },
+                child: Card(
+                  color: Colors.grey[200],
+                  child: Container(
+                      padding: const EdgeInsets.all(10),
+                      width: MediaQuery.of(context).size.width - 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Expanded(flex: 1, child: Icon(Icons.search)),
+                          Expanded(
+                            flex: 5,
+                            child: Text(
+                              location,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                )),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        });
       });
+}
+
+Future<String> showSearchBar(context,changeState) async {
+  var place = await PlacesAutocomplete.show(
+      context: context,
+      apiKey: mapApiKey,
+      mode: Mode.overlay,
+      types: [],
+      strictbounds: false,
+      components: [Component(Component.country, 'IN')],
+      onError: (err) {
+        debugPrint("$err");
+      });
+
+  if (place != null) {
+    debugPrint(place.description.toString());
+    return place.description.toString();
+  }
+  return "";
 }

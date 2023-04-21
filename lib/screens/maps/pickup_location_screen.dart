@@ -171,22 +171,72 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                   )),
             ),
             Positioned(
-              left: 20,
-              bottom: 20,
-              right: 20,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                onPressed: () {
-                  if (latitude != 0 && longitude != 0) {
-                    widget.showMarkers(LatLng(latitude, longitude), false);
-                  }
-                  Provider.of<PickupLocationProvider>(context, listen: false)
-                      .setString(location);
-                  Provider.of<PickupLocationProvider>(context, listen: false)
-                      .setPositionLatLng(LatLng(latitude, longitude));
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Confirm Location"),
+              left: 0,
+              bottom: 0,
+              right: 0,
+              child: Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                      onPressed: () {
+                        if (latitude != 0 && longitude != 0) {
+                          widget.showMarkers(LatLng(latitude, longitude), false);
+                        }
+                        Provider.of<PickupLocationProvider>(context,
+                                listen: false)
+                            .setString(location);
+                        Provider.of<PickupLocationProvider>(context,
+                                listen: false)
+                            .setPositionLatLng(LatLng(latitude, longitude));
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Confirm Location"),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                            icon: const Icon(Icons.location_searching_rounded,
+                                color: Colors.black),
+                            onPressed: () async {
+                              var currentLocation = await getCurrentLocation();
+                              var position = LatLng(
+                                  currentLocation.latitude as double,
+                                  currentLocation.longitude as double);
+                              CameraPosition cameraPosition = CameraPosition(
+                                  target: LatLng(
+                                      position.latitude, position.longitude),
+                                  zoom: zoomLevel);
+                              showDestinationMarker(position);
+                              mapController.moveCamera(
+                                  CameraUpdate.newCameraPosition(cameraPosition));
+                              widget.showMarkers(position, true);
+                            },
+                            label: Text(
+                              "Current Location",
+                              style: _textStyle,
+                            ),
+                            style: _buttonStyle),
+                        ElevatedButton.icon(
+                          icon:
+                              const Icon(Icons.location_on, color: Colors.black),
+                          onPressed: () {
+                            getCurrentLocation();
+                          },
+                          label: Text(
+                            "Location on Map",
+                            style: _textStyle,
+                          ),
+                          style: _buttonStyle,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -215,4 +265,8 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
     super.dispose();
     mapController.dispose();
   }
+
+  final ButtonStyle _buttonStyle =
+      ElevatedButton.styleFrom(elevation: 0, backgroundColor: Colors.white);
+  final TextStyle _textStyle = const TextStyle(color: Colors.black);
 }

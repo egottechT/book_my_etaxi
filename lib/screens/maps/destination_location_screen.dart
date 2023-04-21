@@ -261,29 +261,29 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ElevatedButton.icon(
-                                icon: const Icon(
-                                    Icons.location_searching_rounded,
-                                    color: Colors.black),
-                                onPressed: () async {
-                                  var currentLocation =
-                                      await getCurrentLocation();
-                                  var position = LatLng(
-                                      currentLocation.latitude as double,
-                                      currentLocation.longitude as double);
-                                  CameraPosition cameraPosition = CameraPosition(
-                                      target: LatLng(
-                                          position.latitude, position.longitude),
-                                      zoom: zoomLevel);
-                                  showDestinationMarker(position);
-                                  mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
-                                  widget.setMapMarker(position, true);
-                                },
-                                label: Text(
-                                  "Current Location",
-                                  style: _textStyle,
-                                ),
-                                style: _buttonStyle),
+                            // ElevatedButton.icon(
+                            //     icon: const Icon(
+                            //         Icons.location_searching_rounded,
+                            //         color: Colors.black),
+                            //     onPressed: () async {
+                            //       var currentLocation =
+                            //           await getCurrentLocation();
+                            //       var position = LatLng(
+                            //           currentLocation.latitude as double,
+                            //           currentLocation.longitude as double);
+                            //       CameraPosition cameraPosition = CameraPosition(
+                            //           target: LatLng(
+                            //               position.latitude, position.longitude),
+                            //           zoom: zoomLevel);
+                            //       showDestinationMarker(position);
+                            //       mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
+                            //       widget.setMapMarker(position, true);
+                            //     },
+                            //     label: Text(
+                            //       "Current Location",
+                            //       style: _textStyle,
+                            //     ),
+                            //     style: _buttonStyle),
                             ElevatedButton.icon(
                               icon: const Icon(Icons.location_on,
                                   color: Colors.black),
