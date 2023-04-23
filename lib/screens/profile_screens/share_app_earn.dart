@@ -1,7 +1,10 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShareAppEarnScreen extends StatefulWidget {
@@ -13,6 +16,22 @@ class ShareAppEarnScreen extends StatefulWidget {
 
 //share_app.png
 class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
+  UserModel userModel = UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+    readData();
+  }
+
+  void readData() async {
+    UserModel model =
+        Provider.of<UserModelProvider>(context, listen: false).data;
+    setState(() {
+      userModel = model;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,11 +81,11 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text("Referral Code"),
+                        children: [
+                          const Text("Referral Code"),
                           Text(
-                            "GPRR1U",
-                            style: TextStyle(
+                            userModel.key,
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18),
                           )
                         ],
@@ -75,7 +94,8 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      String referral = FirebaseAuth.instance.currentUser!.uid.toString();
+                      String referral =
+                          FirebaseAuth.instance.currentUser!.uid.toString();
                       Share.share(referral,
                           subject: 'Share your referral Code');
                     },
@@ -85,10 +105,16 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      showReferAndBox(context);
+                      showReferAndBox(context, userModel.referred);
+                      setState(() {
+                        userModel.referred = true;
+                      });
+                      debugPrint("values is ${userModel.referred}");
+                      Provider.of<UserModelProvider>(context, listen: false)
+                          .setData(userModel);
                     },
                     style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     child: const Text("Have a referral Code."),
                   )
                 ],

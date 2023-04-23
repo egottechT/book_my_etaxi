@@ -36,12 +36,14 @@ Future<UserModel> getUserInfo(BuildContext context, bool wait) async {
     await databaseReference.child("customer").child(uid).once().then((value) {
       Map map = value.snapshot.value as Map;
       UserModel model = UserModel().getDataFromMap(map);
+      model.key = value.snapshot.key.toString().substring(0,6);
       completer.complete(model);
     });
   } else {
     databaseReference.child("customer").child(uid).once().then((value) {
       Map map = value.snapshot.value as Map;
       UserModel model = UserModel().getDataFromMap(map);
+      model.key = value.snapshot.key.toString().substring(0,6);
       completer.complete(model);
     });
   }
@@ -341,6 +343,7 @@ Future<void> uploadDummyDataType() async {
 }
 
 Future<void> addReferAndEarn(String uid) async {
+  if (uid.isEmpty) return;
   await databaseReference
       .child("customer")
       .child(uid)
@@ -352,6 +355,10 @@ Future<void> addReferAndEarn(String uid) async {
           .child(uid)
           .child("refers")
           .update({FirebaseAuth.instance.currentUser!.uid.toString(): 1});
+      await databaseReference
+          .child("customer")
+          .child(FirebaseAuth.instance.currentUser!.uid)
+          .update({"referred": true});
     }
   });
 }

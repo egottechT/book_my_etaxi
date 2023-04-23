@@ -3,6 +3,8 @@ class UserModel{
   String phoneNumber = "";
   String email = "";
   String profilePic = "";
+  String key = "";
+  bool referred = false;
   UserModel();
 
   Map<String,dynamic> toMap(UserModel model){
@@ -17,6 +19,7 @@ class UserModel{
     model.phoneNumber = map["phoneNumber"] ?? "";
     model.email = map["email"] ?? "";
     model.name = map["name"] ?? "";
+    model.referred = map["referred"] ?? false;
     model.profilePic = map["profile_pic"] ?? "";
     return model;
   }

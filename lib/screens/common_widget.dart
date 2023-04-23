@@ -115,9 +115,7 @@ Future<String> showSearchBar(context, changeState) async {
   return "";
 }
 
-void showReferAndBox(
-  context,
-) async {
+void showReferAndBox(context, bool isReferAlready) async {
   TextEditingController controller = TextEditingController();
   bool isLoading = false;
   showDialog(
@@ -133,10 +131,13 @@ void showReferAndBox(
           } else {
             return AlertDialog(
               title: const Text('Refer and Earn'),
-              content: TextField(
-                controller: controller,
-                decoration: const InputDecoration(hintText: "Enter the referal code"),
-              ),
+              content: isReferAlready
+                  ? const Text("You are already referred by some-one else")
+                  : TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                          hintText: "Enter the referral code"),
+                    ),
               actions: <Widget>[
                 ElevatedButton(
                   onPressed: () async {

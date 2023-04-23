@@ -1,5 +1,7 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/screens/maps/confirm_location_screen.dart';
 import 'package:book_my_taxi/screens/maps/destination_location_screen.dart';
@@ -228,6 +230,8 @@ class _PanelWidgetState extends State<PanelWidget> {
   }
 
   Widget sharingLayout() {
+    UserModel model =
+        Provider.of<UserModelProvider>(context, listen: true).data;
     return Column(
       children: [
         cardView(
@@ -239,7 +243,7 @@ class _PanelWidgetState extends State<PanelWidget> {
             ),
             () {}),
         cardView("Invite your Family & Friends to ride with BOOK MY ETAXI",
-            "GPRR1U", "Share", Image.asset("assets/images/share_app.png"), () {
+            model.key, "Share", Image.asset("assets/images/share_app.png"), () {
           String referral = FirebaseAuth.instance.currentUser!.uid.toString();
           Share.share(referral, subject: 'Share your referral Code');
         }),
