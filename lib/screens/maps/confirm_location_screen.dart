@@ -40,6 +40,34 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   late polygonPoint.PolylinePoints polylinePoints;
   String costTravelling = "0";
   bool loading = true;
+  int sedanPrice=1;
+  int miniPrice = 1;
+  int suvPrice = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    readDistanceFare();
+  }
+
+  void readDistanceFare() async {
+    String text = Provider.of<DestinationLocationProvider>(context,listen: false).location;
+    List<String> words = text.split(" ");
+    String lastWord = words.length > 1 ? words[words.length-2] : text;
+    lastWord = lastWord.substring(0, lastWord.length - 1);
+    int value = await readingFare(lastWord.toLowerCase(),"suv");
+    setState(() {
+      suvPrice = value;
+    });
+    value = await readingFare(lastWord.toLowerCase(),"sedan");
+    setState(() {
+      sedanPrice = value;
+    });
+    value = await readingFare(lastWord.toLowerCase(),"mini");
+    setState(() {
+      miniPrice = value;
+    });
+  }
 
   Future<void> _createPolylines(
     double startLatitude,
@@ -302,7 +330,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                         Image.asset("assets/images/mini.png"),
                         "Mini",
                         "Comfy, Small cozy Cars",
-                        calculateFare(20),
+                        calculateFare(miniPrice),
                         1,
                         changeCar)),
                 const SizedBox(
@@ -320,7 +348,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                         Image.asset("assets/images/sedan.png"),
                         "Sedan",
                         "Spacious, luxury premium Cars",
-                        calculateFare(75),
+                        calculateFare(sedanPrice),
                         2,
                         changeCar)),
                 const SizedBox(
@@ -338,7 +366,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                         Image.asset("assets/images/suv.png"),
                         "SUV",
                         "Spacious, big 8 seater capacity",
-                        calculateFare(150),
+                        calculateFare(suvPrice),
                         3,
                         changeCar)),
                 Column(

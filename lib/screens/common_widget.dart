@@ -1,4 +1,5 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -54,9 +55,10 @@ void showAddressSaveField(
             title: Text('Update you $label'),
             content: InkWell(
                 onTap: () async {
-                  String stateLocation = await showSearchBar(context,changeState);
-                  changeState((){
-                     location = stateLocation;
+                  String stateLocation =
+                      await showSearchBar(context, changeState);
+                  changeState(() {
+                    location = stateLocation;
                   });
                 },
                 child: Card(
@@ -94,7 +96,7 @@ void showAddressSaveField(
       });
 }
 
-Future<String> showSearchBar(context,changeState) async {
+Future<String> showSearchBar(context, changeState) async {
   var place = await PlacesAutocomplete.show(
       context: context,
       apiKey: mapApiKey,
@@ -111,4 +113,47 @@ Future<String> showSearchBar(context,changeState) async {
     return place.description.toString();
   }
   return "";
+}
+
+void showReferAndBox(
+  context,
+) async {
+  TextEditingController controller = TextEditingController();
+  bool isLoading = false;
+  showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, StateSetter changeState) {
+          if (isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.orange,
+              ),
+            );
+          } else {
+            return AlertDialog(
+              title: const Text('Refer and Earn'),
+              content: TextField(
+                controller: controller,
+                decoration: const InputDecoration(hintText: "Enter the referal code"),
+              ),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    changeState(() {
+                      isLoading = true;
+                    });
+                    await addReferAndEarn(controller.text);
+                    changeState(() {
+                      isLoading = false;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Next'),
+                ),
+              ],
+            );
+          }
+        });
+      });
 }

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -280,11 +281,11 @@ Future<void> uploadPhotoToStorage(File file, String name) async {
   Reference ref = storage.ref().child('images/$uid/$name.jpg');
   File compressedFile = await compressImage(file);
   UploadTask uploadTask = ref.putFile(compressedFile);
-  String url= "a";
+  String url = "a";
   await uploadTask.then((res) async {
     String downloadURL = await res.ref.getDownloadURL();
     debugPrint("url:- $downloadURL");
-    url =downloadURL;
+    url = downloadURL;
   }).catchError((err) {
     // Handle the error.
   });
@@ -303,3 +304,67 @@ Future<File> compressImage(File file) async {
   return File.fromRawPath(result!);
 }
 
+Future<void> uploadDummyDataType() async {
+  Map map = {
+    "Andhra Pradesh".toLowerCase(): {"sedan": 200, "suv": 500, "mini": 100},
+    "Arunachal Pradesh".toLowerCase(): {"sedan": 180, "suv": 450, "mini": 90},
+    "Assam".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Bihar".toLowerCase(): {"sedan": 190, "suv": 500, "mini": 110},
+    "Chhattisgarh".toLowerCase(): {"sedan": 250, "suv": 600, "mini": 130},
+    "Goa".toLowerCase(): {"sedan": 170, "suv": 400, "mini": 80},
+    "Gujarat".toLowerCase(): {"sedan": 210, "suv": 530, "mini": 100},
+    "Haryana".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Himachal Pradesh".toLowerCase(): {"sedan": 190, "suv": 480, "mini": 100},
+    "Jharkhand".toLowerCase(): {"sedan": 180, "suv": 450, "mini": 90},
+    "Karnataka".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Kerala".toLowerCase(): {"sedan": 200, "suv": 500, "mini": 110},
+    "Madhya Pradesh".toLowerCase(): {"sedan": 210, "suv": 530, "mini": 100},
+    "Maharashtra".toLowerCase(): {"sedan": 250, "suv": 600, "mini": 130},
+    "Manipur".toLowerCase(): {"sedan": 190, "suv": 480, "mini": 100},
+    "Meghalaya".toLowerCase(): {"sedan": 180, "suv": 450, "mini": 90},
+    "Mizoram".toLowerCase(): {"sedan": 170, "suv": 400, "mini": 80},
+    "Nagaland".toLowerCase(): {"sedan": 160, "suv": 390, "mini": 70},
+    "Odisha".toLowerCase(): {"sedan": 200, "suv": 500, "mini": 100},
+    "Punjab".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Rajasthan".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Sikkim".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Tamil Nadu".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Telangana".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Tripura".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Uttar Pradesh".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Uttarakhand".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "West Bengal".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Delhi".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120},
+    "Chandigarh".toLowerCase(): {"sedan": 220, "suv": 550, "mini": 120}
+  };
+  databaseReference.child("state").set(map);
+}
+
+Future<void> addReferAndEarn(String uid) async {
+  await databaseReference
+      .child("customer")
+      .child(uid)
+      .once()
+      .then((value) async {
+    if (value.snapshot.exists) {
+      await databaseReference
+          .child("customer")
+          .child(uid)
+          .child("refers")
+          .update({FirebaseAuth.instance.currentUser!.uid.toString(): 1});
+    }
+  });
+}
+
+Future<int> readingFare(String state, String car) async {
+  int data = 1;
+  await databaseReference
+      .child("state")
+      .child(state)
+      .child(car)
+      .once()
+      .then((value) async {
+    data = value.snapshot.value as int;
+  });
+  return data;
+}
