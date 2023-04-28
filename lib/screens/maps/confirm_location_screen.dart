@@ -52,18 +52,22 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
 
   void readDistanceFare() async {
     String text = Provider.of<DestinationLocationProvider>(context,listen: false).location;
-    List<String> words = text.split(" ");
-    String lastWord = words.length > 1 ? words[words.length-2] : text;
-    lastWord = lastWord.substring(0, lastWord.length - 1);
-    int value = await readingFare(lastWord.toLowerCase(),"suv");
+    String location = "";
+    int value = 1;
+    for(var states in statesOfIndia){
+        if(text.contains(states)){
+          location = states;
+        }
+    }
+    value = await readingFare(location.toLowerCase(),"sedan");
     setState(() {
       suvPrice = value;
     });
-    value = await readingFare(lastWord.toLowerCase(),"sedan");
+    value = await readingFare(location.toLowerCase(),"sedan");
     setState(() {
       sedanPrice = value;
     });
-    value = await readingFare(lastWord.toLowerCase(),"mini");
+    value = await readingFare(location.toLowerCase(),"mini");
     setState(() {
       miniPrice = value;
     });
