@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/screens/profile_screens/verify_email_screen.dart';
+import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +18,8 @@ class AccountSettingScreen extends StatefulWidget {
 }
 
 class _AccountSettingScreenState extends State<AccountSettingScreen> {
+  File? imgFile;
+
   TextStyle customStyle(isBold) {
     return TextStyle(
         color: primaryColor,
@@ -70,9 +76,21 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: ListTile(
-            leading: const Icon(
-              Icons.person_pin,
-              size: 75,
+            leading: GestureDetector(
+              onTap: () async {
+                File? img = await selectImage(context);
+                if (img != null) {
+                  setState(() {
+                    imgFile = img;
+                  });
+                  uploadPhotoToStorage(img, "profile_pic");
+                }
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.grey,
+                backgroundImage: showProfileImage(model, imgFile),
+                radius: 40.0,
+              ),
             ),
             title: Text(
               model.name,
@@ -152,8 +170,8 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
             ),
             iconWithText(Icon(Icons.cloud, color: primaryColor),
                 "2-step verification to add an extra layer of\nsecurity", () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const VerifyEmailScreen()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const VerifyEmailScreen()));
             })
           ],
         ),

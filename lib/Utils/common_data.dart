@@ -9,6 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
+import '../model/user_model.dart';
+
 Future<String> showLocationFromLatLng(
     double latitude, double longitude, String location) async {
   try {
@@ -62,4 +64,16 @@ Future<File?> selectImage(context) async {
         message: "Can't pick Images !\nError: ${error.message}");
   }
   return null;
+}
+
+ImageProvider showProfileImage(UserModel userModel,File? imgFile) {
+  if (imgFile != null) {
+    return Image(image: FileImage(File(imgFile!.path))).image;
+  }
+  if (userModel.profilePic.isEmpty) {
+    return Image.asset(
+      "assets/images/profile.png",
+    ).image;
+  }
+  return NetworkImage(userModel.profilePic);
 }

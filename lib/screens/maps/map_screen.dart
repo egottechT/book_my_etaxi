@@ -431,7 +431,7 @@ class _MapsScreenState extends State<MapsScreen> {
                   },
                   child: CircleAvatar(
                     backgroundColor: Colors.grey,
-                    backgroundImage: showProfileImage(userModel),
+                    backgroundImage: showProfileImage(userModel,imgFile),
                     radius: 40.0,
                   ),
                 ),
@@ -555,17 +555,5 @@ class _MapsScreenState extends State<MapsScreen> {
       title: Text(title, style: const TextStyle(fontSize: 18)),
       onTap: function,
     );
-  }
-
-  showProfileImage(UserModel userModel) {
-    if (imgFile != null) {
-      return Image(image: FileImage(File(imgFile!.path))).image;
-    }
-    if (userModel.profilePic.isEmpty) {
-      return Image.asset(
-        "assets/images/profile.png",
-      ).image;
-    }
-    return NetworkImage(userModel.profilePic);
   }
 }
