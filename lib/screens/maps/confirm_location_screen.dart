@@ -172,7 +172,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   }
 
   void testingAppTimer() async {
-    // await Future.delayed(const Duration(seconds: 8));
+    await Future.delayed(const Duration(seconds: 8));
     setState(() {
       loading = false;
     });

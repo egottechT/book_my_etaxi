@@ -26,7 +26,7 @@ class NotificationService {
     //Handle notification tapped logic here
   }
 
-  void showNotification(String title,String value) async {
+  void showNotification(String title, String value) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
@@ -35,8 +35,7 @@ class NotificationService {
             ticker: 'ticker');
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        0, title, value, notificationDetails,
-        payload: 'item x');
+    await flutterLocalNotificationsPlugin
+        .show(0, title, value, notificationDetails, payload: 'item x');
   }
 }
