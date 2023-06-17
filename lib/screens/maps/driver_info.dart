@@ -119,7 +119,6 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                const Text("RE Compact Plus"),
                                 Row(
                                   children: [
                                     Text(driverName),

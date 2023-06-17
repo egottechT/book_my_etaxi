@@ -102,6 +102,7 @@ void uploadTripInfo(
     "tripStarted": false,
     'id': FirebaseAuth.instance.currentUser!.uid.toString(),
     'car': carName,
+    "date": DateTime.now().toString(),
   };
   await newChildRef.set(data);
   key = newChildRef.key.toString();
@@ -328,14 +329,16 @@ Future<void> addReferAndEarn(String uid) async {
 }
 
 Future<int> readingFare(String state, String car) async {
-  int data = 1;
+  int data = 150;
   await databaseReference
       .child("state")
       .child(state)
       .child(car)
       .once()
       .then((value) async {
-    data = value.snapshot.value as int;
+    if (value.snapshot.exists) {
+      data = value.snapshot.value as int;
+    }
   });
   return data;
 }
