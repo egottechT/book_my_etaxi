@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:analyzer_plugin/utilities/pair.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
@@ -112,10 +113,6 @@ void uploadTripInfo(
 }
 
 void checkDriveRequest(BuildContext context, Map data) {
-  // databaseReference.child("trips").child(key).onChildChanged.listen((event) {
-  //   debugPrint("Child Changed ${event.snapshot.value.toString()}");
-  // });
-
   databaseReference.child("trips").child(key).onChildAdded.listen((event) {
     // debugPrint("Child Added : - ${event.snapshot.value.toString()}");
     if (event.snapshot.key == "driver_info") {
@@ -341,4 +338,18 @@ Future<int> readingFare(String state, String car) async {
     }
   });
   return data;
+}
+
+Future<Pair<Map, DriverModel>> findTripUsingId(String tripId) async {
+  Map data = {};
+  DriverModel model = DriverModel();
+  await databaseReference.child('trips').child(tripId).once().then((event) {
+    data = event.snapshot.value as Map;
+    Map map = data["driver_info"];
+    model = DriverModel().getDataFromMap(map);
+    String customerKey = event.snapshot.key.toString();
+    debugPrint(data.toString());
+    key = customerKey;
+  });
+  return Pair(data, model);
 }

@@ -12,6 +12,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,6 +42,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   late PolylinePoints polylinePoints;
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
+  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -54,7 +56,9 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
     notificationChangeMessages();
   }
 
-  void readData() {
+  void readData() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString("tripId", key);
     driveLocationUpdate(mapController, setUpTheMarker);
     checkIsTripEnd(context, widget.driver, widget.data);
   }

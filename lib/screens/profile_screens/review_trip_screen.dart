@@ -3,6 +3,7 @@ import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewTripScreen extends StatefulWidget {
   final DriverModel driver;
@@ -18,6 +19,18 @@ class ReviewTripScreen extends StatefulWidget {
 class _ReviewScreenState extends State<ReviewTripScreen> {
   TextEditingController textEditingController = TextEditingController();
   double star = 0;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    readData();
+  }
+
+  void readData() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.remove("tripId");
+  }
 
   @override
   Widget build(BuildContext context) {

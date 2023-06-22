@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:analyzer_plugin/utilities/pair.dart';
 import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
+import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/balance_screen.dart';
@@ -26,6 +29,7 @@ import 'package:location/location.dart' as locate;
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapsScreen extends StatefulWidget {
@@ -53,6 +57,7 @@ class _MapsScreenState extends State<MapsScreen> {
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
   String? _placeDistance;
+  late SharedPreferences prefs;
 
   void removeDestinationMaker() {
     setState(() {
@@ -117,6 +122,21 @@ class _MapsScreenState extends State<MapsScreen> {
 
   void readData() async {
     UserModel model = await getUserInfo(context, true);
+    prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey("tripId")) {
+      Pair<Map, DriverModel> data =
+          await findTripUsingId(prefs.getString("tripId") ?? "");
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DriverInfoScreen(
+                      driver: data.last,
+                      data: data.first,
+                    )),
+            ModalRoute.withName('/mapScreen'));
+      }
+    }
     if (context.mounted) {
       Provider.of<UserModelProvider>(context, listen: false).setData(model);
     }
@@ -431,7 +451,7 @@ class _MapsScreenState extends State<MapsScreen> {
                   },
                   child: CircleAvatar(
                     backgroundColor: Colors.grey,
-                    backgroundImage: showProfileImage(userModel,imgFile),
+                    backgroundImage: showProfileImage(userModel, imgFile),
                     radius: 40.0,
                   ),
                 ),
