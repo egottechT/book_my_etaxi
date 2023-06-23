@@ -213,9 +213,9 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                leading: Row(
+                                leading: const Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.circle,
                                       color: Colors.red,

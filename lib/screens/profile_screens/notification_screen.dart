@@ -18,10 +18,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
         itemBuilder: (context, index) {
           return Card(
             color: Colors.grey[300],
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
+            child: const Padding(
+              padding: EdgeInsets.all(10.0),
               child: Column(
-                children: const [
+                children: [
                   Text("20% off on first 5"),
                   Text("Offer automatically applied for limited"),
                 ],

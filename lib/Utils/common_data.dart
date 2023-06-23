@@ -68,7 +68,7 @@ Future<File?> selectImage(context) async {
 
 ImageProvider showProfileImage(UserModel userModel,File? imgFile) {
   if (imgFile != null) {
-    return Image(image: FileImage(File(imgFile!.path))).image;
+    return Image(image: FileImage(File(imgFile.path))).image;
   }
   if (userModel.profilePic.isEmpty) {
     return Image.asset(

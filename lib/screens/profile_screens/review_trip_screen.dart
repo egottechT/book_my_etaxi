@@ -1,8 +1,11 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewTripScreen extends StatefulWidget {
@@ -107,6 +110,10 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                           )),
                       ElevatedButton(
                           onPressed: () {
+                            Provider.of<DestinationLocationProvider>(context,listen: false)
+                                .setString("Search Your Destination");
+                            Provider.of<DestinationLocationProvider>(context,listen: false)
+                                .setPositionLatLng(const LatLng(0, 0));
                             uploadRatingUser(
                                 widget.driver,
                                 star,

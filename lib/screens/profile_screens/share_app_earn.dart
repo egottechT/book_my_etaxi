@@ -147,9 +147,9 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
               ),
               InkWell(
                 onTap: () {},
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text(
                       "See All",
                       style: TextStyle(

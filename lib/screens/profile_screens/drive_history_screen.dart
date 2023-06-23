@@ -43,11 +43,11 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
           Container(
             height: 75,
             color: const Color(0xff143f5d),
-            child: Align(
+            child: const Align(
               alignment: Alignment.bottomCenter,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
+                children: [
                   Text(
                     "On Going Details",
                     style: TextStyle(

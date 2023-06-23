@@ -368,7 +368,6 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   ) async {
     // Initializing PolylinePoints
     polylinePoints = PolylinePoints();
-    debugPrint("Map Screen Getting route info");
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       mapApiKey, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
@@ -376,7 +375,6 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
       travelMode: TravelMode.driving,
     );
 
-    debugPrint("Map Screen Route info complete");
 
     // Adding the coordinates to the list
     polylineCoordinates.clear();
