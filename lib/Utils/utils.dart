@@ -1,11 +1,32 @@
-
-import 'dart:convert' as jsonData;
+import 'dart:convert' as json_data;
+import 'dart:math';
 import 'dart:ui';
+
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
+import 'package:vector_math/vector_math.dart';
+
+double getBearing(LatLng begin, LatLng end) {
+  double lat = (begin.latitude - end.latitude).abs();
+  double lng = (begin.longitude - end.longitude).abs();
+
+  if (begin.latitude < end.latitude && begin.longitude < end.longitude) {
+    return degrees(atan(lng / lat));
+  } else if (begin.latitude >= end.latitude &&
+      begin.longitude < end.longitude) {
+    return (90 - degrees(atan(lng / lat))) + 90;
+  } else if (begin.latitude >= end.latitude &&
+      begin.longitude >= end.longitude) {
+    return degrees(atan(lng / lat)) + 180;
+  } else if (begin.latitude < end.latitude &&
+      begin.longitude >= end.longitude) {
+    return (90 - degrees(atan(lng / lat))) + 270;
+  }
+  return -1;
+}
 
 Future<Uint8List> getImages(String path, int width) async {
   ByteData data = await rootBundle.load(path);
@@ -23,13 +44,14 @@ Future<LocationData> getCurrentLocation() async {
   return location;
 }
 
-Future<String> getAddressFromLatLng(double lat, double lng,String previousLocation) async {
+Future<String> getAddressFromLatLng(
+    double lat, double lng, String previousLocation) async {
   String host = 'https://maps.google.com/maps/api/geocode/json';
   final url = '$host?key=$mapApiKey&language=en&latlng=$lat,$lng';
 
   var response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
-    Map data = jsonData.jsonDecode(response.body);
+    Map data = json_data.jsonDecode(response.body);
     String formattedAddress = data["results"][0]["formatted_address"];
     return formattedAddress;
   } else {
@@ -42,8 +64,7 @@ void correctCameraAngle(
     double startLongitude,
     double destinationLatitude,
     double destinationLongitude,
-    GoogleMapController mapController
-    ) async {
+    GoogleMapController mapController) async {
   double miny = (startLatitude <= destinationLatitude)
       ? startLatitude
       : destinationLatitude;

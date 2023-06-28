@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
@@ -8,6 +8,7 @@ import 'package:book_my_taxi/screens/message_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -27,7 +28,8 @@ class DriverInfoScreen extends StatefulWidget {
   State<DriverInfoScreen> createState() => _DriverInfoScreenState();
 }
 
-class _DriverInfoScreenState extends State<DriverInfoScreen> {
+class _DriverInfoScreenState extends State<DriverInfoScreen>
+    with TickerProviderStateMixin {
   late String vehicleNumber;
   late String driverName;
   late String stars;
@@ -44,6 +46,93 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   Map<PolylineId, Polyline> polylines = {};
   late SharedPreferences prefs;
 
+  Animation<double>? _animation;
+  final List<Marker> _markers = <Marker>[];
+  final _mapMarkerSC = StreamController<List<Marker>>();
+
+  StreamSink<List<Marker>> get _mapMarkerSink => _mapMarkerSC.sink;
+
+  Stream<List<Marker>> get mapMarkerStream => _mapMarkerSC.stream;
+
+  updateDriverLocationAnimate(LatLng position) {
+    animateCar(
+      _center.latitude,
+      _center.longitude,
+      position.latitude,
+      position.longitude,
+      _mapMarkerSink,
+      this,
+      mapController,
+    );
+    _center = position;
+  }
+
+  animateCar(
+    double fromLat, //Starting latitude
+    double fromLong, //Starting longitude
+    double toLat, //Ending latitude
+    double toLong, //Ending longitude
+    StreamSink<List<Marker>> mapMarkerSink,
+    //Stream build of map to update the UI
+    TickerProvider provider,
+    //Ticker provider of the widget. This is used for animation
+    GoogleMapController controller, //Google map controller of our widget
+  ) async {
+    final double bearing =
+        getBearing(LatLng(fromLat, fromLong), LatLng(toLat, toLong));
+    _markers.clear();
+
+    var carMarker = Marker(
+        markerId: const MarkerId("car_pickup"),
+        position: LatLng(fromLat, fromLong),
+        icon: BitmapDescriptor.fromBytes(
+            await getImages('assets/images/driver_car.png', 150)),
+        anchor: const Offset(0.5, 0.5),
+        flat: true,
+        rotation: bearing,
+        draggable: false);
+
+    _markers.add(carMarker);
+    mapMarkerSink.add(_markers);
+
+    final animationController = AnimationController(
+      duration: const Duration(seconds: 5), //Animation duration of marker
+      vsync: provider, //From the widget
+    );
+
+    Tween<double> tween = Tween(begin: 0, end: 1);
+
+    _animation = tween.animate(animationController)
+      ..addListener(() async {
+        //We are calculating new latitude and logitude for our marker
+        final v = _animation!.value;
+        double lng = v * toLong + (1 - v) * fromLong;
+        double lat = v * toLat + (1 - v) * fromLat;
+        LatLng newPos = LatLng(lat, lng);
+
+        //Removing old marker if present in the marker array
+        if (_markers.contains(carMarker)) _markers.remove(carMarker);
+
+        //New marker location
+        carMarker = Marker(
+            markerId: const MarkerId("car_pickup"),
+            position: newPos,
+            icon: BitmapDescriptor.fromBytes(
+                await getImages('assets/images/driver_car.png', 150)),
+            anchor: const Offset(0.5, 0.5),
+            flat: true,
+            rotation: bearing,
+            draggable: false);
+        _markers.add(carMarker);
+        mapMarkerSink.add(_markers);
+        controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(target: newPos, zoom: zoomLevel)));
+      });
+
+    //Starting the animation
+    animationController.forward();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +148,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
   void readData() async {
     prefs = await SharedPreferences.getInstance();
     prefs.setString("tripId", key);
-    driveLocationUpdate(mapController, setUpTheMarker);
+    driveLocationUpdate(mapController, updateDriverLocationAnimate);
     checkIsTripEnd(context, widget.driver, widget.data);
   }
 
@@ -332,29 +421,35 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
             ),
           );
         },
-        body: GoogleMap(
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          polylines: Set<Polyline>.of(polylines.values),
-          onMapCreated: (controller) async {
-            mapController = controller;
-            readData();
-            LocationData locationData = await getCurrentLocation();
-            _createPolylines(
-                widget.driver.latitude,
-                widget.driver.longitude,
-                locationData.latitude as double,
-                locationData.longitude as double);
-            CameraPosition cameraPosition =
-                CameraPosition(target: _center, zoom: zoomLevel);
-            mapController
-                .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+        body: StreamBuilder<List<Marker>>(
+          stream: mapMarkerStream,
+          builder: (context, snapshot) {
+            return GoogleMap(
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              polylines: Set<Polyline>.of(polylines.values),
+              onMapCreated: (controller) async {
+                mapController = controller;
+                readData();
+                LocationData locationData = await getCurrentLocation();
+                _createPolylines(
+                    widget.driver.latitude,
+                    widget.driver.longitude,
+                    locationData.latitude as double,
+                    locationData.longitude as double);
+                CameraPosition cameraPosition =
+                    CameraPosition(target: _center, zoom: zoomLevel);
+                mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(cameraPosition));
+              },
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: zoomLevel,
+              ),
+              markers: Set<Marker>.of(snapshot.data ?? []),
+              // markers: makers,
+            );
           },
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: zoomLevel,
-          ),
-          markers: makers,
         ),
       ),
     );
@@ -374,7 +469,6 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
       PointLatLng(destinationLatitude, destinationLongitude),
       travelMode: TravelMode.driving,
     );
-
 
     // Adding the coordinates to the list
     polylineCoordinates.clear();
@@ -593,9 +687,12 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
       position: position,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
-    setState(() {
-      makers.add(tmpMarker);
-    });
+    // setState(() {
+    //   makers.add(tmpMarker);
+    // });
+
+    _markers.add(tmpMarker);
+    _mapMarkerSink.add(_markers);
   }
 
   void updateDriverTiming(LatLng destination) async {
