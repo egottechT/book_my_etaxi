@@ -135,7 +135,7 @@ class _DriverInfoScreenState extends State<TmpScreen>
     driverName = "";
     stars = "";
     phoneNumber = "";
-    _center = LatLng(30.276463679942196, 78.07489652937144);
+    _center = const LatLng(30.276463679942196, 78.07489652937144);
     setUpTheMarker(_center);
     notificationChangeMessages();
   }
@@ -152,7 +152,7 @@ class _DriverInfoScreenState extends State<TmpScreen>
         mapController,
       );
     });
-    _center = LatLng(30.275423, 78.0721966);
+    _center = const LatLng(30.275423, 78.0721966);
     await Future.delayed(const Duration(seconds: 10)).then((value) {
       animateCar(
         _center.latitude,
@@ -164,7 +164,7 @@ class _DriverInfoScreenState extends State<TmpScreen>
         mapController,
       );
     });
-    _center = LatLng(30.2801184,78.0681607);
+    _center = const LatLng(30.2801184,78.0681607);
   }
 
   @override
