@@ -696,11 +696,13 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
   }
 
   void updateDriverTiming(LatLng destination) async {
+    debugPrint("Calculating time");
     LocationData currentLocation = await getCurrentLocation();
     LatLng start = LatLng(currentLocation.latitude as double,
         currentLocation.longitude as double);
     final travelTime = await calculateTravelTime(start, destination);
     String totalTime = formatDuration(travelTime);
+    debugPrint("Time is $totalTime");
     setState(() {
       time = totalTime;
     });

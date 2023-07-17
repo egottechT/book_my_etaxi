@@ -40,7 +40,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   late polygonPoint.PolylinePoints polylinePoints;
   String costTravelling = "0";
   bool loading = true;
-  int sedanPrice=1;
+  int sedanPrice = 1;
   int miniPrice = 1;
   int suvPrice = 1;
 
@@ -51,23 +51,25 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   }
 
   void readDistanceFare() async {
-    String text = Provider.of<DestinationLocationProvider>(context,listen: false).location;
+    String text =
+        Provider.of<DestinationLocationProvider>(context, listen: false)
+            .location;
     String location = "";
     int value = 1;
-    for(var states in statesOfIndia){
-        if(text.contains(states)){
-          location = states;
-        }
+    for (var states in statesOfIndia) {
+      if (text.contains(states)) {
+        location = states;
+      }
     }
-    value = await readingFare(location.toLowerCase(),"sedan");
+    value = await readingFare(location.toLowerCase(), "sedan");
     setState(() {
       suvPrice = value;
     });
-    value = await readingFare(location.toLowerCase(),"sedan");
+    value = await readingFare(location.toLowerCase(), "sedan");
     setState(() {
       sedanPrice = value;
     });
-    value = await readingFare(location.toLowerCase(),"mini");
+    value = await readingFare(location.toLowerCase(), "mini");
     setState(() {
       miniPrice = value;
     });
@@ -90,7 +92,6 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
       travelMode: polygonPoint.TravelMode.driving,
     );
 
-    debugPrint("Confirm Screen Route info complete");
     // Adding the coordinates to the list
     polylineCoordinates.clear();
     if (result.points.isNotEmpty) {

@@ -138,7 +138,8 @@ void driveLocationUpdate(GoogleMapController mapController, Function function) {
       Map map = event.snapshot.value as Map;
       LatLng center = LatLng(map["lat"], map["long"]);
       CameraPosition cameraPosition = CameraPosition(target: center, zoom: 16);
-      mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      mapController
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
       function(center);
     }
   });

@@ -88,8 +88,6 @@ class _MapsScreenState extends State<MapsScreen> {
       travelMode: TravelMode.driving,
     );
 
-    debugPrint("Map Screen Route info complete");
-
     // Adding the coordinates to the list
     polylineCoordinates.clear();
     if (result.points.isNotEmpty) {
