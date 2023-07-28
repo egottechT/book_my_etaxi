@@ -604,8 +604,9 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
         ),
       ),
       ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           cancelRequest(cancelReason);
+          prefs.remove("tripId");
           Navigator.of(context)
             ..pop()
             ..pop();
@@ -696,13 +697,13 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
   }
 
   void updateDriverTiming(LatLng destination) async {
-    debugPrint("Calculating time");
-    LocationData currentLocation = await getCurrentLocation();
-    LatLng start = LatLng(currentLocation.latitude as double,
-        currentLocation.longitude as double);
+    LatLng start =
+        LatLng(widget.data["pick-up"]["lat"], widget.data["pick-up"]["long"]);
     final travelTime = await calculateTravelTime(start, destination);
     String totalTime = formatDuration(travelTime);
-    debugPrint("Time is $totalTime");
+    if (totalTime == "00 minutes") {
+      totalTime = "Less than a 1 minute.";
+    }
     setState(() {
       time = totalTime;
     });
