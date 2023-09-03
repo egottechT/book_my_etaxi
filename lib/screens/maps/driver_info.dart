@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
@@ -31,11 +32,14 @@ class DriverInfoScreen extends StatefulWidget {
 
 class _DriverInfoScreenState extends State<DriverInfoScreen>
     with TickerProviderStateMixin {
+  bool otpDone = false;
   late String vehicleNumber;
   late String driverName;
   late String stars;
   late String phoneNumber;
   String time = "0 Min.";
+  String reachingTime = "0 Min.";
+
   TextEditingController textController = TextEditingController();
   late LatLng _center;
   String moneyWay = "Cash";
@@ -47,6 +51,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
   Map<PolylineId, Polyline> polylines = {};
   late SharedPreferences prefs;
 
+  LatLng startLocation = const LatLng(0, 0);
   Animation<double>? _animation;
   final List<Marker> _markers = <Marker>[];
   final _mapMarkerSC = StreamController<List<Marker>>();
@@ -71,18 +76,19 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
     });
   }
 
-  animateCar(double fromLat, //Starting latitude
-      double fromLong, //Starting longitude
-      double toLat, //Ending latitude
-      double toLong, //Ending longitude
-      StreamSink<List<Marker>> mapMarkerSink,
-      //Stream build of map to update the UI
-      TickerProvider provider,
-      //Ticker provider of the widget. This is used for animation
-      GoogleMapController controller, //Google map controller of our widget
-      ) async {
+  animateCar(
+    double fromLat, //Starting latitude
+    double fromLong, //Starting longitude
+    double toLat, //Ending latitude
+    double toLong, //Ending longitude
+    StreamSink<List<Marker>> mapMarkerSink,
+    //Stream build of map to update the UI
+    TickerProvider provider,
+    //Ticker provider of the widget. This is used for animation
+    GoogleMapController controller, //Google map controller of our widget
+  ) async {
     final double bearing =
-    getBearing(LatLng(fromLat, fromLong), LatLng(toLat, toLong));
+        getBearing(LatLng(fromLat, fromLong), LatLng(toLat, toLong));
     _markers.clear();
 
     var carMarker = Marker(
@@ -144,6 +150,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
     stars = widget.driver.rating;
     phoneNumber = widget.driver.phoneNumber;
     _center = LatLng(widget.driver.latitude, widget.driver.longitude);
+    startLocation = LatLng(
+        widget.data["destination"]["lat"], widget.data["destination"]["long"]);
     setUpTheMarker(_center);
     notificationChangeMessages();
   }
@@ -155,8 +163,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ReviewTripScreen(
+            builder: (context) => ReviewTripScreen(
                   driver: widget.driver,
                   map: widget.data,
                 )),
@@ -164,7 +171,45 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
       return;
     }
     driveLocationUpdate(mapController, updateDriverLocationAnimate);
-    checkIsTripEnd(context, widget.driver, widget.data);
+    checkIsTripEnd(context, widget.driver, widget.data, showReachingTime);
+  }
+
+  void showReachingTime() {
+    setState(() {
+      otpDone = true;
+    });
+
+    Location location = Location();
+    location.onLocationChanged.listen((newLocation) {
+      if (startLocation.longitude != 0) {
+        LatLng value = LatLng(
+            newLocation.latitude as double, newLocation.longitude as double);
+        double distance = calculateDistance(startLocation, value);
+        if (distance > 40.0) {
+          debugPrint("Distance is :- $distance");
+          updateReachingTiming(newLocation);
+          setState(() {
+            startLocation = LatLng(newLocation.latitude as double,
+                newLocation.longitude as double);
+          });
+        }
+      }
+    });
+  }
+
+  double calculateDistance(LatLng from, LatLng to) {
+    var lat1 = from.latitude;
+    var lon1 = from.longitude;
+    var lat2 = to.latitude;
+    var lon2 = to.longitude;
+
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    double distance = 12742 * asin(sqrt(a)) * 1000;
+    return distance;
   }
 
   @override
@@ -175,14 +220,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
 
   @override
   Widget build(BuildContext context) {
-    final panelHeightClosed = MediaQuery
-        .of(context)
-        .size
-        .height * 0.5;
-    final panelHeightOpen = MediaQuery
-        .of(context)
-        .size
-        .height * 0.9;
+    final panelHeightClosed = MediaQuery.of(context).size.height * 0.5;
+    final panelHeightOpen = MediaQuery.of(context).size.height * 0.9;
 
     return SafeArea(
       child: SlidingUpPanel(
@@ -191,10 +230,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
         maxHeight: panelHeightOpen,
         parallaxOffset: 1,
         panelBuilder: (controller) {
-          final bottom = MediaQuery
-              .of(context)
-              .viewInsets
-              .bottom;
+          final bottom = MediaQuery.of(context).viewInsets.bottom;
 
           return Scaffold(
             body: Padding(
@@ -207,7 +243,9 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          "Driver is arriving in $time",
+                          otpDone
+                              ? "You will reach your destination in $reachingTime"
+                              : "Driver is arriving in $time",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
@@ -271,20 +309,24 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                           color: Colors.grey[300],
                         ),
                         //OTP
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "OTP ",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              widget.driver.otp.toString(),
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
+                        otpDone
+                            ? SizedBox.shrink()
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "OTP ",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  Text(
+                                    widget.driver.otp.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
                         Divider(
                           thickness: 2,
                           height: 10,
@@ -320,19 +362,19 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                             ),
                             Expanded(
                                 child: TextField(
-                                  controller: textController,
-                                  decoration: InputDecoration(
-                                      suffixIcon: IconButton(
-                                          onPressed: () {
-                                            uploadChatData(textController.text);
-                                            textController.text = "";
-                                          },
-                                          icon: const Icon(Icons.send)),
-                                      border: const OutlineInputBorder(),
-                                      hintText: "Message your driver..",
-                                      hintStyle:
+                              controller: textController,
+                              decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        uploadChatData(textController.text);
+                                        textController.text = "";
+                                      },
+                                      icon: const Icon(Icons.send)),
+                                  border: const OutlineInputBorder(),
+                                  hintText: "Message your driver..",
+                                  hintStyle:
                                       const TextStyle(color: Colors.grey)),
-                                ))
+                            ))
                           ],
                         ),
 
@@ -371,8 +413,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                                 onTap: () async {
                                   final result = await Navigator.of(context)
                                       .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                      const PaymentScreen()));
+                                          builder: (context) =>
+                                              const PaymentScreen()));
                                   debugPrint("$result");
                                   setState(() {
                                     moneyWay = result;
@@ -462,7 +504,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                     locationData.latitude as double,
                     locationData.longitude as double);
                 CameraPosition cameraPosition =
-                CameraPosition(target: _center, zoom: zoomLevel);
+                    CameraPosition(target: _center, zoom: zoomLevel);
                 mapController.animateCamera(
                     CameraUpdate.newCameraPosition(cameraPosition));
               },
@@ -479,10 +521,12 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
     );
   }
 
-  void _createPolylines(double startLatitude,
-      double startLongitude,
-      double destinationLatitude,
-      double destinationLongitude,) async {
+  void _createPolylines(
+    double startLatitude,
+    double startLongitude,
+    double destinationLatitude,
+    double destinationLongitude,
+  ) async {
     // Initializing PolylinePoints
     polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
@@ -597,8 +641,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
         showIconWithText(() async {
           LocationData currentLocation = await getCurrentLocation();
           String locationData =
-              "https://www.google.com/maps/search/?api=1&query=${currentLocation
-              .latitude},${currentLocation.longitude}";
+              "https://www.google.com/maps/search/?api=1&query=${currentLocation.latitude},${currentLocation.longitude}";
           Share.share(locationData,
               subject: 'Share your live location with anyone');
         }, const Icon(Icons.share), "Share"),
@@ -631,7 +674,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
           cancelRequest(cancelReason);
           prefs.remove("tripId");
           Navigator.of(context)
-            ..pop()..pop();
+            ..pop()
+            ..pop();
         },
         style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
         child: const Text(
@@ -710,9 +754,6 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
       position: position,
       icon: BitmapDescriptor.fromBytes(markIcons),
     );
-    // setState(() {
-    //   makers.add(tmpMarker);
-    // });
 
     _markers.add(tmpMarker);
     _mapMarkerSink.add(_markers);
@@ -720,7 +761,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
 
   void updateDriverTiming(LatLng destination) async {
     LatLng start =
-    LatLng(widget.data["pick-up"]["lat"], widget.data["pick-up"]["long"]);
+        LatLng(widget.data["pick-up"]["lat"], widget.data["pick-up"]["long"]);
     final travelTime = await calculateTravelTime(start, destination);
     String totalTime = formatDuration(travelTime);
     if (totalTime == "00 minutes") {
@@ -728,6 +769,22 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
     }
     setState(() {
       time = totalTime;
+    });
+  }
+
+  void updateReachingTiming(LocationData locationData) async {
+    // LocationData locationData = await getCurrentLocation();
+    LatLng destination = LatLng(
+        locationData.latitude as double, locationData.longitude as double);
+    LatLng start = LatLng(
+        widget.data["destination"]["lat"], widget.data["destination"]["long"]);
+    final travelTime = await calculateTravelTime(start, destination);
+    String totalTime = formatDuration(travelTime);
+    if (totalTime == "00 minutes") {
+      totalTime = "Less than a 1 minute.";
+    }
+    setState(() {
+      reachingTime = totalTime;
     });
   }
 }

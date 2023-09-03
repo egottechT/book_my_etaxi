@@ -168,14 +168,13 @@ Future<void> uploadRatingUser(
   });
 }
 
-Future<void> checkIsTripEnd(
-    BuildContext context, DriverModel model, Map map) async {
+Future<void> checkIsTripEnd(BuildContext context, DriverModel model, Map map,
+    Function showReachingTime) async {
   databaseReference.child("trips").child(key).onChildChanged.listen((event) {
-    // debugPrint("Changed key is:- ${event.snapshot.key}");
-    // debugPrint("Value key is:- ${event.snapshot.value}");
     if (event.snapshot.key == "tripStarted") {
       NotificationService()
           .showNotification("Your Ride is started", "Enjoy Your Ride");
+      showReachingTime();
     }
     if (event.snapshot.key == "isFinished") {
       uploadTripDataInHistory(map);
