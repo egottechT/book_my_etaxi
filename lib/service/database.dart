@@ -194,6 +194,7 @@ Future<void> checkIsTripEnd(BuildContext context, DriverModel model, Map map,
 
 Future<void> uploadTripDataInHistory(Map map) async {
   String uid = FirebaseAuth.instance.currentUser!.uid;
+
   TripModel model = TripModel().convertFromTrip(map);
   databaseReference
       .child("customer")
