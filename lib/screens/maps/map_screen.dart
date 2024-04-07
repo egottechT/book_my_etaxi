@@ -121,6 +121,7 @@ class _MapsScreenState extends State<MapsScreen> {
   void readData() async {
     UserModel model = await getUserInfo(context, true);
     prefs = await SharedPreferences.getInstance();
+    prefs.setString("tripId",'-NeGYiYyygDQ9bbd4X4y');
     if (prefs.containsKey("tripId")) {
       Pair<Map, DriverModel> data =
           await findTripUsingId(prefs.getString("tripId") ?? "");

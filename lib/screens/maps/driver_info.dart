@@ -6,7 +6,6 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/message_screen.dart';
-import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
@@ -310,7 +309,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                         ),
                         //OTP
                         otpDone
-                            ? SizedBox.shrink()
+                            ? const SizedBox.shrink()
                             : Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -394,36 +393,36 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
                           color: Colors.grey[300],
                         ),
                         //Cash row
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.money_outlined),
-                                  Text(moneyWay),
-                                ],
-                              ),
-                              InkWell(
-                                child: const Text(
-                                  "Change",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                onTap: () async {
-                                  final result = await Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              const PaymentScreen()));
-                                  debugPrint("$result");
-                                  setState(() {
-                                    moneyWay = result;
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(vertical: 10),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Row(
+                        //         children: [
+                        //           const Icon(Icons.money_outlined),
+                        //           Text(moneyWay),
+                        //         ],
+                        //       ),
+                        //       InkWell(
+                        //         child: const Text(
+                        //           "Change",
+                        //           style: TextStyle(color: Colors.grey),
+                        //         ),
+                        //         onTap: () async {
+                        //           final result = await Navigator.of(context)
+                        //               .push(MaterialPageRoute(
+                        //                   builder: (context) =>
+                        //                       const PaymentScreen()));
+                        //           debugPrint("$result");
+                        //           setState(() {
+                        //             moneyWay = result;
+                        //           });
+                        //         },
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
                         Divider(
                           thickness: 2,
                           height: 10,

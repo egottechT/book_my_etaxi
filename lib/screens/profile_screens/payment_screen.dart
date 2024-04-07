@@ -1,7 +1,10 @@
+import 'package:book_my_taxi/service/razor_pay.dart';
 import 'package:flutter/material.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+  final String amt;
+
+  const PaymentScreen({Key? key, required this.amt}) : super(key: key);
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -25,22 +28,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
             flex: 1,
             child: Container(
               color: Colors.grey,
-              child: const Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
                     flex: 3,
                     child: Center(
                       child: Text(
-                        "Rs. 100 - Rs. 220",
-                        style: TextStyle(
-                            color: Colors.white,
+                        "Rs. ${widget.amt}",
+                        style: const TextStyle(
+                            color: Colors.greenAccent,
                             fontSize: 28,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                     flex: 1,
                     child: Padding(
                       padding: EdgeInsets.all(5.0),
@@ -85,27 +88,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           child: Card(
                             child: ListTile(
                               leading: const Icon(Icons.paypal),
-                              title: const Text("Paypal"),
+                              title: const Text("RazorPay"),
                               trailing: currentIndex == 0
-                                  ? const Icon(
-                                      Icons.check_circle,
-                                      color: Colors.orange,
-                                    )
-                                  : const Icon(null),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              currentIndex = 1;
-                            });
-                          },
-                          child: Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.credit_card),
-                              title: const Text("Credit/Debit"),
-                              trailing: currentIndex == 1
                                   ? const Icon(
                                       Icons.check_circle,
                                       color: Colors.orange,
@@ -136,18 +120,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        String selected = "Credit/Debit";
-                        if(currentIndex==0){
-                          selected = "Paypal";
+                      onPressed: () async {
+                        if (currentIndex == 0) {
+                          RazorPayService().initRazorPay();
+                          await RazorPayService().createOrder(widget.amt);
+                        } else {
+                          RazorPayService.paymentSuccess = true;
                         }
-                        else if(currentIndex == 1){
-                          selected = "Credit/Debit";
-                        }
-                        else{
-                          selected = "Cash";
-                        }
-                        Navigator.pop(context,selected);
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black),

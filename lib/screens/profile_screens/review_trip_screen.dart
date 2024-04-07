@@ -2,7 +2,9 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
+import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
+import 'package:book_my_taxi/service/razor_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -66,17 +68,41 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.person),
-                      title: Text(widget.driver.name),
-                      trailing: Column(
-                        children: [
-                          Text("${widget.map["price"]}"),
-                          const Text("Cash"),
-                        ],
-                      ),
+                  if (!RazorPayService.paymentSuccess)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Card(
+                          child: ListTile(
+                            leading: const Icon(Icons.person),
+                            title: Text(widget.driver.name),
+                            trailing: Text(
+                              "Rs. ${widget.map["price"]}",
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 16),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => PaymentScreen(
+                                        amt: widget.map["price"].toString(),
+                                      )));
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black),
+                            child: const Text(
+                              "Pay Now",
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      ],
                     ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Card(
                     child: Column(
@@ -95,7 +121,7 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 100,
+                    height: 50,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -110,9 +136,16 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                           )),
                       ElevatedButton(
                           onPressed: () {
-                            Provider.of<DestinationLocationProvider>(context,listen: false)
+                            if (!RazorPayService.paymentSuccess) {
+                              context.showErrorSnackBar(
+                                  message: 'First clear the payment');
+                              return;
+                            }
+                            Provider.of<DestinationLocationProvider>(context,
+                                    listen: false)
                                 .setString("Search Your Destination");
-                            Provider.of<DestinationLocationProvider>(context,listen: false)
+                            Provider.of<DestinationLocationProvider>(context,
+                                    listen: false)
                                 .setPositionLatLng(const LatLng(0, 0));
                             uploadRatingUser(
                                 widget.driver,
