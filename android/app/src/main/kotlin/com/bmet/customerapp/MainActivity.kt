@@ -1,4 +1,4 @@
-package com.example.book_my_taxi
+package com.bmet.customerapp
 
 import io.flutter.embedding.android.FlutterActivity
 

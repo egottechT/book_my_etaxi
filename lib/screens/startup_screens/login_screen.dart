@@ -3,6 +3,7 @@ import 'package:book_my_taxi/service/authentication.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -152,6 +153,20 @@ class _LoginScreen extends State<LoginScreen> {
                       child: Text(
                         "By continuing, you agree that you have read and accept our T&C and Privacy Policy.",
                         style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        String url = 'https://bmet.pro/PrivacyPolicy.html';
+                        if (!await launchUrl(Uri.parse(url))) {
+                          throw Exception('Could not launch $url');
+                        }
+                      },
+                      child: const Text(
+                        "Privacy Policy",
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ],

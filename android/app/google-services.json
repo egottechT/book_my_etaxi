@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:709692300821:android:8b712224a6f5847b29381c",
+        "mobilesdk_app_id": "1:709692300821:android:f7ca396b04a1070a29381c",
         "android_client_info": {
-          "package_name": "com.example.book_my_taxi"
+          "package_name": "com.bmet.customerapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "709692300821-jae0it1focroqp9mh5kkk7akoltbl0ht.apps.googleusercontent.com",
+          "client_id": "709692300821-jh6gn6eeglb23r7gdij5qneisr32vrok.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.book_my_taxi",
+            "package_name": "com.bmet.customerapp",
             "certificate_hash": "67090bde9c9c37a397ab02913db9d214a4bb59e2"
           }
         },
