@@ -157,7 +157,7 @@ class _LoginScreen extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        String url = 'https://bmet.pro/PrivacyPolicy.html';
+                        String url = 'https://docs.google.com/document/d/1jw_tbat4gmOYtWoMHgVmNLjH1Orw9L4PCE7eYWNfT4s/edit?usp=sharing';
                         if (!await launchUrl(Uri.parse(url))) {
                           throw Exception('Could not launch $url');
                         }
