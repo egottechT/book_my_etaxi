@@ -23,6 +23,59 @@
           }
         },
         {
+          "client_id": "709692300821-qcoj1kl1jomtigkremvp8rn2msdkgg5r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bmet.customerapp",
+            "certificate_hash": "2a52fdc935ff1154ce6b72d4d7fc1733e14e6b63"
+          }
+        },
+        {
+          "client_id": "709692300821-4bmpccgvpo33ccdj1gdjgfeivl7hjbqu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmhfTVZULPMgosgbUaZLgdOvkpXRUisO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709692300821-4bmpccgvpo33ccdj1gdjgfeivl7hjbqu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709692300821:android:44701ce37cbf921929381c",
+        "android_client_info": {
+          "package_name": "com.bmet.driver_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709692300821-9a53g5gp01ni9igm8mihffb0lbatts0b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bmet.driver_app",
+            "certificate_hash": "2a52fdc935ff1154ce6b72d4d7fc1733e14e6b63"
+          }
+        },
+        {
+          "client_id": "709692300821-u1jd6dv0traqtppuuivskvgmq1l3ijr6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bmet.driver_app",
+            "certificate_hash": "67090bde9c9c37a397ab02913db9d214a4bb59e2"
+          }
+        },
+        {
           "client_id": "709692300821-4bmpccgvpo33ccdj1gdjgfeivl7hjbqu.apps.googleusercontent.com",
           "client_type": 3
         }
