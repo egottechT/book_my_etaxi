@@ -20,11 +20,13 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
-final databaseReference = FirebaseDatabase(
-        databaseURL:
-            "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app")
-    .ref();
+// final databaseReference = FirebaseDatabase(
+//         // databaseURL:
+//         //     "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app"
+// )
+//     .ref();
 
+final databaseReference = FirebaseDatabase.instance.ref();
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 String key = "";
