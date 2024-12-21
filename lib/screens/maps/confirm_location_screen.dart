@@ -43,6 +43,8 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   int sedanPrice = 1;
   int miniPrice = 1;
   int suvPrice = 1;
+  int erickshawPrice = 25;
+  int autoPrice = 30;
 
   @override
   void initState() {
@@ -320,6 +322,39 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                   "Available Vehicles",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+                DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              (currentIndex == 4) ? primaryColor : Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: carCardView(
+                        Image.asset("assets/images/auto.png"),
+                        "Auto",
+                        "Spacious and comfortable for 2 people",
+                        calculateFare(autoPrice),
+                        3,
+                        changeCar)),
+                const SizedBox(
+                  height: 10,
+                ),
+                DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              (currentIndex == 5) ? primaryColor : Colors.white,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: carCardView(
+                        Image.asset("assets/images/erickshaw.png"),
+                        "E-Rickshaw",
+                        "Cheap and cleaner alternative of auto",
+                        calculateFare(erickshawPrice),
+                        3,
+                        changeCar)),
                 const SizedBox(
                   height: 10,
                 ),
@@ -374,6 +409,9 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                         calculateFare(suvPrice),
                         3,
                         changeCar)),
+                const SizedBox(
+                  height: 10,
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -469,7 +507,6 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     double distance = double.parse(_placeDistance);
     String fare = "₹";
     price = price * distance.round();
-    debugPrint(costTravelling);
     if (costTravelling == "0") {
       costTravelling = price.toString();
     }
@@ -478,8 +515,12 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
 
   getCarName() {
     if (currentIndex == 1) {
-      return "mini";
+      return "auto";
     } else if (currentIndex == 2) {
+      return "erickshaw";
+    } else if (currentIndex == 3) {
+      return "mini";
+    } else if (currentIndex == 4) {
       return "sedan";
     } else {
       return "suv";

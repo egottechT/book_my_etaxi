@@ -51,7 +51,7 @@ void main() async {
       routes: appPageRoutes,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: AppBarTheme(color: Colors.grey[800]),
+        appBarTheme: AppBarTheme(color: Colors.grey[400]),
       ),
       initialRoute: "splash",
       // home: const DriverHistoryScreen(),
