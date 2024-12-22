@@ -278,7 +278,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     );
   }
 
-  Widget bottomPanelLayout() {
+  Widget bottomPanelLayout(ScrollController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
       child: loading
@@ -300,7 +300,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                       fit: BoxFit.scaleDown),
                 ],
               ))
-          : ListView(children: [
+          : ListView(controller: controller, children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Center(
                   child: SizedBox(
@@ -322,93 +322,58 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                   "Available Vehicles",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                DecoratedBox(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color:
-                              (currentIndex == 4) ? primaryColor : Colors.white,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: carCardView(
-                        Image.asset("assets/images/auto.png"),
-                        "Auto",
-                        "Spacious and comfortable for 2 people",
-                        calculateFare(autoPrice),
-                        3,
-                        changeCar)),
+                carCardView(
+                    Image.asset("assets/images/auto.png"),
+                    "Auto",
+                    "Spacious and comfortable for 2 people",
+                    calculateFare(autoPrice),
+                    1,
+                    changeCar,
+                    color: (currentIndex == 1) ? primaryColor : Colors.white),
                 const SizedBox(
                   height: 10,
                 ),
-                DecoratedBox(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color:
-                              (currentIndex == 5) ? primaryColor : Colors.white,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: carCardView(
-                        Image.asset("assets/images/erickshaw.png"),
-                        "E-Rickshaw",
-                        "Cheap and cleaner alternative of auto",
-                        calculateFare(erickshawPrice),
-                        3,
-                        changeCar)),
+                carCardView(
+                    Image.asset("assets/images/erickshaw.png"),
+                    "E-Rickshaw",
+                    "Cheap and cleaner alternative of auto",
+                    calculateFare(erickshawPrice),
+                    2,
+                    changeCar,
+                    color: (currentIndex == 2) ? primaryColor : Colors.white),
                 const SizedBox(
                   height: 10,
                 ),
-                DecoratedBox(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color:
-                              (currentIndex == 1) ? primaryColor : Colors.white,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: carCardView(
-                        Image.asset("assets/images/mini.png"),
-                        "Mini",
-                        "Comfy, Small cozy Cars",
-                        calculateFare(miniPrice),
-                        1,
-                        changeCar)),
+                carCardView(
+                    Image.asset("assets/images/mini.png"),
+                    "Mini",
+                    "Comfy, Small cozy Cars",
+                    calculateFare(miniPrice),
+                    3,
+                    changeCar,
+                    color: (currentIndex == 3) ? primaryColor : Colors.white),
                 const SizedBox(
                   height: 10,
                 ),
-                DecoratedBox(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color:
-                              (currentIndex == 2) ? primaryColor : Colors.white,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: carCardView(
-                        Image.asset("assets/images/sedan.png"),
-                        "Sedan",
-                        "Spacious, luxury premium Cars",
-                        calculateFare(sedanPrice),
-                        2,
-                        changeCar)),
+                carCardView(
+                    Image.asset("assets/images/sedan.png"),
+                    "Sedan",
+                    "Spacious, luxury premium Cars",
+                    calculateFare(sedanPrice),
+                    4,
+                    changeCar,
+                    color: (currentIndex == 4) ? primaryColor : Colors.white),
                 const SizedBox(
                   height: 10,
                 ),
-                DecoratedBox(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color:
-                              (currentIndex == 3) ? primaryColor : Colors.white,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
-                    child: carCardView(
-                        Image.asset("assets/images/suv.png"),
-                        "SUV",
-                        "Spacious, big 8 seater capacity",
-                        calculateFare(suvPrice),
-                        3,
-                        changeCar)),
+                carCardView(
+                    Image.asset("assets/images/suv.png"),
+                    "SUV",
+                    "Spacious, big 8 seater capacity",
+                    calculateFare(suvPrice),
+                    5,
+                    changeCar,
+                    color: (currentIndex == 5) ? primaryColor : Colors.white),
                 const SizedBox(
                   height: 10,
                 ),
@@ -474,20 +439,21 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final panelHeightClosed = MediaQuery.of(context).size.height * 0.7;
+    final panelHeightClosed = MediaQuery.of(context).size.height * 0.3;
 
     return Scaffold(
         appBar: AppBar(
           title: const Text("Confirm Location"),
         ),
         body: SlidingUpPanel(
+          defaultPanelState: PanelState.OPEN,
           parallaxEnabled: true,
           controller: panelController,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
           minHeight: panelHeightClosed,
           parallaxOffset: 2,
           panelBuilder: (controller) {
-            return bottomPanelLayout();
+            return bottomPanelLayout(controller);
           },
           body: GoogleMap(
             polylines: Set<Polyline>.of(polylines.values),

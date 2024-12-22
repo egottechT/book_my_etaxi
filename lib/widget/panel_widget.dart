@@ -163,6 +163,20 @@ class _PanelWidgetState extends State<PanelWidget> {
                   style:
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   onPressed: () async {
+                    //TODO REMOVE THIS BEFORE PRODUCTION
+                    // String location =
+                    //     'Uttranchal Complex, 1, Rajeev Nagar Rd, Vidhan Sabha Marg, Shastri Nagar, Ajabpur Kalan, Dehradun, Uttarakhand 248001, India';
+                    // double latitude = 30.29394698138099,
+                    //     longitude = 78.05788245052099;
+                    // context
+                    //     .read<DestinationLocationProvider>()
+                    //     .setString(location);
+                    // context
+                    //     .read<DestinationLocationProvider>()
+                    //     .setPositionLatLng(LatLng(latitude, longitude));
+
+                    //----------> TODO <---------
+
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const ConfirmLocationScreen()));
                   },
