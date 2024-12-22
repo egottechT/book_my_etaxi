@@ -155,8 +155,8 @@ Future<void> cancelRequest(String reason) async {
       .set({"reason": reason});
 }
 
-Future<void> uploadRatingUser(
-    DriverModel driverModel, double stars, String title, String name) async {
+Future<void> uploadRatingUser(DriverModel driverModel, double stars,
+    String title, String name, double amount) async {
   await databaseReference
       .child("driver")
       .child(driverModel.id)
@@ -168,6 +168,23 @@ Future<void> uploadRatingUser(
     "customerName": name,
     "date": DateTime.now().toString()
   });
+  if (stars == 5.0) {
+    int addedValue = (0.02 * amount).round();
+    await databaseReference.child("driver").child(driverModel.id).update({
+      "amount": amount + addedValue,
+    });
+    await databaseReference
+        .child("driver")
+        .child(driverModel.id)
+        .child("transition")
+        .push()
+        .set({
+      "amount": addedValue,
+      "status": "5 Star rating reward",
+      "is_added": true,
+      "date": DateTime.now().toString()
+    });
+  }
 }
 
 Future<void> checkIsTripEnd(BuildContext context, DriverModel model, Map map,

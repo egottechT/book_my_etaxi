@@ -151,7 +151,8 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                                 widget.driver,
                                 star,
                                 textEditingController.text,
-                                widget.map["title"]);
+                                widget.map["title"],
+                                double.parse(widget.map["price"]));
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/mapScreen'));
                           },
