@@ -176,7 +176,7 @@ Future<void> uploadRatingUser(DriverModel driverModel, double stars,
     await databaseReference
         .child("driver")
         .child(driverModel.id)
-        .child("transition")
+        .child("transaction")
         .push()
         .set({
       "amount": addedValue,
@@ -184,6 +184,36 @@ Future<void> uploadRatingUser(DriverModel driverModel, double stars,
       "is_added": true,
       "date": DateTime.now().toString()
     });
+  }
+}
+
+Future<void> updateDriverAmount(String uuid, int incrementBy) async {
+  try {
+    if (uuid.isEmpty) return;
+    final DatabaseReference driverRef =
+        FirebaseDatabase.instance.ref("driver/$uuid");
+
+    final DataSnapshot snapshot = await driverRef.get();
+
+    if (snapshot.exists) {
+      final Map<dynamic, dynamic>? driverData =
+          snapshot.value as Map<dynamic, dynamic>?;
+      int currentAmount = driverData?['amount'] ?? 0;
+
+      await driverRef.update({'amount': currentAmount + incrementBy});
+      final DatabaseReference transactionRef =
+          driverRef.child("transaction").push();
+      await transactionRef.set({
+        "amount": incrementBy,
+        "status": "Referral Bonus",
+        "is_added": true,
+        "date": DateTime.now().toString(),
+      });
+    } else {
+      print("Driver with UUID $uuid not found.");
+    }
+  } catch (e) {
+    print("Error: ${e.toString()}");
   }
 }
 

@@ -45,6 +45,7 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
             Container(
               height: 150,
               color: secondaryColor,
+              padding: EdgeInsets.only(left: 10),
               child: Row(
                 children: [
                   const Expanded(
@@ -67,16 +68,22 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text("Your invites"),
+                  const Text(
+                    "Your invites",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-                  cardDetailView(),
+                  // cardDetailView(),
                   const SizedBox(
-                    height: 200,
+                    height: 250,
                   ),
                   Container(
-                    color: Colors.grey[200],
+                    color: Colors.grey[500],
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(

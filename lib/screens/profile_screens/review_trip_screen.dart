@@ -1,6 +1,8 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
+import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
@@ -147,12 +149,20 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                             Provider.of<DestinationLocationProvider>(context,
                                     listen: false)
                                 .setPositionLatLng(const LatLng(0, 0));
+                            UserModel user = Provider.of<UserModelProvider>(
+                                    context,
+                                    listen: false)
+                                .data;
+                            double amount = double.parse(widget.map["price"]);
                             uploadRatingUser(
                                 widget.driver,
                                 star,
                                 textEditingController.text,
                                 widget.map["title"],
-                                double.parse(widget.map["price"]));
+                                amount);
+
+                            int addedValue = (0.02 * amount).round();
+                            updateDriverAmount(user.driverReferred, addedValue);
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/mapScreen'));
                           },
