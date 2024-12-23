@@ -144,10 +144,15 @@ void showReferAndBox(context, bool isReferAlready) async {
                     changeState(() {
                       isLoading = true;
                     });
-                    await addReferAndEarn(controller.text);
+                    bool check = await addReferAndEarn(controller.text);
                     changeState(() {
                       isLoading = false;
                     });
+                    if (!check) {
+                      context.showErrorSnackBar(
+                          message:
+                              'Cannot find the driver with this phone number');
+                    }
                     Navigator.of(context).pop();
                   },
                   child: const Text('Next'),

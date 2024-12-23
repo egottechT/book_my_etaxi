@@ -322,25 +322,54 @@ Future<File> compressImage(File file) async {
   return File.fromRawPath(result!);
 }
 
-Future<void> addReferAndEarn(String uid) async {
-  if (uid.isEmpty) return;
+Future<String> getDriverUuidByPhoneNumber(String phoneNumber) async {
+  try {
+    // Reference to the Firebase Realtime Database
+    final DatabaseReference databaseRef =
+        FirebaseDatabase.instance.ref("driver");
+
+    // Fetch the driver data once
+    final DataSnapshot snapshot = await databaseRef.get();
+
+    // Check if the snapshot contains data
+    if (snapshot.exists) {
+      final Map<dynamic, dynamic>? driversData =
+          snapshot.value as Map<dynamic, dynamic>?;
+
+      // Iterate over the drivers data
+      if (driversData != null) {
+        for (final uuid in driversData.keys) {
+          final dynamic driverData = driversData[uuid];
+
+          // Check if the driver data contains a matching phone number
+          if (driverData is Map<dynamic, dynamic> &&
+              driverData['phoneNumber'] == phoneNumber) {
+            return uuid; // Return the UUID of the matching driver
+          }
+        }
+      }
+    }
+
+    // If no match is found, return no match message
+    return "No driver match";
+  } catch (e) {
+    // Handle any errors that occur
+    return "Error: ${e.toString()}";
+  }
+}
+
+Future<bool> addReferAndEarn(String phoneNumber) async {
+  if (phoneNumber.isEmpty) return false;
+  String uuid = await getDriverUuidByPhoneNumber("+91$phoneNumber");
+  if (uuid == "No driver match") {
+    return false;
+  }
+
   await databaseReference
       .child("customer")
-      .child(uid)
-      .once()
-      .then((value) async {
-    if (value.snapshot.exists) {
-      await databaseReference
-          .child("customer")
-          .child(uid)
-          .child("refers")
-          .update({FirebaseAuth.instance.currentUser!.uid.toString(): 1});
-      await databaseReference
-          .child("customer")
-          .child(FirebaseAuth.instance.currentUser!.uid)
-          .update({"referred": true});
-    }
-  });
+      .child(FirebaseAuth.instance.currentUser!.uid)
+      .update({"referred": true, "driver_referred": uuid});
+  return true;
 }
 
 Future<int> readingFare(String state, String car) async {

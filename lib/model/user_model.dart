@@ -5,6 +5,7 @@ class UserModel{
   String profilePic = "";
   String key = "";
   bool referred = false;
+  String driverReferred = '';
   UserModel();
 
   Map<String,dynamic> toMap(UserModel model){
@@ -21,6 +22,7 @@ class UserModel{
     model.name = map["name"] ?? "";
     model.referred = map["referred"] ?? false;
     model.profilePic = map["profile_pic"] ?? "";
+    model.driverReferred  = map["driver_referred"] ?? "";
     return model;
   }
 }
