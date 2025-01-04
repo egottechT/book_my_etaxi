@@ -135,8 +135,9 @@ void showReferAndBox(context, bool isReferAlready) async {
                   ? const Text("You are already referred by some-one else")
                   : TextField(
                       controller: controller,
+                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                          hintText: "Enter the referral code"),
+                          hintText: "Phone number of driver"),
                     ),
               actions: <Widget>[
                 ElevatedButton(
@@ -153,6 +154,8 @@ void showReferAndBox(context, bool isReferAlready) async {
                           message:
                               'Cannot find the driver with this phone number');
                     }
+
+                    context.showSnackBar(message: 'Referral Code applied');
                     Navigator.of(context).pop();
                   },
                   child: const Text('Next'),
