@@ -323,17 +323,6 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 carCardView(
-                    Image.asset("assets/images/auto.png"),
-                    "Auto",
-                    "Spacious and comfortable for 2 people",
-                    calculateFare(autoPrice),
-                    1,
-                    changeCar,
-                    color: (currentIndex == 1) ? primaryColor : Colors.white),
-                const SizedBox(
-                  height: 10,
-                ),
-                carCardView(
                     Image.asset("assets/images/erickshaw.png"),
                     "E-Rickshaw",
                     "Cheap and cleaner alternative of auto",
@@ -341,6 +330,17 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                     2,
                     changeCar,
                     color: (currentIndex == 2) ? primaryColor : Colors.white),
+                const SizedBox(
+                  height: 10,
+                ),
+                carCardView(
+                    Image.asset("assets/images/auto.png"),
+                    "Auto",
+                    "Spacious and comfortable for 2 people",
+                    calculateFare(autoPrice),
+                    1,
+                    changeCar,
+                    color: (currentIndex == 1) ? primaryColor : Colors.white),
                 const SizedBox(
                   height: 10,
                 ),
