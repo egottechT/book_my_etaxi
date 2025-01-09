@@ -3,9 +3,9 @@ import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/repository/transaction_repo.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
 import 'package:book_my_taxi/screens/profile_screens/payment_screen.dart';
-import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/razor_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -154,7 +154,7 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                                     listen: false)
                                 .data;
                             double amount = double.parse(widget.map["price"]);
-                            uploadRatingUser(
+                            TransactionRepo().uploadRatingUser(
                                 widget.driver,
                                 star,
                                 textEditingController.text,
@@ -162,7 +162,11 @@ class _ReviewScreenState extends State<ReviewTripScreen> {
                                 amount);
 
                             int addedValue = (0.02 * amount).round();
-                            updateDriverAmount(user.driverReferred, addedValue);
+                            TransactionRepo().updateDriverAmount(
+                              user.driverReferred,
+                              addedValue,
+                              widget.map["title"],
+                            );
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/mapScreen'));
                           },
