@@ -27,6 +27,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as locate;
 import 'package:location/location.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,6 +59,7 @@ class _MapsScreenState extends State<MapsScreen> {
   Map<PolylineId, Polyline> polylines = {};
   String? _placeDistance;
   late SharedPreferences prefs;
+  String versionNumber = "";
 
   void removeDestinationMaker() {
     setState(() {
@@ -116,6 +118,7 @@ class _MapsScreenState extends State<MapsScreen> {
     panelWidget = PanelWidget(
         function: setMapMarker, removeDestinationMaker: removeDestinationMaker);
     readData();
+    getAppVersion();
   }
 
   void readData() async {
@@ -425,6 +428,16 @@ class _MapsScreenState extends State<MapsScreen> {
     );
   }
 
+  Future<void> getAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    String version = packageInfo.version;
+
+    setState(() {
+      versionNumber = version;
+    });
+  }
+
   appDrawerView() {
     UserModel userModel =
         Provider.of<UserModelProvider>(context, listen: true).data;
@@ -563,6 +576,13 @@ class _MapsScreenState extends State<MapsScreen> {
                 color: primaryColor,
               ),
               "Logout"),
+          drawerItems(
+              () {},
+              Icon(
+                Icons.app_blocking,
+                color: primaryColor,
+              ),
+              "Version: $versionNumber"),
         ],
       ),
     );
