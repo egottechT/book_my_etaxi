@@ -99,7 +99,7 @@ void uploadTripInfo(
       "lat": pickUp.latitude,
       "long": pickUp.longitude,
     },
-    "price": price,
+    "price": price.replaceAll('₹', ''),
     "distance": distance,
     "isFinished": false,
     "tripStarted": false,
@@ -154,9 +154,6 @@ Future<void> cancelRequest(String reason) async {
       .child("cancel_trip")
       .set({"reason": reason});
 }
-
-
-
 
 Future<void> checkIsTripEnd(BuildContext context, DriverModel model, Map map,
     Function showReachingTime) async {
