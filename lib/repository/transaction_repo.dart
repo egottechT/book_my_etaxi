@@ -21,8 +21,18 @@ class TransactionRepo {
     });
     if (stars == 5.0) {
       int addedValue = (0.02 * amount).round();
-      await databaseReference.child("driver").child(driverModel.id).update({
-        "amount": amount + addedValue,
+
+      final DatabaseReference driverRef =
+          FirebaseDatabase.instance.ref("driver/${driverModel.id}");
+
+      final DataSnapshot snapshot = await driverRef.get();
+      final Map<dynamic, dynamic>? driverData =
+          snapshot.value as Map<dynamic, dynamic>?;
+
+      int currentAmount = driverData?['amount'] ?? 0;
+
+      await driverRef.update({
+        "amount": currentAmount + addedValue,
       });
 
       final DatabaseReference transactionRef = databaseReference
@@ -39,7 +49,7 @@ class TransactionRepo {
         "is_added": true,
         "date": DateTime.now().toString(),
         "order_id": orderIdKey,
-        "current_balance": amount + addedValue,
+        "current_balance": currentAmount + addedValue,
         "user_name": name
       });
     }
