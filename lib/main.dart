@@ -1,5 +1,6 @@
 import 'dart:isolate';
 
+import 'package:book_my_taxi/firebase_options.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/otp_listener.dart';
@@ -21,7 +22,7 @@ import 'Utils/constant.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService().init();
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

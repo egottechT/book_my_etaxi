@@ -60,11 +60,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "709692300821-9a53g5gp01ni9igm8mihffb0lbatts0b.apps.googleusercontent.com",
+          "client_id": "709692300821-gqtlmu01jkeh7eakseni7nhap5fmcp65.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bmet.driver_app",
-            "certificate_hash": "2a52fdc935ff1154ce6b72d4d7fc1733e14e6b63"
+            "certificate_hash": "10652ff96b2af7cf3ebf5ad1abcad01b3dffdc23"
           }
         },
         {

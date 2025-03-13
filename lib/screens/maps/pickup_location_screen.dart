@@ -4,10 +4,12 @@ import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+import 'package:flutter_google_places_hoc081098/src/google_maps_webservice/src/core.dart'
+    as places;
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart' as locate;
 import 'package:provider/provider.dart';
 
@@ -70,13 +72,16 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
   }
 
   void showSearchBar() async {
+    places.Component component1 =
+        places.Component(places.Component.country, 'IN');
+
     var place = await PlacesAutocomplete.show(
         context: context,
         apiKey: mapApiKey,
         mode: Mode.overlay,
         types: [],
         strictbounds: false,
-        components: [Component(Component.country, 'IN')],
+        components: [component1],
         onError: (err) {
           debugPrint("$err");
         });
@@ -180,11 +185,12 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey),
                       onPressed: () {
                         if (latitude != 0 && longitude != 0) {
-                          widget.showMarkers(LatLng(latitude, longitude), false);
+                          widget.showMarkers(
+                              LatLng(latitude, longitude), false);
                         }
                         Provider.of<PickupLocationProvider>(context,
                                 listen: false)
@@ -213,7 +219,8 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                                   zoom: zoomLevel);
                               showDestinationMarker(position);
                               mapController.moveCamera(
-                                  CameraUpdate.newCameraPosition(cameraPosition));
+                                  CameraUpdate.newCameraPosition(
+                                      cameraPosition));
                               widget.showMarkers(position, true);
                             },
                             label: Text(
@@ -222,8 +229,8 @@ class _PickUpLocationScreenState extends State<PickUpLocationScreen> {
                             ),
                             style: _buttonStyle),
                         ElevatedButton.icon(
-                          icon:
-                              const Icon(Icons.location_on, color: Colors.black),
+                          icon: const Icon(Icons.location_on,
+                              color: Colors.black),
                           onPressed: () {
                             getCurrentLocation();
                           },

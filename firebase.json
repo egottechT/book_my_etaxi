@@ -1,1 +1,21 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"book-my-etaxi","appId":"1:709692300821:android:f7ca396b04a1070a29381c","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"book-my-etaxi","configurations":{"android":"1:709692300821:android:f7ca396b04a1070a29381c","ios":"1:709692300821:ios:7909e3d8ef7643e229381c","macos":"1:709692300821:ios:7909e3d8ef7643e229381c","web":"1:709692300821:web:c1a98ddd1a2730a229381c","windows":"1:709692300821:web:ea3343bbc0a1ebc729381c"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "book-my-etaxi",
+          "appId": "1:709692300821:android:f7ca396b04a1070a29381c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "book-my-etaxi",
+          "configurations": {
+            "android": "1:709692300821:android:f7ca396b04a1070a29381c"
+          }
+        }
+      }
+    }
+  }
+}

@@ -6,12 +6,14 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+import 'package:flutter_google_places_hoc081098/src/google_maps_webservice/src/core.dart'
+    as places;
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:location/location.dart';
 import 'package:location/location.dart' as locate;
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 class DestinationLocationScreen extends StatefulWidget {
@@ -55,13 +57,16 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
   }
 
   void showSearchBar() async {
+    places.Component component1 =
+        places.Component(places.Component.country, 'IN');
+
     var place = await PlacesAutocomplete.show(
         context: context,
         apiKey: mapApiKey,
         mode: Mode.overlay,
         types: [],
         strictbounds: false,
-        components: [Component(Component.country, 'IN')],
+        components: [component1],
         onError: (err) {
           debugPrint("$err");
         });
@@ -257,7 +262,10 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                               Navigator.pop(context);
                               widget.setMapMarker(position, true);
                             },
-                            child: const Text("Confirm Location",style: TextStyle(fontSize: 18),)),
+                            child: const Text(
+                              "Confirm Location",
+                              style: TextStyle(fontSize: 18),
+                            )),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [

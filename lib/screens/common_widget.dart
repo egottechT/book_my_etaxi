@@ -2,9 +2,9 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+import 'package:flutter_google_places_hoc081098/src/google_maps_webservice/src/core.dart'
+    as places;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:google_maps_webservice/directions.dart';
-import 'package:google_maps_webservice/places.dart';
 
 Widget showRatingBar(int rating) {
   return Row(
@@ -97,13 +97,16 @@ void showAddressSaveField(
 }
 
 Future<String> showSearchBar(context, changeState) async {
+  places.Component component1 =
+      places.Component(places.Component.country, 'IN');
+
   var place = await PlacesAutocomplete.show(
       context: context,
       apiKey: mapApiKey,
       mode: Mode.overlay,
       types: [],
       strictbounds: false,
-      components: [Component(Component.country, 'IN')],
+      components: [component1],
       onError: (err) {
         debugPrint("$err");
       });

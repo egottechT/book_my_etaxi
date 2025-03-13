@@ -9,12 +9,14 @@ import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/selectCarView.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
+import 'package:flutter_google_places_hoc081098/src/google_maps_webservice/src/core.dart'
+    as places;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart'
-    as polygonPoint;
+    as polyLine;
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:lottie/lottie.dart' as lottie;
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -37,7 +39,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
   String _placeDistance = "0.0";
-  late polygonPoint.PolylinePoints polylinePoints;
+  late polyLine.PolylinePoints polylinePoints;
   String costTravelling = "0";
   bool loading = true;
   int sedanPrice = 1;
@@ -84,14 +86,27 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     double destinationLongitude,
   ) async {
     // Initializing PolylinePoints
-    polylinePoints = polygonPoint.PolylinePoints();
+    polylinePoints = polyLine.PolylinePoints();
 
-    polygonPoint.PolylineResult result =
+    // polygonPoint.PolylineResult result =
+    //     await polylinePoints.getRouteBetweenCoordinates(
+    //   mapApiKey, // Google Maps API Key
+    //   polygonPoint.PointLatLng(startLatitude, startLongitude),
+    //   polygonPoint.PointLatLng(destinationLatitude, destinationLongitude),
+    //   travelMode: polygonPoint.TravelMode.driving,
+    // );
+
+    polyLine.PolylineRequest request = polyLine.PolylineRequest(
+      origin: polyLine.PointLatLng(startLatitude, startLongitude),
+      destination:
+          polyLine.PointLatLng(destinationLatitude, destinationLongitude),
+      mode: polyLine.TravelMode.driving,
+    );
+
+    polyLine.PolylineResult result =
         await polylinePoints.getRouteBetweenCoordinates(
-      mapApiKey, // Google Maps API Key
-      polygonPoint.PointLatLng(startLatitude, startLongitude),
-      polygonPoint.PointLatLng(destinationLatitude, destinationLongitude),
-      travelMode: polygonPoint.TravelMode.driving,
+      request: request,
+      googleApiKey: mapApiKey, // Google Maps API Key
     );
 
     // Adding the coordinates to the list
@@ -125,13 +140,16 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   }
 
   void showSearchBar(bool pickup) async {
+    places.Component component1 =
+        places.Component(places.Component.country, 'IN');
+
     var place = await PlacesAutocomplete.show(
         context: context,
         apiKey: mapApiKey,
         mode: Mode.overlay,
         types: [],
         strictbounds: false,
-        components: [Component(Component.country, 'IN')],
+        components: [component1],
         onError: (err) {
           debugPrint("$err");
         });
