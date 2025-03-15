@@ -8,6 +8,7 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
@@ -132,7 +133,7 @@ class _MapsScreenState extends State<MapsScreen> {
     // prefs.setString("tripId", '-NeGYiYyygDQ9bbd4X4y');
     if (prefs.containsKey("tripId")) {
       Pair<Map, DriverModel> data =
-          await findTripUsingId(prefs.getString("tripId") ?? "");
+          await TripRepo().findTripUsingId(prefs.getString("tripId") ?? "");
       if (mounted) {
         Navigator.pushAndRemoveUntil(
             context,

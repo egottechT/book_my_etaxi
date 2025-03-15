@@ -1,6 +1,6 @@
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
-import 'package:book_my_taxi/service/database.dart';
+import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    uploadTripInfo(context, widget.price, widget.distance, widget.carInfo);
+    TripRepo()
+        .uploadTripInfo(context, widget.price, widget.distance, widget.carInfo);
   }
 
   Widget secondSectionView() {

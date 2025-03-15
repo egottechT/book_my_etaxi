@@ -4,9 +4,9 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/loading_screen.dart';
-import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
 import 'package:book_my_taxi/widget/selectCarView.dart';
 import 'package:flutter/material.dart';
@@ -66,15 +66,15 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
         location = states;
       }
     }
-    value = await readingFare(location.toLowerCase(), "sedan");
+    value = await TripRepo().readingFare(location.toLowerCase(), "sedan");
     setState(() {
       suvPrice = value;
     });
-    value = await readingFare(location.toLowerCase(), "sedan");
+    value = await TripRepo().readingFare(location.toLowerCase(), "sedan");
     setState(() {
       sedanPrice = value;
     });
-    value = await readingFare(location.toLowerCase(), "mini");
+    value = await TripRepo().readingFare(location.toLowerCase(), "mini");
     setState(() {
       miniPrice = value;
     });

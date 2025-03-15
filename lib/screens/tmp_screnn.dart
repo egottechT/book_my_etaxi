@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
+import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:book_my_taxi/screens/message_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:flutter/material.dart';
@@ -164,7 +165,7 @@ class _DriverInfoScreenState extends State<TmpScreen>
         mapController,
       );
     });
-    _center = const LatLng(30.2801184,78.0681607);
+    _center = const LatLng(30.2801184, 78.0681607);
   }
 
   @override
@@ -324,7 +325,7 @@ class _DriverInfoScreenState extends State<TmpScreen>
       ),
       ElevatedButton(
         onPressed: () {
-          cancelRequest(cancelReason);
+          TripRepo().cancelRequest(cancelReason);
           Navigator.of(context)
             ..pop()
             ..pop();

@@ -1,6 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/model/trip_model.dart';
-import 'package:book_my_taxi/service/database.dart';
+import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,7 +23,7 @@ class _DriverHistoryState extends State<DriverHistoryScreen> {
 
   void readData() async {
     debugPrint("Checking data");
-    List<TripModel> list = await fetchTripHistory();
+    List<TripModel> list = await TripRepo().fetchTripHistory();
 
     debugPrint("Checking data  finished ${list.length}");
     setState(() {

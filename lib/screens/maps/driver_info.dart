@@ -5,6 +5,7 @@ import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:book_my_taxi/screens/message_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
@@ -157,7 +158,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
 
   void readData() async {
     prefs = await SharedPreferences.getInstance();
-    prefs.setString("tripId", key);
+    prefs.setString("tripId", TripRepo.key);
     if (widget.data["isFinished"]) {
       Navigator.pushReplacement(
         context,
@@ -170,7 +171,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
       return;
     }
     driveLocationUpdate(mapController, updateDriverLocationAnimate);
-    checkIsTripEnd(context, widget.driver, widget.data, showReachingTime);
+    TripRepo()
+        .checkIsTripEnd(context, widget.driver, widget.data, showReachingTime);
   }
 
   void showReachingTime() {
@@ -674,7 +676,7 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
       ),
       ElevatedButton(
         onPressed: () async {
-          cancelRequest(cancelReason);
+          TripRepo().cancelRequest(cancelReason);
           prefs.remove("tripId");
           Navigator.of(context)
             ..pop()
