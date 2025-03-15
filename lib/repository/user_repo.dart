@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 
 class UserRepo {
   final databaseReference = FirebaseDatabase.instance.ref();
+  static String userUUid = "";
 
   Future<UserModel> getUserInfo(BuildContext context, bool wait) async {
     Completer<UserModel> completer = Completer();
-    String uid = FirebaseAuth.instance.currentUser!.uid.toString();
+    String uid = UserRepo.userUUid;
     if (wait) {
       await databaseReference.child("customer").child(uid).once().then((value) {
         Map map = value.snapshot.value as Map;

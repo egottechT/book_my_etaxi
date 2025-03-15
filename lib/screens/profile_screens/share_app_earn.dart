@@ -26,7 +26,9 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
 
   void readData() async {
     UserModel model =
-        Provider.of<UserModelProvider>(context, listen: false).data;
+        Provider
+            .of<UserModelProvider>(context, listen: false)
+            .data;
     setState(() {
       userModel = model;
     });
@@ -102,12 +104,12 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                   ElevatedButton(
                     onPressed: () {
                       String referral =
-                          FirebaseAuth.instance.currentUser!.uid.toString();
+                          UserRepo.userUUid;
                       Share.share(referral,
                           subject: 'Share your referral Code');
                     },
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     child: const Text("Share Code"),
                   ),
                   ElevatedButton(
@@ -121,7 +123,7 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                           .setData(userModel);
                     },
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     child: const Text("Have a referral Code."),
                   )
                 ],

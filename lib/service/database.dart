@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:book_my_taxi/model/message_model.dart';
 import 'package:book_my_taxi/repository/driver_repo.dart';
 import 'package:book_my_taxi/repository/trip_repo.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/service/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -67,7 +68,7 @@ Future<List<MessageModel>> fetchMessageData() async {
 }
 
 Future<void> uploadPhotoToStorage(File file, String name) async {
-  String uid = FirebaseAuth.instance.currentUser!.uid.toString();
+  String uid = UserRepo.userUUid;
   Reference ref = storage.ref().child('images/$uid/$name.jpg');
   // File compressedFile = await compressImage(file);
   UploadTask uploadTask = ref.putFile(file);
@@ -82,7 +83,7 @@ Future<void> uploadPhotoToStorage(File file, String name) async {
 
   await databaseReference
       .child("customer")
-      .child(FirebaseAuth.instance.currentUser!.uid.toString())
+      .child(UserRepo.userUUid)
       .update({name: url});
 }
 

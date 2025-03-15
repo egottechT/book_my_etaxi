@@ -7,6 +7,7 @@ import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/trip_model.dart';
 import 'package:book_my_taxi/repository/driver_repo.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/notification_service.dart';
@@ -54,7 +55,7 @@ class TripRepo {
       "distance": distance,
       "isFinished": false,
       "tripStarted": false,
-      'id': FirebaseAuth.instance.currentUser!.uid.toString(),
+      'id': UserRepo.userUUid,
       'car': carName,
       "date": DateTime.now().toString(),
     };

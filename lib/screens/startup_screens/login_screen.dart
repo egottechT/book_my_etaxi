@@ -109,6 +109,8 @@ class _LoginScreen extends State<LoginScreen> {
                                     try {
                                       User? result = await doGmailLogin();
                                       if (result != null) {
+                                        UserRepo.userUUid =
+                                            result.uid.toString();
                                         bool isExist = await UserRepo()
                                             .checkDatabaseForUser(
                                                 result.uid.toString());
