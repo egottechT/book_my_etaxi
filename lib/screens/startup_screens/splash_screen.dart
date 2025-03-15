@@ -28,6 +28,7 @@ class _SplashScreen extends State<SplashScreen> {
         LocationData location = await getCurrentLocation();
         if (context.mounted) {
           UserRepo.userUUid = FirebaseAuth.instance.currentUser!.uid.toString();
+          // UserRepo.userUUid = "s4oZNoijIPdlM83DcBVdtFOMt4R2";
           Navigator.of(context).pushReplacementNamed('/mapScreen',
               arguments: LatLng(
                   location.latitude as double, location.latitude as double));

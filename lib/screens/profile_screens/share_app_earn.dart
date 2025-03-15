@@ -1,8 +1,8 @@
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/common_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,9 +26,7 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
 
   void readData() async {
     UserModel model =
-        Provider
-            .of<UserModelProvider>(context, listen: false)
-            .data;
+        Provider.of<UserModelProvider>(context, listen: false).data;
     setState(() {
       userModel = model;
     });
@@ -103,13 +101,12 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      String referral =
-                          UserRepo.userUUid;
+                      String referral = UserRepo.userUUid;
                       Share.share(referral,
                           subject: 'Share your referral Code');
                     },
                     style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     child: const Text("Share Code"),
                   ),
                   ElevatedButton(
@@ -123,7 +120,7 @@ class _ShareAppEarnScreenState extends State<ShareAppEarnScreen> {
                           .setData(userModel);
                     },
                     style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
                     child: const Text("Have a referral Code."),
                   )
                 ],
