@@ -6,6 +6,7 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/trip_model.dart';
+import 'package:book_my_taxi/repository/driver_repo.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/notification_service.dart';
@@ -60,7 +61,7 @@ class TripRepo {
     await newChildRef.set(data);
     key = newChildRef.key.toString();
     if (context.mounted) {
-      checkDriveRequest(context, data);
+      DriverRepo().checkDriveRequest(context, data);
     }
   }
 

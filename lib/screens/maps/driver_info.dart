@@ -5,6 +5,7 @@ import 'package:book_my_taxi/Utils/common_data.dart';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/Utils/utils.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/repository/driver_repo.dart';
 import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:book_my_taxi/screens/message_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
@@ -170,7 +171,8 @@ class _DriverInfoScreenState extends State<DriverInfoScreen>
       );
       return;
     }
-    driveLocationUpdate(mapController, updateDriverLocationAnimate);
+    DriverRepo()
+        .driveLocationUpdate(mapController, updateDriverLocationAnimate);
     TripRepo()
         .checkIsTripEnd(context, widget.driver, widget.data, showReachingTime);
   }
