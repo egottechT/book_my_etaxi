@@ -4,6 +4,7 @@ import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/loading_screen.dart';
 import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/location_manager.dart';
@@ -404,7 +405,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                                 listen: false)
                             .data;
                         if (user.name.isEmpty) {
-                          await getUserInfo(context, true);
+                          await UserRepo().getUserInfo(context, true);
                         }
                         if (context.mounted) {
                           Navigator.of(context).push(MaterialPageRoute(

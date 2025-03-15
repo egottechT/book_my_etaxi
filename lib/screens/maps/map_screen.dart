@@ -8,6 +8,7 @@ import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/maps/pickup_location_screen.dart';
 import 'package:book_my_taxi/screens/profile_screens/account_setting_screen.dart';
@@ -126,7 +127,7 @@ class _MapsScreenState extends State<MapsScreen> {
   }
 
   void readData() async {
-    UserModel model = await getUserInfo(context, true);
+    UserModel model = await UserRepo().getUserInfo(context, true);
     prefs = await SharedPreferences.getInstance();
     // prefs.setString("tripId", '-NeGYiYyygDQ9bbd4X4y');
     if (prefs.containsKey("tripId")) {

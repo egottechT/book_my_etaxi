@@ -1,6 +1,6 @@
 import 'package:book_my_taxi/Utils/constant.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/service/authentication.dart';
-import 'package:book_my_taxi/service/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -109,8 +109,8 @@ class _LoginScreen extends State<LoginScreen> {
                                     try {
                                       User? result = await doGmailLogin();
                                       if (result != null) {
-                                        bool isExist =
-                                            await checkDatabaseForUser(
+                                        bool isExist = await UserRepo()
+                                            .checkDatabaseForUser(
                                                 result.uid.toString());
                                         if (context.mounted) {
                                           if (isExist) {
@@ -157,7 +157,8 @@ class _LoginScreen extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        String url = 'https://docs.google.com/document/d/1jw_tbat4gmOYtWoMHgVmNLjH1Orw9L4PCE7eYWNfT4s/edit?usp=sharing';
+                        String url =
+                            'https://docs.google.com/document/d/1jw_tbat4gmOYtWoMHgVmNLjH1Orw9L4PCE7eYWNfT4s/edit?usp=sharing';
                         if (!await launchUrl(Uri.parse(url))) {
                           throw Exception('Could not launch $url');
                         }

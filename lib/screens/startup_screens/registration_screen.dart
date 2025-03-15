@@ -1,5 +1,5 @@
 import 'package:book_my_taxi/model/user_model.dart';
-import 'package:book_my_taxi/service/database.dart';
+import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/widget/phone_number_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -61,13 +61,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           model.email = ownerEmail.text;
                           model.phoneNumber = phoneNumber.text;
                           User? result = FirebaseAuth.instance.currentUser;
-                          addUserToDatabase(
+                          UserRepo().addUserToDatabase(
                               result?.uid.toString() as String, model);
                           Navigator.of(context).pushNamed("/permissionScreen");
                         }
                       },
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black),
                       child: const Text("Next"),
                     )
                   ],

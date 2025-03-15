@@ -8,7 +8,6 @@ import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
 import 'package:book_my_taxi/model/message_model.dart';
 import 'package:book_my_taxi/model/trip_model.dart';
-import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/screens/maps/driver_info.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
 import 'package:book_my_taxi/service/notification_service.dart';
@@ -20,57 +19,11 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
-// final databaseReference = FirebaseDatabase(
-//         // databaseURL:
-//         //     "https://book-my-etaxi-default-rtdb.asia-southeast1.firebasedatabase.app"
-// )
-//     .ref();
-
 final databaseReference = FirebaseDatabase.instance.ref();
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 String key = "";
 String amount = "";
-
-Future<UserModel> getUserInfo(BuildContext context, bool wait) async {
-  Completer<UserModel> completer = Completer();
-  String uid = FirebaseAuth.instance.currentUser!.uid.toString();
-  if (wait) {
-    await databaseReference.child("customer").child(uid).once().then((value) {
-      Map map = value.snapshot.value as Map;
-      UserModel model = UserModel().getDataFromMap(map);
-      model.key = value.snapshot.key.toString().substring(0, 6);
-      completer.complete(model);
-    });
-  } else {
-    databaseReference.child("customer").child(uid).once().then((value) {
-      Map map = value.snapshot.value as Map;
-      UserModel model = UserModel().getDataFromMap(map);
-      model.key = value.snapshot.key.toString().substring(0, 6);
-      completer.complete(model);
-    });
-  }
-  return completer.future;
-}
-
-Future<void> addUserToDatabase(String name, UserModel model) async {
-  try {
-    await databaseReference
-        .child("customer")
-        .child(name)
-        .set(UserModel().toMap(model));
-  } catch (e) {
-    debugPrint(e.toString());
-  }
-}
-
-Future<bool> checkDatabaseForUser(String uid) async {
-  Completer<bool> completer = Completer();
-  databaseReference.child("customer").child(uid).onValue.listen((event) {
-    completer.complete(event.snapshot.exists);
-  });
-  return completer.future;
-}
 
 void uploadTripInfo(
     BuildContext context, String price, String distance, String carName) async {
