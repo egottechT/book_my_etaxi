@@ -26,7 +26,8 @@ class DriverRepo {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => DriverInfoScreen(
+                builder: (context) =>
+                    DriverInfoScreen(
                       driver: model,
                       data: data,
                     )),
@@ -35,8 +36,8 @@ class DriverRepo {
     });
   }
 
-  void driveLocationUpdate(
-      GoogleMapController mapController, Function function) {
+  void driveLocationUpdate(GoogleMapController mapController,
+      Function function) {
     databaseReference
         .child("trips")
         .child(TripRepo.key)
@@ -46,7 +47,7 @@ class DriverRepo {
         Map map = event.snapshot.value as Map;
         LatLng center = LatLng(map["lat"], map["long"]);
         CameraPosition cameraPosition =
-            CameraPosition(target: center, zoom: 16);
+        CameraPosition(target: center, zoom: 16);
         mapController
             .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
         function(center);
@@ -58,7 +59,7 @@ class DriverRepo {
     try {
       // Reference to the Firebase Realtime Database
       final DatabaseReference databaseRef =
-          FirebaseDatabase.instance.ref("driver");
+      FirebaseDatabase.instance.ref("driver");
 
       // Fetch the driver data once
       final DataSnapshot snapshot = await databaseRef.get();
@@ -66,7 +67,7 @@ class DriverRepo {
       // Check if the snapshot contains data
       if (snapshot.exists) {
         final Map<dynamic, dynamic>? driversData =
-            snapshot.value as Map<dynamic, dynamic>?;
+        snapshot.value as Map<dynamic, dynamic>?;
 
         // Iterate over the drivers data
         if (driversData != null) {

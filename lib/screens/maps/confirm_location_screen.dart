@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:book_my_taxi/Utils/constant.dart';
 import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
+import 'package:book_my_taxi/model/ride_fare_model.dart';
 import 'package:book_my_taxi/model/user_model.dart';
 import 'package:book_my_taxi/repository/trip_repo.dart';
 import 'package:book_my_taxi/repository/user_repo.dart';
@@ -43,11 +44,11 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   late polyLine.PolylinePoints polylinePoints;
   String costTravelling = "0";
   bool loading = true;
-  int sedanPrice = 1;
-  int miniPrice = 1;
-  int suvPrice = 1;
-  int erickshawPrice = 25;
-  int autoPrice = 30;
+  RideFareModel sedanPrice = RideFareModel(perKm: 100);
+  RideFareModel miniPrice = RideFareModel(perKm: 50);
+  RideFareModel suvPrice = RideFareModel(perKm: 150);
+  RideFareModel erickshawPrice = RideFareModel(perKm: 10);
+  RideFareModel autoPrice = RideFareModel(perKm: 40);
 
   @override
   void initState() {
@@ -60,13 +61,14 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
         Provider.of<DestinationLocationProvider>(context, listen: false)
             .location;
     String location = "";
-    int value = 1;
+    RideFareModel value = RideFareModel();
+
     for (var states in statesOfIndia) {
       if (text.contains(states)) {
         location = states;
       }
     }
-    value = await TripRepo().readingFare(location.toLowerCase(), "sedan");
+    value = await TripRepo().readingFare(location.toLowerCase(), "suv");
     setState(() {
       suvPrice = value;
     });
@@ -479,14 +481,24 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
         ));
   }
 
-  String calculateFare(int price) {
+  String calculateFare(RideFareModel price) {
     double distance = double.parse(_placeDistance);
     String fare = "₹";
-    price = price * distance.round();
-    if (costTravelling == "0") {
-      costTravelling = price.toString();
+    int totalPrice =
+        (price.basePrice.round() + price.perKm * distance.round()) as int;
+    DateTime now = DateTime.now();
+    int hour = now.hour;
+
+    bool isNight = (hour >= 21 || hour < 4);
+
+    if (isNight) {
+      totalPrice += price.nightCharge.round();
     }
-    return fare + price.toString();
+
+    if (costTravelling == "0") {
+      costTravelling = totalPrice.toString();
+    }
+    return fare + totalPrice.toString();
   }
 
   getCarName() {

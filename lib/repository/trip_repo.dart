@@ -5,11 +5,11 @@ import 'package:book_my_taxi/listeners/location_bottom_string.dart';
 import 'package:book_my_taxi/listeners/location_string_listener.dart';
 import 'package:book_my_taxi/listeners/user_provider.dart';
 import 'package:book_my_taxi/model/driver_model.dart';
+import 'package:book_my_taxi/model/ride_fare_model.dart';
 import 'package:book_my_taxi/model/trip_model.dart';
 import 'package:book_my_taxi/repository/driver_repo.dart';
 import 'package:book_my_taxi/repository/user_repo.dart';
 import 'package:book_my_taxi/screens/profile_screens/review_trip_screen.dart';
-import 'package:book_my_taxi/service/database.dart';
 import 'package:book_my_taxi/service/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -129,8 +129,8 @@ class TripRepo {
     return list;
   }
 
-  Future<int> readingFare(String state, String car) async {
-    int data = 150;
+  Future<RideFareModel> readingFare(String state, String car) async {
+    RideFareModel data = RideFareModel();
     await databaseReference
         .child("state")
         .child(state)
@@ -138,7 +138,9 @@ class TripRepo {
         .once()
         .then((value) async {
       if (value.snapshot.exists) {
-        data = value.snapshot.value as int;
+        Map map = value.snapshot.value as Map;
+
+        data = RideFareModel().fromMap(map);
       }
     });
     return data;
