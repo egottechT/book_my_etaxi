@@ -32,15 +32,10 @@ class DestinationLocationScreen extends StatefulWidget {
 }
 
 class _DestinationLocationScreen extends State<DestinationLocationScreen> {
-  String location = "Destination";
+  String location = "Please enter your destination";
   double latitude = 0, longitude = 0;
   late GoogleMapController mapController;
   Set<Marker> markerList = {};
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void showDestinationMarker(LatLng latLng) async {
     Uint8List markIcons = await getImages('assets/images/red_pin.png', 150);
@@ -269,29 +264,6 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            // ElevatedButton.icon(
-                            //     icon: const Icon(
-                            //         Icons.location_searching_rounded,
-                            //         color: Colors.black),
-                            //     onPressed: () async {
-                            //       var currentLocation =
-                            //           await getCurrentLocation();
-                            //       var position = LatLng(
-                            //           currentLocation.latitude as double,
-                            //           currentLocation.longitude as double);
-                            //       CameraPosition cameraPosition = CameraPosition(
-                            //           target: LatLng(
-                            //               position.latitude, position.longitude),
-                            //           zoom: zoomLevel);
-                            //       showDestinationMarker(position);
-                            //       mapController.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
-                            //       widget.setMapMarker(position, true);
-                            //     },
-                            //     label: Text(
-                            //       "Current Location",
-                            //       style: _textStyle,
-                            //     ),
-                            //     style: _buttonStyle),
                             ElevatedButton.icon(
                               icon: const Icon(Icons.location_on,
                                   color: Colors.black),

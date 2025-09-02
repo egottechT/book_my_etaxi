@@ -86,16 +86,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     double destinationLatitude,
     double destinationLongitude,
   ) async {
-    // Initializing PolylinePoints
     polylinePoints = polyLine.PolylinePoints();
-
-    // polygonPoint.PolylineResult result =
-    //     await polylinePoints.getRouteBetweenCoordinates(
-    //   mapApiKey, // Google Maps API Key
-    //   polygonPoint.PointLatLng(startLatitude, startLongitude),
-    //   polygonPoint.PointLatLng(destinationLatitude, destinationLongitude),
-    //   travelMode: polygonPoint.TravelMode.driving,
-    // );
 
     polyLine.PolylineRequest request = polyLine.PolylineRequest(
       origin: polyLine.PointLatLng(startLatitude, startLongitude),
