@@ -80,6 +80,14 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
     setState(() {
       miniPrice = value;
     });
+    value = await TripRepo().readingFare(location.toLowerCase(), "auto");
+    setState(() {
+      autoPrice = value;
+    });
+    value = await TripRepo().readingFare(location.toLowerCase(), "erickshaw");
+    setState(() {
+      erickshawPrice = value;
+    });
   }
 
   Future<void> _createPolylines(
