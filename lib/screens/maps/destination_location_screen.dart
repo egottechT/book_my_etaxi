@@ -36,7 +36,7 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
   double latitude = 0, longitude = 0;
   late GoogleMapController mapController;
   Set<Marker> markerList = {};
-
+  bool isFirstTime = true;
   void showDestinationMarker(LatLng latLng) async {
     Uint8List markIcons = await getImages('assets/images/red_pin.png', 150);
     Marker tmpMarker = Marker(
@@ -149,9 +149,13 @@ class _DestinationLocationScreen extends State<DestinationLocationScreen> {
                     var text = await showLocationFromLatLng(
                         latitude, longitude, location);
                     if (mounted) {
-                      setState(() {
-                        location = text;
-                      });
+                      if (isFirstTime) {
+                        isFirstTime = false;
+                      } else {
+                        setState(() {
+                          location = text;
+                        });
+                      }
                     }
                   },
                 ),

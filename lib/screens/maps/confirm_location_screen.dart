@@ -484,8 +484,9 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   String calculateFare(RideFareModel price) {
     double distance = double.parse(_placeDistance);
     String fare = "₹";
-    int totalPrice =
-        (price.basePrice.round() + price.perKm * distance.round()) as int;
+    dynamic totalPrice =
+        (price.basePrice.round() + price.perKm * distance.round());
+    totalPrice = totalPrice.round();
     DateTime now = DateTime.now();
     int hour = now.hour;
 
