@@ -96,6 +96,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                       actions: [
                         TextButton(
                             onPressed: () {
+                              TripRepo().cancelRequest("Long Waiting Time");
                               Navigator.of(context)
                                 ..pop()
                                 ..pop();

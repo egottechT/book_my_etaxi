@@ -274,6 +274,16 @@ class _DriverInfoScreenState extends State<TmpScreen>
                                   const SizedBox(
                                     height: 20,
                                   ),
+                                  const Text(
+                                    "Scroll Down for more reasons & to confirm.",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.grey),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
                                   cancelOptionMenu(changeSet),
                                 ],
                               ),
